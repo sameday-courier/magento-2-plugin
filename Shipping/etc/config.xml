@@ -4,7 +4,6 @@
         <carriers>
             <samedaycourier>
                 <active>0</active>
-                <password backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
                 <model>SamedayCourier\Shipping\Model\Carrier\Shipping</model>
                 <title>Sameday Courier</title>
                 <specificerrmsg>This shipping method is not available. To use this shipping method, please contact us.</specificerrmsg>
