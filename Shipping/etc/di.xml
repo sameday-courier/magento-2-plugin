@@ -7,4 +7,17 @@
             </argument>
         </arguments>
     </type>
+    <virtualType name="SamedayCourier\Shipping\Model\ResourceModel\Service\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">samedaycourier_shipping_service</argument>
+            <argument name="resourceModel" xsi:type="string">SamedayCourier\Shipping\Model\ResourceModel\Service</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="samedaycourier_shipping_pickuppoint_data_source" xsi:type="string">SamedayCourier\Shipping\Model\ResourceModel\PickupPoint\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
