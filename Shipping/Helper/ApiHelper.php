@@ -5,15 +5,9 @@ namespace SamedayCourier\Shipping\Helper;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\ProductMetadataInterface;
-use Magento\Framework\Encryption\EncryptorInterface;
 
 class ApiHelper extends AbstractHelper
 {
-    /**
-     * @var EncryptorInterface
-     */
-    private $encryptor;
-
     /**
      * @var ProductMetadataInterface 
      */
@@ -23,14 +17,12 @@ class ApiHelper extends AbstractHelper
      * ApiHelper constructor.
      *
      * @param Context $context
-     * @param EncryptorInterface $encryptor
      * @param ProductMetadataInterface $productMetadata
      */
-    public function __construct(Context $context, EncryptorInterface $encryptor, ProductMetadataInterface $productMetadata)
+    public function __construct(Context $context, ProductMetadataInterface $productMetadata)
     {
         parent::__construct($context);
 
-        $this->encryptor = $encryptor;
         $this->productMetadata = $productMetadata;
     }
 
@@ -47,7 +39,7 @@ class ApiHelper extends AbstractHelper
     {
         if ($username === null && $password === null && $testing === null) {
             $username = $this->scopeConfig->getValue('carriers/samedaycourier/username');
-            $password = $this->encryptor->decrypt($this->scopeConfig->getValue('carriers/samedaycourier/password'));
+            $password = $this->scopeConfig->getValue('carriers/samedaycourier/password');
             $testing = $this->scopeConfig->getValue('carriers/samedaycourier/testing');
         }
 

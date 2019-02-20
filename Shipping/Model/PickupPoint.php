@@ -10,6 +10,7 @@ class PickupPoint extends AbstractModel implements IdentityInterface
     const CACHE_TAG = 'samedaycourier_shipping_pickuppoint';
     protected $_cacheTag = 'samedaycourier_shipping_pickuppoint';
     protected $_eventPrefix = 'samedaycourier_shipping_pickuppoint';
+    protected $_eventObject = 'samedaycourier_shipping_pickuppoint';
 
     protected function _construct()
     {
