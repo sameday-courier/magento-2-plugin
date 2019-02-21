@@ -51,7 +51,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
                 255
             )
             ->addColumn(
-                'testing',
+                'is_testing',
                 \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN
             )
             ->addColumn(
