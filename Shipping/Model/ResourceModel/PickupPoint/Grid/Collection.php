@@ -45,7 +45,7 @@ class Collection extends \Magento\Framework\View\Element\UiComponent\DataProvide
         $select = parent::getSelect();
 
         if ($select !== null && $this->config !== null) {
-            $select->where('testing=?', (int) $this->config->getValue('carriers/samedaycourier/testing'));
+            $select->where('is_testing=?', (int) $this->config->getValue('carriers/samedaycourier/testing'));
         }
 
         return $select;

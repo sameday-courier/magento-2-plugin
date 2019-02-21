@@ -121,7 +121,7 @@
                 </item>
             </argument>
         </column>
-        <column name="default" class="SamedayCourier\Shipping\Ui\Component\Listing\Column\PickupPointDefault">
+        <column name="is_default" class="SamedayCourier\Shipping\Ui\Component\Listing\Column\PickupPointIsDefault">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>
