@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
-    <menu>
-        <add id="SamedayCourier_Shipping::main" title="Sameday Courier" module="SamedayCourier_Shipping" sortOrder="51" resource="Magento_Backend::admin"/>
-        <add id="SamedayCourier_Shipping::pickuppoint" title="Pickup points" module="SamedayCourier_Shipping" sortOrder="10" action="samedaycourier_shipping/pickuppoint/index" resource="Magento_Backend::admin" parent="SamedayCourier_Shipping::main"/>
-    </menu>
-</config>
