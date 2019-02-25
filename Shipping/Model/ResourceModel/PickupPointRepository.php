@@ -2,8 +2,10 @@
 
 namespace SamedayCourier\Shipping\Model\ResourceModel;
 
+use Magento\Framework\Api\Search\FilterGroup;
 use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Api\SortOrder;
 use Magento\Framework\Exception\NoSuchEntityException;
 use SamedayCourier\Shipping\Api\Data\PickupPointInterface;
 use SamedayCourier\Shipping\Api\Data\PickupPointSearchResultsInterface;
@@ -71,7 +73,7 @@ class PickupPointRepository implements PickupPointRepositoryInterface
         PickupPointSearchResultsInterfaceFactory $pickupPointSearchResultsFactory,
         \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $extensionAttributesJoinProcessor,
         SearchCriteriaBuilder $searchCriteriaBuilder,
-        CollectionProcessorInterface $collectionProcessor = null
+        $collectionProcessor = null
     ) {
         $this->pickupPointFactory = $pickupPointFactory;
         $this->pickupPointResourceModel = $pickupPointResourceModel;
@@ -145,7 +147,44 @@ class PickupPointRepository implements PickupPointRepositoryInterface
         /** @var Collection $collection */
         $collection = $this->pickupPointCollectionFactory->create();
         $this->extensionAttributesJoinProcessor->process($collection, PickupPointInterface::class);
-        $this->collectionProcessor->process($searchCriteria, $collection);
+
+        if (is_object($this->collectionProcessor)) {
+            $this->collectionProcessor->process($searchCriteria, $collection);
+        } else {
+            //Add filters from root filter group to the collection.
+            /** @var FilterGroup $group */
+            foreach ($searchCriteria->getFilterGroups() as $group) {
+                $fields = [];
+                $conditions = [];
+
+                foreach ($group->getFilters() as $filter) {
+                    $condition = $filter->getConditionType() ? $filter->getConditionType() : 'eq';
+                    $fields[] = $filter->getField();
+                    $conditions[] = [$condition => $filter->getValue()];
+                }
+
+                if ($fields) {
+                    $collection->addFieldToFilter($fields, $conditions);
+                }
+            }
+
+            $sortOrders = $searchCriteria->getSortOrders();
+            /** @var SortOrder $sortOrder */
+            if ($sortOrders) {
+                foreach ($searchCriteria->getSortOrders() as $sortOrder) {
+                    $collection->addOrder(
+                        $sortOrder->getField(),
+                        ($sortOrder->getDirection() == SortOrder::SORT_ASC) ? 'ASC' : 'DESC'
+                    );
+                }
+            } else {
+                // Set a default sorting order.
+                $collection->addOrder('id', 'ASC');
+            }
+
+            $collection->setCurPage($searchCriteria->getCurrentPage());
+            $collection->setPageSize($searchCriteria->getPageSize());
+        }
 
         /** @var PickupPointInterface[] $pickupPoints */
         $pickupPoints = [];

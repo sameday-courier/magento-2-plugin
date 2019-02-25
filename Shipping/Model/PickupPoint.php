@@ -5,6 +5,7 @@ namespace SamedayCourier\Shipping\Model;
 use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\Api\ExtensionAttributesFactory;
 use Magento\Framework\Model\AbstractExtensibleModel;
+use Sameday\Objects\PickupPoint\ContactPersonObject;
 use SamedayCourier\Shipping\Api\Data\PickupPointExtensionInterface;
 use SamedayCourier\Shipping\Api\Data\PickupPointInterface;
 
@@ -68,12 +69,21 @@ class PickupPoint extends AbstractExtensibleModel
      */
     public function getDataModel()
     {
-        $pickupPointDataObject = $this->pickupPointDataFactory->create();
-        $this->dataObjectHelper->populateWithArray(
-            $pickupPointDataObject,
-            $this->getData(),
-            \SamedayCourier\Shipping\Api\Data\PickupPointInterface::class
-        );
+        $pickupPointDataObject = $this->pickupPointDataFactory->create()
+            ->setId($this->getData('id'))
+            ->setSamedayId($this->getData('sameday_id'))
+            ->setSamedayAlias($this->getData('sameday_alias'))
+            ->setIsDefault($this->getData('is_testing'))
+            ->setCity($this->getData('city'))
+            ->setCounty($this->getData('county'))
+            ->setAddress($this->getData('address'))
+            ->setContactPersons(array_map(
+                function (array $data) {
+                    return new ContactPersonObject($data['id'], $data['name'], $data['phone'], $data['default']);
+                },
+                $this->getData('contact_persons')
+            ))
+            ->setIsDefault($this->getData('is_default'));
 
         return $pickupPointDataObject;
     }
