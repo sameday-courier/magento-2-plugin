@@ -7,38 +7,38 @@ use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SortOrder;
 use Magento\Framework\Exception\NoSuchEntityException;
-use SamedayCourier\Shipping\Api\Data\PickupPointInterface;
-use SamedayCourier\Shipping\Api\Data\PickupPointSearchResultsInterface;
-use SamedayCourier\Shipping\Api\Data\PickupPointSearchResultsInterfaceFactory;
-use SamedayCourier\Shipping\Api\PickupPointRepositoryInterface;
-use SamedayCourier\Shipping\Model\PickupPointFactory;
-use SamedayCourier\Shipping\Model\ResourceModel\PickupPoint\Collection;
-use SamedayCourier\Shipping\Model\ResourceModel\PickupPoint\CollectionFactory;
+use SamedayCourier\Shipping\Api\Data\ServiceInterface;
+use SamedayCourier\Shipping\Api\Data\ServiceSearchResultsInterface;
+use SamedayCourier\Shipping\Api\Data\ServiceSearchResultsInterfaceFactory;
+use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
+use SamedayCourier\Shipping\Model\ServiceFactory;
+use SamedayCourier\Shipping\Model\ResourceModel\Service\Collection;
+use SamedayCourier\Shipping\Model\ResourceModel\Service\CollectionFactory;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class PickupPointRepository implements PickupPointRepositoryInterface
+class ServiceRepository implements ServiceRepositoryInterface
 {
     /**
-     * @var PickupPointFactory
+     * @var ServiceFactory
      */
-    private $pickupPointFactory;
+    private $serviceFactory;
 
     /**
-     * @var PickupPoint
+     * @var Service
      */
-    private $pickupPointResourceModel;
+    private $serviceResourceModel;
 
     /**
      * @var CollectionFactory
      */
-    private $pickupPointCollectionFactory;
+    private $serviceCollectionFactory;
 
     /**
-     * @var PickupPointSearchResultsInterfaceFactory
+     * @var ServiceSearchResultsInterfaceFactory
      */
-    private $pickupPointSearchResultsFactory;
+    private $serviceSearchResultsFactory;
 
     /**
      * @var \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface
@@ -51,27 +51,27 @@ class PickupPointRepository implements PickupPointRepositoryInterface
     private $searchCriteriaBuilder;
 
     /**
-     * PickupPointRepository constructor.
+     * ServiceRepository constructor.
      *
-     * @param PickupPointFactory $pickupPointFactory
-     * @param PickupPoint $pickupPointResourceModel
-     * @param CollectionFactory $pickupPointCollectionFactory
-     * @param PickupPointSearchResultsInterfaceFactory $pickupPointSearchResultsFactory
+     * @param ServiceFactory $serviceFactory
+     * @param Service $serviceResourceModel
+     * @param CollectionFactory $serviceCollectionFactory
+     * @param ServiceSearchResultsInterfaceFactory $serviceSearchResultsFactory
      * @param \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $extensionAttributesJoinProcessor
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      */
     public function __construct(
-        PickupPointFactory $pickupPointFactory,
-        PickupPoint $pickupPointResourceModel,
-        CollectionFactory $pickupPointCollectionFactory,
-        PickupPointSearchResultsInterfaceFactory $pickupPointSearchResultsFactory,
+        ServiceFactory $serviceFactory,
+        Service $serviceResourceModel,
+        CollectionFactory $serviceCollectionFactory,
+        ServiceSearchResultsInterfaceFactory $serviceSearchResultsFactory,
         \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $extensionAttributesJoinProcessor,
         SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
-        $this->pickupPointFactory = $pickupPointFactory;
-        $this->pickupPointResourceModel = $pickupPointResourceModel;
-        $this->pickupPointCollectionFactory = $pickupPointCollectionFactory;
-        $this->pickupPointSearchResultsFactory = $pickupPointSearchResultsFactory;
+        $this->serviceFactory = $serviceFactory;
+        $this->serviceResourceModel = $serviceResourceModel;
+        $this->serviceCollectionFactory = $serviceCollectionFactory;
+        $this->serviceSearchResultsFactory = $serviceSearchResultsFactory;
         $this->extensionAttributesJoinProcessor = $extensionAttributesJoinProcessor;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
@@ -81,19 +81,19 @@ class PickupPointRepository implements PickupPointRepositoryInterface
      *
      * @throws \Magento\Framework\Exception\AlreadyExistsException
      */
-    public function save(PickupPointInterface $pickupPoint)
+    public function save(ServiceInterface $service)
     {
-        $pickupPointModel = null;
-        if ($pickupPoint->getId()) {
-            $pickupPointModel = $this->pickupPointFactory->create();
-            $this->pickupPointResourceModel->load($pickupPointModel, $pickupPoint->getId());
+        $serviceModel = null;
+        if ($service->getId()) {
+            $serviceModel = $this->serviceFactory->create();
+            $this->serviceResourceModel->load($serviceModel, $service->getId());
         } else {
-            $pickupPointModel = $this->pickupPointFactory->create();
+            $serviceModel = $this->serviceFactory->create();
         }
 
-        $pickupPointModel->updateData($pickupPoint);
+        $serviceModel->updateData($service);
 
-        $this->pickupPointResourceModel->save($pickupPointModel);
+        $this->serviceResourceModel->save($serviceModel);
     }
 
     /**
@@ -101,14 +101,14 @@ class PickupPointRepository implements PickupPointRepositoryInterface
      */
     public function get($id)
     {
-        $pickupPointModel = $this->pickupPointFactory->create();
-        $this->pickupPointResourceModel->load($pickupPointModel, $id);
+        $serviceModel = $this->serviceFactory->create();
+        $this->serviceResourceModel->load($serviceModel, $id);
 
-        if (!$pickupPointModel->getId()) {
-            throw NoSuchEntityException::singleField(PickupPointInterface::ID, $id);
+        if (!$serviceModel->getId()) {
+            throw NoSuchEntityException::singleField(ServiceInterface::ID, $id);
         }
 
-        return $pickupPointModel->getDataModel();
+        return $serviceModel->getDataModel();
     }
 
     /**
@@ -117,15 +117,15 @@ class PickupPointRepository implements PickupPointRepositoryInterface
     public function getBySamedayId($samedayId, $isTesting)
     {
         $searchCriteria = $this->searchCriteriaBuilder
-            ->addFilter(PickupPointInterface::SAMEDAY_ID, $samedayId)
-            ->addFilter(PickupPointInterface::IS_TESTING, $isTesting)
+            ->addFilter(ServiceInterface::SAMEDAY_ID, $samedayId)
+            ->addFilter(ServiceInterface::IS_TESTING, $isTesting)
             ->setPageSize(1)
             ->create();
 
         $items = $this->getList($searchCriteria)->getItems();
 
         if (!$items) {
-            throw NoSuchEntityException::doubleField(PickupPointInterface::SAMEDAY_ID, $samedayId, PickupPointInterface::IS_TESTING, $isTesting);
+            throw NoSuchEntityException::doubleField(ServiceInterface::SAMEDAY_ID, $samedayId, ServiceInterface::IS_TESTING, $isTesting);
         }
 
         return $items[0];
@@ -137,8 +137,8 @@ class PickupPointRepository implements PickupPointRepositoryInterface
     public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria)
     {
         /** @var Collection $collection */
-        $collection = $this->pickupPointCollectionFactory->create();
-        $this->extensionAttributesJoinProcessor->process($collection, PickupPointInterface::class);
+        $collection = $this->serviceCollectionFactory->create();
+        $this->extensionAttributesJoinProcessor->process($collection, ServiceInterface::class);
 
         // Add filters from root filter group to the collection.
         /** @var FilterGroup $group */
@@ -174,17 +174,17 @@ class PickupPointRepository implements PickupPointRepositoryInterface
         $collection->setCurPage($searchCriteria->getCurrentPage());
         $collection->setPageSize($searchCriteria->getPageSize());
 
-        /** @var PickupPointInterface[] $pickupPoints */
-        $pickupPoints = [];
-        /** @var \SamedayCourier\Shipping\Model\PickupPoint $pickupPoint */
-        foreach ($collection->getItems() as $pickupPoint) {
-            $this->pickupPointResourceModel->load($pickupPoint, $pickupPoint->getId());
-            $pickupPoints[] = $pickupPoint->getDataModel();
+        /** @var ServiceInterface[] $services */
+        $services = [];
+        /** @var \SamedayCourier\Shipping\Model\Service $service */
+        foreach ($collection->getItems() as $service) {
+            $this->serviceResourceModel->load($service, $service->getId());
+            $services[] = $service->getDataModel();
         }
 
-        /** @var PickupPointSearchResultsInterface $searchResults */
-        $searchResults = $this->pickupPointSearchResultsFactory->create()
-            ->setItems($pickupPoints)
+        /** @var ServiceSearchResultsInterface $searchResults */
+        $searchResults = $this->serviceSearchResultsFactory->create()
+            ->setItems($services)
             ->setSearchCriteria($searchCriteria)
             ->setTotalCount($collection->getSize());
 
@@ -197,7 +197,7 @@ class PickupPointRepository implements PickupPointRepositoryInterface
     public function getListByTesting($isTesting)
     {
         $searchCriteria = $this->searchCriteriaBuilder
-            ->addFilter(PickupPointInterface::IS_TESTING, $isTesting)
+            ->addFilter(ServiceInterface::IS_TESTING, $isTesting)
             ->create();
 
         return $this->getList($searchCriteria);
@@ -208,9 +208,9 @@ class PickupPointRepository implements PickupPointRepositoryInterface
      *
      * @throws \Exception
      */
-    public function delete(PickupPointInterface $pickupPoint)
+    public function delete(ServiceInterface $service)
     {
-        return $this->deleteById($pickupPoint->getId());
+        return $this->deleteById($service->getId());
     }
 
     /**
@@ -220,14 +220,14 @@ class PickupPointRepository implements PickupPointRepositoryInterface
      */
     public function deleteById($id)
     {
-        $pickupPointModel = $this->pickupPointFactory->create();
-        $this->pickupPointResourceModel->load($pickupPointModel, $id);
+        $serviceModel = $this->serviceFactory->create();
+        $this->serviceResourceModel->load($serviceModel, $id);
 
-        if (!$pickupPointModel->getId()) {
+        if (!$serviceModel->getId()) {
             return false;
         }
 
-        $this->pickupPointResourceModel->delete($pickupPointModel);
+        $this->serviceResourceModel->delete($serviceModel);
 
         return true;
     }

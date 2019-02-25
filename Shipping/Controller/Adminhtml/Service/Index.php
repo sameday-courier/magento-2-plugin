@@ -1,6 +1,6 @@
 <?php
 
-namespace SamedayCourier\Shipping\Controller\Adminhtml\PickupPoint;
+namespace SamedayCourier\Shipping\Controller\Adminhtml\Service;
 
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\View\Result\Page;
@@ -33,8 +33,8 @@ class Index extends \Magento\Backend\App\Action
     {
         /** @var Page $page */
         $page = $this->resultPageFactory->create();
-        $page->setActiveMenu('SamedayCourier_Shipping::pickuppoint');
-        $page->getConfig()->getTitle()->prepend(__('Pickup points'));
+        $page->setActiveMenu('SamedayCourier_Shipping::service');
+        $page->getConfig()->getTitle()->prepend(__('Services'));
 
         return $page;
     }

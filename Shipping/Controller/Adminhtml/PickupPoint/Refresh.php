@@ -1,6 +1,6 @@
 <?php
 
-namespace SamedayCourier\Shipping\Controller\Adminhtml\Pickuppoint;
+namespace SamedayCourier\Shipping\Controller\Adminhtml\PickupPoint;
 
 use Magento\Backend\App\Action;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -71,7 +71,7 @@ class Refresh extends Action
             try {
                 $pickUpPoints = $sameday->getPickupPoints($request);
             } catch (\Exception $e) {
-                $this->messageManager->addErrorMessage(sprintf(__('Communication error: %s'), 'AAA'));
+                $this->messageManager->addErrorMessage(sprintf(__('Communication error: %s'), $e->getMessage()));
 
                 return $this->_redirect('samedaycourier_shipping/pickuppoint/index');
             }

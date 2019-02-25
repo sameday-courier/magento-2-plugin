@@ -52,6 +52,11 @@
                     <label>Pickup points</label>
                     <frontend_model>SamedayCourier\Shipping\Block\Adminhtml\System\Config\Form\Field\PickupPointsButton</frontend_model>
                 </field>
+
+                <field id="services" translate="label" type="button" sortOrder="700" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Services</label>
+                    <frontend_model>SamedayCourier\Shipping\Block\Adminhtml\System\Config\Form\Field\ServicesButton</frontend_model>
+                </field>
             </group>
         </section>
     </system>

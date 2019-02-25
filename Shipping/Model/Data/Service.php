@@ -3,10 +3,9 @@
 namespace SamedayCourier\Shipping\Model\Data;
 
 use Magento\Framework\Api\AbstractExtensibleObject;
-use Sameday\Objects\PickupPoint\ContactPersonObject;
-use SamedayCourier\Shipping\Api\Data\PickupPointInterface;
+use SamedayCourier\Shipping\Api\Data\ServiceInterface;
 
-class PickupPoint extends AbstractExtensibleObject implements PickupPointInterface
+class Service extends AbstractExtensibleObject implements ServiceInterface
 {
     /**
      * @inheritdoc
@@ -43,17 +42,17 @@ class PickupPoint extends AbstractExtensibleObject implements PickupPointInterfa
     /**
      * @inheritdoc
      */
-    public function getSamedayAlias()
+    public function getSamedayName()
     {
-        return $this->_get(self::SAMEDAY_ALIAS);
+        return $this->_get(self::SAMEDAY_NAME);
     }
 
     /**
      * @inheritdoc
      */
-    public function setSamedayAlias($samedayAlias)
+    public function setSamedayName($samedayName)
     {
-        return $this->setData(self::SAMEDAY_ALIAS, $samedayAlias);
+        return $this->setData(self::SAMEDAY_NAME, $samedayName);
     }
 
     /**
@@ -75,81 +74,97 @@ class PickupPoint extends AbstractExtensibleObject implements PickupPointInterfa
     /**
      * @inheritdoc
      */
-    public function getCity()
+    public function getName()
     {
-        return $this->_get(self::CITY);
+        return $this->_get(self::NAME);
     }
 
     /**
      * @inheritdoc
      */
-    public function setCity($city)
+    public function setName($name)
     {
-        return $this->setData(self::CITY, $city);
+        return $this->setData(self::NAME, $name);
     }
 
     /**
      * @inheritdoc
      */
-    public function getCounty()
+    public function getPrice()
     {
-        return $this->_get(self::COUNTY);
+        return $this->_get(self::PRICE);
     }
 
     /**
      * @inheritdoc
      */
-    public function setCounty($county)
+    public function setPrice($price)
     {
-        return $this->setData(self::COUNTY, $county);
+        return $this->setData(self::PRICE, $price);
     }
 
     /**
      * @inheritdoc
      */
-    public function getAddress()
+    public function getIsPriceFree()
     {
-        return $this->_get(self::ADDRESS);
+        return $this->_get(self::IS_PRICE_FREE);
     }
 
     /**
      * @inheritdoc
      */
-    public function setAddress($address)
+    public function setIsPriceFree($isPriceFree)
     {
-        return $this->setData(self::ADDRESS, $address);
+        return $this->setData(self::IS_PRICE_FREE, $isPriceFree);
     }
 
     /**
      * @inheritdoc
      */
-    public function getContactPersons()
+    public function getPriceFree()
     {
-        return $this->_get(self::CONTACT_PERSONS);
+        return $this->_get(self::PRICE_FREE);
     }
 
     /**
      * @inheritdoc
      */
-    public function setContactPersons($contactPersons)
+    public function setPriceFree($priceFree)
     {
-        return $this->setData(self::CONTACT_PERSONS, $contactPersons ? $contactPersons : []);
+        return $this->setData(self::PRICE_FREE, $priceFree);
     }
 
     /**
      * @inheritdoc
      */
-    public function getIsDefault()
+    public function getStatus()
     {
-        return $this->_get(self::IS_DEFAULT);
+        return $this->_get(self::STATUS);
     }
 
     /**
      * @inheritdoc
      */
-    public function setIsDefault($isDefault)
+    public function setStatus($status)
     {
-        return $this->setData(self::IS_DEFAULT, $isDefault);
+        return $this->setData(self::STATUS, $status);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getWorkingDays()
+    {
+        return $this->_get(self::WORKING_DAYS);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setWorkingDays($workingDays)
+    {
+        return $this->setData(self::WORKING_DAYS, $workingDays);
     }
 
     /**
@@ -163,7 +178,7 @@ class PickupPoint extends AbstractExtensibleObject implements PickupPointInterfa
     /**
      * @inheritdoc
      */
-    public function setExtensionAttributes(\SamedayCourier\Shipping\Api\Data\PickupPointExtensionInterface $extensionAttributes)
+    public function setExtensionAttributes(\SamedayCourier\Shipping\Api\Data\ServiceExtensionInterface $extensionAttributes)
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }

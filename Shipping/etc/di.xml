@@ -7,16 +7,17 @@
             </argument>
         </arguments>
     </type>
-    <virtualType name="SamedayCourier\Shipping\Model\ResourceModel\Service\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
-        <arguments>
-            <argument name="mainTable" xsi:type="string">samedaycourier_shipping_service</argument>
-            <argument name="resourceModel" xsi:type="string">SamedayCourier\Shipping\Model\ResourceModel\Service</argument>
-        </arguments>
-    </virtualType>
+    <!--<virtualType name="SamedayCourier\Shipping\Model\ResourceModel\Service\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">-->
+        <!--<arguments>-->
+            <!--<argument name="mainTable" xsi:type="string">samedaycourier_shipping_service</argument>-->
+            <!--<argument name="resourceModel" xsi:type="string">SamedayCourier\Shipping\Model\ResourceModel\Service</argument>-->
+        <!--</arguments>-->
+    <!--</virtualType>-->
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
             <argument name="collections" xsi:type="array">
                 <item name="samedaycourier_shipping_pickuppoint_data_source" xsi:type="string">SamedayCourier\Shipping\Model\ResourceModel\PickupPoint\Grid\Collection</item>
+                <item name="samedaycourier_shipping_service_data_source" xsi:type="string">SamedayCourier\Shipping\Model\ResourceModel\Service\Grid\Collection</item>
             </argument>
         </arguments>
     </type>
@@ -24,4 +25,8 @@
     <preference for="SamedayCourier\Shipping\Api\Data\PickupPointInterface" type="SamedayCourier\Shipping\Model\Data\PickupPoint" />
     <preference for="SamedayCourier\Shipping\Api\PickupPointRepositoryInterface" type="SamedayCourier\Shipping\Model\ResourceModel\PickupPointRepository" />
     <preference for="SamedayCourier\Shipping\Api\Data\PickupPointSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
+
+    <preference for="SamedayCourier\Shipping\Api\Data\ServiceInterface" type="SamedayCourier\Shipping\Model\Data\Service" />
+    <preference for="SamedayCourier\Shipping\Api\ServiceRepositoryInterface" type="SamedayCourier\Shipping\Model\ResourceModel\ServiceRepository" />
+    <preference for="SamedayCourier\Shipping\Api\Data\ServiceSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
 </config>

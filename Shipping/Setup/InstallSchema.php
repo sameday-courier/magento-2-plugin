@@ -18,6 +18,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
         $setup->startSetup();
 
         $this->setupPickupPoints($setup);
+        $this->setupServices($setup);
 
         $setup->endSetup();
     }
@@ -76,6 +77,71 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
             ->addColumn(
                 'is_default',
                 \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN
+            );
+
+        $setup->getConnection()->createTable($table);
+    }
+
+    /**
+     * @param SchemaSetupInterface $setup
+     *
+     * @throws \Zend_Db_Exception
+     */
+    private function setupServices(SchemaSetupInterface $setup)
+    {
+        if ($setup->tableExists('samedaycourier_shipping_service')) {
+            return;
+        }
+
+        $table = $setup->getConnection()
+            ->newTable($setup->getTable('samedaycourier_shipping_service'))
+            ->addColumn(
+                'id',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true]
+            )
+            ->addColumn(
+                'sameday_id',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER
+            )
+            ->addColumn(
+                'sameday_name',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255
+            )
+            ->addColumn(
+                'is_testing',
+                \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN
+            )
+            ->addColumn(
+                'name',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255
+            )
+            ->addColumn(
+                'price',
+                \Magento\Framework\DB\Ddl\Table::TYPE_DECIMAL,
+                null,
+                ['precision' => 10, 'scale' => 2]
+            )
+            ->addColumn(
+                'is_price_free',
+                \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN
+            )
+            ->addColumn(
+                'price_free',
+                \Magento\Framework\DB\Ddl\Table::TYPE_DECIMAL,
+                null,
+                ['precision' => 10, 'scale' => 2]
+            )
+            ->addColumn(
+                'status',
+                \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT
+            )
+            ->addColumn(
+                'working_days',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT
             );
 
         $setup->getConnection()->createTable($table);

@@ -5,11 +5,10 @@ namespace SamedayCourier\Shipping\Model;
 use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\Api\ExtensionAttributesFactory;
 use Magento\Framework\Model\AbstractExtensibleModel;
-use Sameday\Objects\PickupPoint\ContactPersonObject;
-use SamedayCourier\Shipping\Api\Data\PickupPointExtensionInterface;
-use SamedayCourier\Shipping\Api\Data\PickupPointInterface;
+use SamedayCourier\Shipping\Api\Data\ServiceExtensionInterface;
+use SamedayCourier\Shipping\Api\Data\ServiceInterface;
 
-class PickupPoint extends AbstractExtensibleModel
+class Service extends AbstractExtensibleModel
 {
     /**
      * @var \Magento\Framework\Reflection\DataObjectProcessor
@@ -17,15 +16,15 @@ class PickupPoint extends AbstractExtensibleModel
     private $dataProcessor;
 
     /**
-     * @var \SamedayCourier\Shipping\Api\Data\PickupPointInterfaceFactory;
+     * @var \SamedayCourier\Shipping\Api\Data\ServiceInterfaceFactory;
      */
-    private $pickupPointDataFactory;
+    private $serviceDataFactory;
 
     /**
-     * PickupPoint constructor.
+     * Service constructor.
      *
      * @param \Magento\Framework\Reflection\DataObjectProcessor $dataProcessor
-     * @param \SamedayCourier\Shipping\Api\Data\PickupPointInterfaceFactory $pickupPointDataFactory
+     * @param \SamedayCourier\Shipping\Api\Data\ServiceInterfaceFactory $serviceDataFactory
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param ExtensionAttributesFactory $extensionFactory
@@ -36,7 +35,7 @@ class PickupPoint extends AbstractExtensibleModel
      */
     public function __construct(
         \Magento\Framework\Reflection\DataObjectProcessor $dataProcessor,
-        \SamedayCourier\Shipping\Api\Data\PickupPointInterfaceFactory $pickupPointDataFactory,
+        \SamedayCourier\Shipping\Api\Data\ServiceInterfaceFactory $serviceDataFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         ExtensionAttributesFactory $extensionFactory,
@@ -48,47 +47,43 @@ class PickupPoint extends AbstractExtensibleModel
         parent::__construct($context, $registry, $extensionFactory, $customAttributeFactory, $resource, $resourceCollection, $data);
 
         $this->dataProcessor = $dataProcessor;
-        $this->pickupPointDataFactory = $pickupPointDataFactory;
+        $this->serviceDataFactory = $serviceDataFactory;
     }
 
     protected function _construct()
     {
-        $this->_init(\SamedayCourier\Shipping\Model\ResourceModel\PickupPoint::class);
+        $this->_init(\SamedayCourier\Shipping\Model\ResourceModel\Service::class);
     }
 
     /**
-     * @return PickupPointInterface
+     * @return ServiceInterface
      */
     public function getDataModel()
     {
-        $pickupPointDataObject = $this->pickupPointDataFactory->create()
+        $serviceDataObject = $this->serviceDataFactory->create()
             ->setId($this->getData('id'))
             ->setSamedayId($this->getData('sameday_id'))
-            ->setSamedayAlias($this->getData('sameday_alias'))
-            ->setIsDefault($this->getData('is_testing'))
-            ->setCity($this->getData('city'))
-            ->setCounty($this->getData('county'))
-            ->setAddress($this->getData('address'))
-            ->setContactPersons(array_map(
-                function (array $data) {
-                    return new ContactPersonObject($data['id'], $data['name'], $data['phone'], $data['default']);
-                },
-                $this->getData('contact_persons')
-            ))
-            ->setIsDefault($this->getData('is_default'));
+            ->setSamedayName($this->getData('sameday_name'))
+            ->setIsTesting($this->getData('is_testing'))
+            ->setName($this->getData('name'))
+            ->setPrice($this->getData('price'))
+            ->setIsPriceFree($this->getData('is_price_free'))
+            ->setPriceFree($this->getData('price_free'))
+            ->setStatus($this->getData('status'))
+            ->setWorkingDays($this->getData('working_days'));
 
-        return $pickupPointDataObject;
+        return $serviceDataObject;
     }
 
     /**
-     * @param PickupPointInterface $pickupPoint
+     * @param ServiceInterface $service
      *
      * @return $this
      */
-    public function updateData(PickupPointInterface $pickupPoint)
+    public function updateData(ServiceInterface $service)
     {
         $attributes = $this->dataProcessor
-            ->buildOutputDataArray($pickupPoint, PickupPointInterface::class);
+            ->buildOutputDataArray($service, ServiceInterface::class);
 
         foreach ($attributes as $code => $data) {
             $this->setDataUsingMethod($code, $data);
@@ -100,7 +95,7 @@ class PickupPoint extends AbstractExtensibleModel
     /**
      * @inheritdoc
      *
-     * @return PickupPointExtensionInterface|null
+     * @return ServiceExtensionInterface|null
      */
     public function getExtensionAttributes()
     {
@@ -110,11 +105,11 @@ class PickupPoint extends AbstractExtensibleModel
     /**
      * @inheritdoc
      *
-     * @param PickupPointExtensionInterface $extensionAttributes
+     * @param ServiceExtensionInterface $extensionAttributes
      *
      * @return $this
      */
-    public function setExtensionAttributes(PickupPointExtensionInterface $extensionAttributes)
+    public function setExtensionAttributes(ServiceExtensionInterface $extensionAttributes)
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
