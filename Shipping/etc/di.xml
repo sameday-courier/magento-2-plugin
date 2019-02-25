@@ -21,21 +21,6 @@
         </arguments>
     </type>
 
-    <virtualType name="SamedayCourier\Shipping\Model\Api\SearchCriteria\CollectionProcessor\PickupPointFilterProcessor" type="Magento\Framework\Api\SearchCriteria\CollectionProcessor\FilterProcessor" />
-    <virtualType name="SamedayCourier\Shipping\Model\Api\SearchCriteria\PickupPointCollectionProcessor" type="Magento\Framework\Api\SearchCriteria\CollectionProcessor">
-        <arguments>
-            <argument name="processors" xsi:type="array">
-                <item name="filters" xsi:type="object">SamedayCourier\Shipping\Model\Api\SearchCriteria\CollectionProcessor\PickupPointFilterProcessor</item>
-                <item name="sorting" xsi:type="object">Magento\Framework\Api\SearchCriteria\CollectionProcessor\SortingProcessor</item>
-                <item name="pagination" xsi:type="object">Magento\Framework\Api\SearchCriteria\CollectionProcessor\PaginationProcessor</item>
-            </argument>
-        </arguments>
-    </virtualType>
-    <type name="SamedayCourier\Shipping\Model\ResourceModel\PickupPointRepository">
-        <arguments>
-            <argument name="collectionProcessor" xsi:type="object">SamedayCourier\Shipping\Model\Api\SearchCriteria\PickupPointCollectionProcessor</argument>
-        </arguments>
-    </type>
     <preference for="SamedayCourier\Shipping\Api\Data\PickupPointInterface" type="SamedayCourier\Shipping\Model\Data\PickupPoint" />
     <preference for="SamedayCourier\Shipping\Api\PickupPointRepositoryInterface" type="SamedayCourier\Shipping\Model\ResourceModel\PickupPointRepository" />
     <preference for="SamedayCourier\Shipping\Api\Data\PickupPointSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />

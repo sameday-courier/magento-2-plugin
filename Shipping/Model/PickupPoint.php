@@ -69,6 +69,11 @@ class PickupPoint extends AbstractExtensibleModel
      */
     public function getDataModel()
     {
+        $contactPersons = $this->getData('contact_persons');
+        if (!is_array($contactPersons) && !empty($contactPersons)) {
+            $contactPersons = json_decode($contactPersons, true);
+        }
+
         $pickupPointDataObject = $this->pickupPointDataFactory->create()
             ->setId($this->getData('id'))
             ->setSamedayId($this->getData('sameday_id'))
@@ -81,7 +86,7 @@ class PickupPoint extends AbstractExtensibleModel
                 function (array $data) {
                     return new ContactPersonObject($data['id'], $data['name'], $data['phone'], $data['default']);
                 },
-                $this->getData('contact_persons')
+                $contactPersons
             ))
             ->setIsDefault($this->getData('is_default'));
 

@@ -51,11 +51,6 @@ class PickupPointRepository implements PickupPointRepositoryInterface
     private $searchCriteriaBuilder;
 
     /**
-     * @var CollectionProcessorInterface
-     */
-    private $collectionProcessor;
-
-    /**
      * PickupPointRepository constructor.
      *
      * @param PickupPointFactory $pickupPointFactory
@@ -64,7 +59,6 @@ class PickupPointRepository implements PickupPointRepositoryInterface
      * @param PickupPointSearchResultsInterfaceFactory $pickupPointSearchResultsFactory
      * @param \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $extensionAttributesJoinProcessor
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
-     * @param CollectionProcessorInterface|null $collectionProcessor
      */
     public function __construct(
         PickupPointFactory $pickupPointFactory,
@@ -72,8 +66,7 @@ class PickupPointRepository implements PickupPointRepositoryInterface
         CollectionFactory $pickupPointCollectionFactory,
         PickupPointSearchResultsInterfaceFactory $pickupPointSearchResultsFactory,
         \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $extensionAttributesJoinProcessor,
-        SearchCriteriaBuilder $searchCriteriaBuilder,
-        $collectionProcessor = null
+        SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
         $this->pickupPointFactory = $pickupPointFactory;
         $this->pickupPointResourceModel = $pickupPointResourceModel;
@@ -81,7 +74,6 @@ class PickupPointRepository implements PickupPointRepositoryInterface
         $this->pickupPointSearchResultsFactory = $pickupPointSearchResultsFactory;
         $this->extensionAttributesJoinProcessor = $extensionAttributesJoinProcessor;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->collectionProcessor = $collectionProcessor ?: $this->getCollectionProcessor();
     }
 
     /**
@@ -148,43 +140,39 @@ class PickupPointRepository implements PickupPointRepositoryInterface
         $collection = $this->pickupPointCollectionFactory->create();
         $this->extensionAttributesJoinProcessor->process($collection, PickupPointInterface::class);
 
-        if (is_object($this->collectionProcessor)) {
-            $this->collectionProcessor->process($searchCriteria, $collection);
-        } else {
-            //Add filters from root filter group to the collection.
-            /** @var FilterGroup $group */
-            foreach ($searchCriteria->getFilterGroups() as $group) {
-                $fields = [];
-                $conditions = [];
+        // Add filters from root filter group to the collection.
+        /** @var FilterGroup $group */
+        foreach ($searchCriteria->getFilterGroups() as $group) {
+            $fields = [];
+            $conditions = [];
 
-                foreach ($group->getFilters() as $filter) {
-                    $condition = $filter->getConditionType() ? $filter->getConditionType() : 'eq';
-                    $fields[] = $filter->getField();
-                    $conditions[] = [$condition => $filter->getValue()];
-                }
-
-                if ($fields) {
-                    $collection->addFieldToFilter($fields, $conditions);
-                }
+            foreach ($group->getFilters() as $filter) {
+                $condition = $filter->getConditionType() ? $filter->getConditionType() : 'eq';
+                $fields[] = $filter->getField();
+                $conditions[] = [$condition => $filter->getValue()];
             }
 
-            $sortOrders = $searchCriteria->getSortOrders();
-            /** @var SortOrder $sortOrder */
-            if ($sortOrders) {
-                foreach ($searchCriteria->getSortOrders() as $sortOrder) {
-                    $collection->addOrder(
-                        $sortOrder->getField(),
-                        ($sortOrder->getDirection() == SortOrder::SORT_ASC) ? 'ASC' : 'DESC'
-                    );
-                }
-            } else {
-                // Set a default sorting order.
-                $collection->addOrder('id', 'ASC');
+            if ($fields) {
+                $collection->addFieldToFilter($fields, $conditions);
             }
-
-            $collection->setCurPage($searchCriteria->getCurrentPage());
-            $collection->setPageSize($searchCriteria->getPageSize());
         }
+
+        $sortOrders = $searchCriteria->getSortOrders();
+        /** @var SortOrder $sortOrder */
+        if ($sortOrders) {
+            foreach ($searchCriteria->getSortOrders() as $sortOrder) {
+                $collection->addOrder(
+                    $sortOrder->getField(),
+                    ($sortOrder->getDirection() == SortOrder::SORT_ASC) ? 'ASC' : 'DESC'
+                );
+            }
+        } else {
+            // Set a default sorting order.
+            $collection->addOrder('id', 'ASC');
+        }
+
+        $collection->setCurPage($searchCriteria->getCurrentPage());
+        $collection->setPageSize($searchCriteria->getPageSize());
 
         /** @var PickupPointInterface[] $pickupPoints */
         $pickupPoints = [];
@@ -241,17 +229,5 @@ class PickupPointRepository implements PickupPointRepositoryInterface
         $this->pickupPointResourceModel->delete($pickupPointModel);
 
         return true;
-    }
-
-    /**
-     * @return CollectionProcessorInterface
-     */
-    private function getCollectionProcessor()
-    {
-        if (!$this->collectionProcessor) {
-            $this->collectionProcessor = \Magento\Framework\App\ObjectManager::getInstance()->get('SamedayCourier\Shipping\Api\SearchCriteria\PickupPointCollectionProcessor');
-        }
-
-        return $this->collectionProcessor;
     }
 }
