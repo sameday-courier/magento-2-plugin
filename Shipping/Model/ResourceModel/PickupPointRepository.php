@@ -178,6 +178,7 @@ class PickupPointRepository implements PickupPointRepositoryInterface
         $pickupPoints = [];
         /** @var \SamedayCourier\Shipping\Model\PickupPoint $pickupPoint */
         foreach ($collection->getItems() as $pickupPoint) {
+            $this->pickupPointResourceModel->load($pickupPoint, $pickupPoint->getId());
             $pickupPoints[] = $pickupPoint->getDataModel();
         }
 
