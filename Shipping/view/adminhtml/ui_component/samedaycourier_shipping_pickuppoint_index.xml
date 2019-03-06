@@ -2,20 +2,20 @@
 <listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Ui/etc/ui_configuration.xsd">
     <argument name="data" xsi:type="array">
         <item name="js_config" xsi:type="array">
-            <item name="provider" xsi:type="string">samedaycourier_shipping_pickuppoint.samedaycourier_shipping_pickuppoint_data_source</item>
-            <item name="deps" xsi:type="string">samedaycourier_shipping_pickuppoint.samedaycourier_shipping_pickuppoint_data_source</item>
+            <item name="provider" xsi:type="string">samedaycourier_shipping_pickuppoint_index.samedaycourier_shipping_pickuppoint_data_source</item>
+            <item name="deps" xsi:type="string">samedaycourier_shipping_pickuppoint_index.samedaycourier_shipping_pickuppoint_data_source</item>
         </item>
-        <item name="spinner" xsi:type="string">samedaycourier_shipping_pickuppoint_columns</item>
+        <item name="spinner" xsi:type="string">samedaycourier_shipping_pickuppoint_index_columns</item>
         <item name="buttons" xsi:type="array">
-            <item name="add" xsi:type="array">
-                <item name="name" xsi:type="string">add</item>
+            <item name="refresh" xsi:type="array">
+                <item name="name" xsi:type="string">refresh</item>
                 <item name="label" xsi:type="string" translate="true">Refresh</item>
                 <item name="class" xsi:type="string">primary</item>
                 <item name="url" xsi:type="string">*/*/refresh</item>
             </item>
         </item>
     </argument>
-    <dataSource name="samedaycourier_shipping_pickuppoint_data_source">
+    <dataSource name="samedaycourier_shipping_pickuppoint_index_data_source">
         <argument name="dataProvider" xsi:type="configurableObject">
             <argument name="class" xsi:type="string">Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider</argument>
             <argument name="name" xsi:type="string">samedaycourier_shipping_pickuppoint_data_source</argument>
@@ -43,30 +43,30 @@
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="storageConfig" xsi:type="array">
-                        <item name="provider" xsi:type="string">samedaycourier_shipping_pickuppoint.samedaycourier_shipping_pickuppoint.listing_top.bookmarks</item>
+                        <item name="provider" xsi:type="string">samedaycourier_shipping_pickuppoint_index.samedaycourier_shipping_pickuppoint_index.listing_top.bookmarks</item>
                         <item name="namespace" xsi:type="string">current.paging</item>
                     </item>
-                    <item name="selectProvider" xsi:type="string">samedaycourier_shipping_pickuppoint.samedaycourier_shipping_pickuppoint.samedaycourier_shipping_pickuppoint_columns.ids</item>
+                    <item name="selectProvider" xsi:type="string">samedaycourier_shipping_pickuppoint_index.samedaycourier_shipping_pickuppoint_index.samedaycourier_shipping_pickuppoint_index_columns.ids</item>
                     <item name="displayArea" xsi:type="string">bottom</item>
                 </item>
             </argument>
         </paging>
     </container>
-    <columns name="samedaycourier_shipping_pickuppoint_columns">
+    <columns name="samedaycourier_shipping_pickuppoint_index_columns">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="storageConfig" xsi:type="array">
-                    <item name="provider" xsi:type="string">samedaycourier_shipping_pickuppoint.samedaycourier_shipping_pickuppoint.listing_top.bookmarks</item>
+                    <item name="provider" xsi:type="string">samedaycourier_shipping_pickuppoint_index.samedaycourier_shipping_pickuppoint_index.listing_top.bookmarks</item>
                     <item name="namespace" xsi:type="string">current</item>
                 </item>
                 <item name="childDefaults" xsi:type="array">
                     <item name="storageConfig" xsi:type="array">
-                        <item name="provider" xsi:type="string">samedaycourier_shipping_pickuppoint.samedaycourier_shipping_pickuppoint.listing_top.bookmarks</item>
+                        <item name="provider" xsi:type="string">samedaycourier_shipping_pickuppoint_index.samedaycourier_shipping_pickuppoint_index.listing_top.bookmarks</item>
                         <item name="root" xsi:type="string">columns.${ $.index }</item>
                         <item name="namespace" xsi:type="string">current.${ $.storageConfig.root}</item>
                     </item>
                     <item name="fieldAction" xsi:type="array">
-                        <item name="provider" xsi:type="string">samedaycourier_shipping_pickuppoint.samedaycourier_shipping_pickuppoint.samedaycourier_shipping_pickuppoint_columns.actions</item>
+                        <item name="provider" xsi:type="string">samedaycourier_shipping_pickuppoint_index.samedaycourier_shipping_pickuppoint_index.samedaycourier_shipping_pickuppoint_index_columns.actions</item>
                         <item name="target" xsi:type="string">applyAction</item>
                         <item name="params" xsi:type="array">
                             <item name="0" xsi:type="string">edit</item>
