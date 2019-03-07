@@ -6,6 +6,19 @@
             <item name="deps" xsi:type="string">samedaycourier_shipping_service_edit.samedaycourier_shipping_service_edit_data_source</item>
         </item>
         <item name="label" xsi:type="string" translate="true">Edit service</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+        <item name="config" xsi:type="array">
+            <item name="dataScope" xsi:type="string">data</item>
+            <item name="namespace" xsi:type="string">samedaycourier_shipping_service_edit</item>
+        </item>
+        <item name="buttons" xsi:type="array">
+            <item name="back" xsi:type="string">SamedayCourier\Shipping\Block\Adminhtml\Service\Edit\BackButton</item>
+            <item name="save" xsi:type="array">
+                <item name="name" xsi:type="string">save</item>
+                <item name="label" xsi:type="string" translate="true">Save service</item>
+                <item name="class" xsi:type="string">primary</item>
+            </item>
+        </item>
     </argument>
     <dataSource name="samedaycourier_shipping_service_edit_data_source">
         <argument name="dataProvider" xsi:type="configurableObject">
@@ -13,6 +26,9 @@
             <argument name="name" xsi:type="string">samedaycourier_shipping_service_edit_data_source</argument>
             <argument name="primaryFieldName" xsi:type="string">id</argument>
             <argument name="requestFieldName" xsi:type="string">id</argument>
+            <argument name="data" xsi:type="array">
+                <item name="submit_url" path="*/*/edit" xsi:type="url" />
+            </argument>
         </argument>
         <argument name="data" xsi:type="array">
             <item name="js_config" xsi:type="array">
@@ -32,7 +48,6 @@
                     <item name="visible" xsi:type="boolean">false</item>
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="formElement" xsi:type="string">input</item>
-                    <item name="source" xsi:type="string">service</item>
                 </item>
             </argument>
         </field>
@@ -43,7 +58,51 @@
                     <item name="visible" xsi:type="boolean">true</item>
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="formElement" xsi:type="string">input</item>
-                    <item name="source" xsi:type="string">service</item>
+                    <item name="disabled" xsi:type="boolean">true</item>
+                </item>
+            </argument>
+        </field>
+        <field name="name">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">Display name</item>
+                    <item name="visible" xsi:type="boolean">true</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                </item>
+            </argument>
+        </field>
+        <field name="price">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">Shipping price</item>
+                    <item name="dataType" xsi:type="string">number</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="validate" xsi:type="string">validate-not-negative-number</item>
+                </item>
+            </argument>
+        </field>
+        <field name="is_price_free">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">Has free shipping price</item>
+                    <item name="dataType" xsi:type="string">number</item>
+                    <item name="formElement" xsi:type="string">checkbox</item>
+                    <item name="prefer" xsi:type="string">toggle</item>
+                    <item name="valueMap" xsi:type="array">
+                        <item name="true" xsi:type="string">1</item>
+                        <item name="false" xsi:type="string">0</item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+        <field name="price_free">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">Free shipping price</item>
+                    <item name="dataType" xsi:type="string">number</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="validate" xsi:type="string">validate-not-negative-number</item>
                 </item>
             </argument>
         </field>
