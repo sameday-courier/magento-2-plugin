@@ -39,7 +39,7 @@ class ServiceDataProvider extends AbstractDataProvider
         $this->loadedData = [];
         /** @var Service $item */
         foreach ($this->collection->getItems() as $item) {
-            $this->loadedData[$item->getId()] = $item->getData();
+            $this->loadedData[$item->getId()]['service'] = $item->getData();
         }
 
         return $this->loadedData;

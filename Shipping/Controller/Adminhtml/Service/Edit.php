@@ -38,16 +38,16 @@ class Edit extends \Magento\Backend\App\Action
         }
 
         try {
-            $service = $this->repository->get($data['id']);
+            $service = $this->repository->get($data['service']['id']);
         } catch (NoSuchEntityException $e) {
             return $this->resultFactory->create(ResultFactory::TYPE_PAGE);
         }
 
         $service
-            ->setName($data['name'])
-            ->setIsPriceFree($data['is_price_free'])
-            ->setPriceFree($data['price_free'])
-            ->setPrice($data['price']);
+            ->setName($data['service']['name'])
+            ->setIsPriceFree($data['service']['is_price_free'] === 'true')
+            ->setPriceFree($data['service']['price_free'])
+            ->setPrice($data['service']['price']);
 
         $this->repository->save($service);
 

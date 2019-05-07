@@ -6,7 +6,9 @@
             <item name="deps" xsi:type="string">samedaycourier_shipping_service_edit.samedaycourier_shipping_service_edit_data_source</item>
         </item>
         <item name="label" xsi:type="string" translate="true">Edit service</item>
-        <item name="template" xsi:type="string">templates/form/collapsible</item>
+        <item name="layout" xsi:type="array">
+            <item name="type" xsi:type="string">tabs</item>
+        </item>
         <item name="config" xsi:type="array">
             <item name="dataScope" xsi:type="string">data</item>
             <item name="namespace" xsi:type="string">samedaycourier_shipping_service_edit</item>
@@ -48,6 +50,7 @@
                     <item name="visible" xsi:type="boolean">false</item>
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">service</item>
                 </item>
             </argument>
         </field>
@@ -59,6 +62,7 @@
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="formElement" xsi:type="string">input</item>
                     <item name="disabled" xsi:type="boolean">true</item>
+                    <item name="source" xsi:type="string">service</item>
                 </item>
             </argument>
         </field>
@@ -69,6 +73,7 @@
                     <item name="visible" xsi:type="boolean">true</item>
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">service</item>
                 </item>
             </argument>
         </field>
@@ -78,7 +83,7 @@
                     <item name="label" xsi:type="string">Shipping price</item>
                     <item name="dataType" xsi:type="string">number</item>
                     <item name="formElement" xsi:type="string">input</item>
-                    <item name="validate" xsi:type="string">validate-not-negative-number</item>
+                    <item name="source" xsi:type="string">service</item>
                 </item>
             </argument>
         </field>
@@ -93,6 +98,7 @@
                         <item name="true" xsi:type="string">1</item>
                         <item name="false" xsi:type="string">0</item>
                     </item>
+                    <item name="source" xsi:type="string">service</item>
                 </item>
             </argument>
         </field>
@@ -102,9 +108,65 @@
                     <item name="label" xsi:type="string">Free shipping price</item>
                     <item name="dataType" xsi:type="string">number</item>
                     <item name="formElement" xsi:type="string">input</item>
-                    <item name="validate" xsi:type="string">validate-not-negative-number</item>
+                    <item name="source" xsi:type="string">service</item>
                 </item>
             </argument>
         </field>
+<!--        <container name="container_group">-->
+<!--            <argument name="data" xsi:type="array">-->
+<!--                <item name="config" xsi:type="array">-->
+<!--                    <item name="component" xsi:type="string">Magento_Ui/js/form/components/group</item>-->
+<!--                    <item name="label" xsi:type="string" translate="true">Groupa</item>-->
+<!--                </item>-->
+<!--            </argument>-->
+<!--            <field name="group_id">-->
+<!--                <argument name="data" xsi:type="array">-->
+<!--                    <item name="config" xsi:type="array">-->
+<!--                        <item name="fieldGroup" xsi:type="string">group_id</item>-->
+<!--                        <item name="dataType" xsi:type="string">number</item>-->
+<!--                        <item name="formElement" xsi:type="string">select</item>-->
+<!--                        <item name="source" xsi:type="string">customer</item>-->
+<!--                    </item>-->
+<!--                </argument>-->
+<!--            </field>-->
+<!--            <field name="disable_auto_group_change">-->
+<!--                <argument name="data" xsi:type="array">-->
+<!--                    <item name="config" xsi:type="array">-->
+<!--                        <item name="fieldGroup" xsi:type="string">group_id</item>-->
+<!--                        <item name="dataType" xsi:type="string">boolean</item>-->
+<!--                        <item name="formElement" xsi:type="string">checkbox</item>-->
+<!--                        <item name="source" xsi:type="string">customer</item>-->
+<!--                    </item>-->
+<!--                </argument>-->
+<!--            </field>-->
+<!--        </container>-->
+        <!--<fieldset name="arggg">-->
+            <!--<argument name="data" xsi:type="array">-->
+                <!--<item name="config" xsi:type="array">-->
+                    <!--<item name="label" xsi:type="string" translate="true">Service details</item>-->
+                <!--</item>-->
+            <!--</argument>-->
+            <!--<field name="opening_time">-->
+                <!--<argument name="data" xsi:type="array">-->
+                    <!--<item name="config" xsi:type="array">-->
+                        <!--<item name="dataType" xsi:type="string">string</item>-->
+                        <!--<item name="label" xsi:type="string" translate="true">Opening time</item>-->
+                        <!--<item name="formElement" xsi:type="string">date</item>-->
+                        <!--<item name="source" xsi:type="string">page</item>-->
+                        <!--<item name="sortOrder" xsi:type="number">70</item>-->
+                        <!--<item name="dataScope" xsi:type="string">opening_time</item>-->
+                        <!--<item name="validation" xsi:type="array">-->
+                            <!--<item name="required-entry" xsi:type="boolean">true</item>-->
+                        <!--</item>-->
+                        <!--<item name="options" xsi:type="array">-->
+                            <!--<item name="dateFormat" xsi:type="string">yyyy-MM-dd</item>-->
+                            <!--<item name="timeFormat" xsi:type="string">HH:mm:ss</item>-->
+                            <!--<item name="showsTime" xsi:type="boolean">true</item>-->
+                            <!--<item name="timeOnly" xsi:type="boolean">true</item>-->
+                        <!--</item>-->
+                    <!--</item>-->
+                <!--</argument>-->
+            <!--</field>-->
+        <!--</fieldset>-->
     </fieldset>
 </form>
