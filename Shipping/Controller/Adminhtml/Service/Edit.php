@@ -47,7 +47,8 @@ class Edit extends \Magento\Backend\App\Action
             ->setName($data['service']['name'])
             ->setIsPriceFree($data['service']['is_price_free'] === 'true')
             ->setPriceFree($data['service']['price_free'])
-            ->setPrice($data['service']['price']);
+            ->setPrice($data['service']['price'])
+            ->setStatus($data['service']['status']);
 
         $this->repository->save($service);
 
