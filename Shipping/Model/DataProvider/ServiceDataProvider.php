@@ -17,9 +17,9 @@ class ServiceDataProvider extends AbstractDataProvider
      * ServiceDataProvider constructor.
      *
      * @param CollectionFactory $collectionFactory
-     * @param $name
-     * @param $primaryFieldName
-     * @param $requestFieldName
+     * @param string $name
+     * @param string $primaryFieldName
+     * @param string $requestFieldName
      * @param array $meta
      * @param array $data
      */
