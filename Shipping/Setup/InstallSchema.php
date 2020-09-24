@@ -19,6 +19,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
 
         $this->setupPickupPoints($setup);
         $this->setupServices($setup);
+        $this->setupLockers($setup);
 
         $setup->endSetup();
     }
@@ -143,6 +144,69 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
                 'working_days',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT
             );
+
+        $setup->getConnection()->createTable($table);
+    }
+
+    /**
+     * @param SchemaSetupInterface $setup
+     *
+     * @throws \Zend_Db_Exception
+     */
+    private function setupLockers(SchemaSetupInterface $setup)
+    {
+        if ($setup->tableExists('samedaycourier_shipping_locker')) {
+            return;
+        }
+
+        $table = $setup->getConnection()
+            ->newTable($setup->getTable('samedaycourier_shipping_locker'))
+            ->addColumn(
+                'id',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true]
+            )
+            ->addColumn(
+                'locker_id',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER
+            )
+            ->addColumn(
+                'name',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255
+            )
+            ->addColumn(
+                'county',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255
+            )
+            ->addColumn(
+                'city',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255
+            )
+            ->addColumn(
+                'address',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255
+            )
+            ->addColumn(
+                'postalCode',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255
+            )
+            ->addColumn(
+                'lat',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255
+            )
+            ->addColumn(
+                'lng',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255
+            )
+            ;
 
         $setup->getConnection()->createTable($table);
     }

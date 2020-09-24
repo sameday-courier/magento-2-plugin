@@ -57,6 +57,11 @@
                     <label>Services</label>
                     <frontend_model>SamedayCourier\Shipping\Block\Adminhtml\System\Config\Form\Field\ServicesButton</frontend_model>
                 </field>
+
+                <field id="lockers" translate="label" type="button" sortOrder="700" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Lockers</label>
+                    <frontend_model>SamedayCourier\Shipping\Block\Adminhtml\System\Config\Form\Field\LockersButton</frontend_model>
+                </field>
             </group>
         </section>
     </system>
