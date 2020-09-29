@@ -192,7 +192,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
                 255
             )
             ->addColumn(
-                'postalCode',
+                'postal_code',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 255
             )
@@ -205,6 +205,10 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
                 'lng',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 255
+            )
+            ->addColumn(
+                'is_testing',
+                \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN
             )
             ;
 

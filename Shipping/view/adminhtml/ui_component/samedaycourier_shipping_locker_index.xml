@@ -61,12 +61,85 @@
                 </item>
             </item>
         </argument>
-        <column name="id">
+        <column name="locker_id">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="label" xsi:type="string" translate="true">Locker ID</item>
+                </item>
+            </argument>
+        </column>
+        <column name="name">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Locker name</item>
+                </item>
+            </argument>
+        </column>
+        <column name="county">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">County</item>
+                </item>
+            </argument>
+        </column>
+        <column name="city">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">City</item>
+                </item>
+            </argument>
+        </column>
+        <column name="address">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Address</item>
+                </item>
+            </argument>
+        </column>
+        <column name="postal_code">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Postal Code</item>
+                </item>
+            </argument>
+        </column>
+        <column name="lat">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Latitude</item>
+                </item>
+            </argument>
+        </column>
+        <column name="lng">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Longitude</item>
+                </item>
+            </argument>
+        </column>
+        <column name="is_testing">
+            <argument name="data" xsi:type="array">
+                <item name="options" xsi:type="object">Magento\Config\Model\Config\Source\Yesno</item>
+                <item name="config" xsi:type="array">
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/select</item>
+                    <item name="dataType" xsi:type="string">select</item>
+                    <item name="label" xsi:type="string" translate="true">Test mode</item>
                 </item>
             </argument>
         </column>

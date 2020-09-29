@@ -7,7 +7,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Sameday\Requests\SamedayGetLockersRequest;
 use Sameday\Sameday;
-use SamedayCourier\Shipping\Api\Data\ServiceInterfaceFactory;
+use SamedayCourier\Shipping\Api\Data\LockerInterfaceFactory;
 use SamedayCourier\Shipping\Api\LockerRepositoryInterface;
 use SamedayCourier\Shipping\Helper\ApiHelper;
 
@@ -24,9 +24,9 @@ class Refresh extends Action
     private $config;
 
     /**
-     * @var ServiceInterfaceFactory
+     * @var LockerInterfaceFactory
      */
-    private $serviceFactory;
+    private $lockerFactory;
 
     /**
      * @var LockerRepositoryInterface
@@ -38,14 +38,14 @@ class Refresh extends Action
      *
      * @param ApiHelper $apiHelper
      * @param ScopeConfigInterface $config
-     * @param ServiceInterfaceFactory $serviceFactory
+     * @param LockerInterfaceFactory $lockerFactory
      * @param LockerRepositoryInterface $lockerRepository
      * @param Action\Context $context
      */
     public function __construct(
         ApiHelper $apiHelper,
         ScopeConfigInterface $config,
-        ServiceInterfaceFactory $serviceFactory,
+        LockerInterfaceFactory $lockerFactory,
         LockerRepositoryInterface $lockerRepository,
         Action\Context $context
     ) {
@@ -53,7 +53,7 @@ class Refresh extends Action
 
         $this->apiHelper = $apiHelper;
         $this->config = $config;
-        $this->serviceFactory = $serviceFactory;
+        $this->lockerFactory = $lockerFactory;
         $this->lockerRepository = $lockerRepository;
     }
 
@@ -62,84 +62,45 @@ class Refresh extends Action
         $sameday = new Sameday($this->apiHelper->initClient());
         $isTesting = (bool) $this->config->getValue('carriers/samedaycourier/testing');
 
-
-
         $request = new SamedayGetLockersRequest();
         try {
             $lockers = $sameday->getLockers($request);
         } catch (\Exception $e) {
             $this->messageManager->addErrorMessage(sprintf(__('Communication error: %s'), $e->getMessage()));
-
             return $this->_redirect('samedaycourier_shipping/locker/index');
         }
 
-
+        $remoteLockers = [];
         foreach ($lockers->getLockers() as $lockerObject) {
-            $locker = $this->lockerRepository->get($lockerObject->getId());
-            var_dump($locker);
-        }
-        exit;
-        /*
-
-        $remoteServices = [];
-        $page = 1;
-        do {
-            $request = new SamedayGetServicesRequest();
-            $request->setPage($page++);
+            $locker = null;
             try {
-                $services = $sameday->getServices($request);
-            } catch (\Exception $e) {
-                $this->messageManager->addErrorMessage(sprintf(__('Communication error: %s'), $e->getMessage()));
-
-                return $this->_redirect('samedaycourier_shipping/service/index');
+                $locker = $this->lockerRepository->getByLockerId($lockerObject->getId());
+            } catch (NoSuchEntityException $exception) {
+                $locker = $this->lockerFactory->create();
             }
 
-            foreach ($services->getServices() as $serviceObject) {
-                try {
-                    $service = $this->serviceRepository->getBySamedayId($serviceObject->getId(), $isTesting);
-                } catch (NoSuchEntityException $e) {
-                    $service = null;
-                }
+            $locker
+                ->setLockerId($lockerObject->getId())
+                ->setName($lockerObject->getName())
+                ->setCounty($lockerObject->getCounty())
+                ->setCity($lockerObject->getCity())
+                ->setAddress($lockerObject->getAddress())
+                ->setPostalCode($lockerObject->getPostalCode())
+                ->setLat($lockerObject->getLat())
+                ->setLng($lockerObject->getLong())
+                ->setIsTesting($isTesting);
 
-                if (!$service) {
-                    // Service not found, add it.
-                    $service = $this->serviceFactory->create()
-                        ->setName($serviceObject->getName())
-                        ->setIsPriceFree(false)
-                        ->setStatus(ServiceInterface::STATUS_DISABLED);
-                }
+            $this->lockerRepository->save($locker);
+            $remoteLockers[] = $lockerObject->getId();
+        }
 
-                $service
-                    ->setSamedayId($serviceObject->getId())
-                    ->setSamedayName($serviceObject->getName())
-                    ->setIsTesting($isTesting);
-
-                $this->serviceRepository->save($service);
-
-                // Save as current services.
-                $remoteServices[] = $serviceObject->getId();
+        $localLockers = $this->lockerRepository->getListByTesting($isTesting);
+        foreach ($localLockers->getItems() as $locker) {
+            if (!in_array($locker['locker_id'], $remoteLockers, false)) {
+                $this->lockerRepository->deleteById($locker['id']);
             }
-        } while ($page <= $services->getPages());
+        }
 
-
-        // Build array of local services.
-        $localServices = array_map(
-            function (ServiceInterface $service) {
-                return array(
-                    'id' => $service->getId(),
-                    'sameday_id' => $service->getSamedayId()
-                );
-            },
-            $this->serviceRepository->getListByTesting($isTesting)->getItems()
-        );
-
-        // Delete local services that aren't present in remote services anymore.
-        foreach ($localServices as $localService) {
-            if (!in_array($localService['sameday_id'], $remoteServices, false)) {
-                $this->serviceRepository->deleteById($localService['id']);
-            }
-        }*/
-        var_dump('lala'); exit;
         return $this->_redirect('samedaycourier_shipping/locker/index');
     }
 }

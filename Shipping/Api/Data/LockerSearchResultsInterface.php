@@ -10,13 +10,13 @@ use Magento\Framework\Api\SearchResultsInterface;
 interface LockerSearchResultsInterface extends SearchResultsInterface
 {
     /**
-     * @return ServiceInterface[]
+     * @return LockerInterface[]
      */
     public function getItems();
 
     /**
      * @api
-     * @param ServiceInterface[] $items
+     * @param LockerInterface[] $items
      *
      * @return $this
      */

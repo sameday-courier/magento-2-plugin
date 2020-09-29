@@ -4,9 +4,9 @@ namespace SamedayCourier\Shipping\Model;
 
 use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\Api\ExtensionAttributesFactory;
+use Magento\Framework\Api\ExtensionAttributesInterface;
 use Magento\Framework\Model\AbstractExtensibleModel;
-use SamedayCourier\Shipping\Api\Data\ServiceExtensionInterface;
-use SamedayCourier\Shipping\Api\Data\ServiceInterface;
+use SamedayCourier\Shipping\Api\Data\LockerInterface;
 
 class Locker extends AbstractExtensibleModel
 {
@@ -16,26 +16,13 @@ class Locker extends AbstractExtensibleModel
     private $dataProcessor;
 
     /**
-     * @var \SamedayCourier\Shipping\Api\Data\ServiceInterfaceFactory;
+     * @var \SamedayCourier\Shipping\Api\Data\LockerInterfaceFactory;
      */
-    private $serviceDataFactory;
+    private $lockerDataFactory;
 
-    /**
-     * Service constructor.
-     *
-     * @param \Magento\Framework\Reflection\DataObjectProcessor $dataProcessor
-     * @param \SamedayCourier\Shipping\Api\Data\ServiceInterfaceFactory $serviceDataFactory
-     * @param \Magento\Framework\Model\Context $context
-     * @param \Magento\Framework\Registry $registry
-     * @param ExtensionAttributesFactory $extensionFactory
-     * @param AttributeValueFactory $customAttributeFactory
-     * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
-     * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
-     * @param array $data
-     */
     public function __construct(
         \Magento\Framework\Reflection\DataObjectProcessor $dataProcessor,
-        \SamedayCourier\Shipping\Api\Data\ServiceInterfaceFactory $serviceDataFactory,
+        \SamedayCourier\Shipping\Api\Data\LockerInterfaceFactory $lockerDataFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         ExtensionAttributesFactory $extensionFactory,
@@ -47,35 +34,35 @@ class Locker extends AbstractExtensibleModel
         parent::__construct($context, $registry, $extensionFactory, $customAttributeFactory, $resource, $resourceCollection, $data);
 
         $this->dataProcessor = $dataProcessor;
-        $this->serviceDataFactory = $serviceDataFactory;
+        $this->lockerDataFactory = $lockerDataFactory;
     }
 
     protected function _construct()
     {
-        $this->_init(\SamedayCourier\Shipping\Model\ResourceModel\Service::class);
+        $this->_init(\SamedayCourier\Shipping\Model\ResourceModel\Locker::class);
     }
 
     /**
-     * @return ServiceInterface
+     * @return LockerInterface
      */
     public function getDataModel()
     {
-        $serviceDataObject = $this->serviceDataFactory->create()
+        $lockerDataObject = $this->lockerDataFactory->create()
             ->setId($this->getData('id'))
             ;
 
-        return $serviceDataObject;
+        return $lockerDataObject;
     }
 
     /**
-     * @param ServiceInterface $service
+     * @param LockerInterface $locker
      *
      * @return $this
      */
-    public function updateData(ServiceInterface $service)
+    public function updateData(LockerInterface $locker)
     {
         $attributes = $this->dataProcessor
-            ->buildOutputDataArray($service, ServiceInterface::class);
+            ->buildOutputDataArray($locker, LockerInterface::class);
 
         foreach ($attributes as $code => $data) {
             $this->setDataUsingMethod($code, $data);
@@ -87,7 +74,7 @@ class Locker extends AbstractExtensibleModel
     /**
      * @inheritdoc
      *
-     * @return ServiceExtensionInterface|null
+     * @return ExtensionAttributesInterface|null
      */
     public function getExtensionAttributes()
     {
@@ -97,11 +84,11 @@ class Locker extends AbstractExtensibleModel
     /**
      * @inheritdoc
      *
-     * @param ServiceExtensionInterface $extensionAttributes
+     * @param LockerExtensionInterface $extensionAttributes
      *
      * @return $this
      */
-    public function setExtensionAttributes(ServiceExtensionInterface $extensionAttributes)
+    public function setExtensionAttributes(LockerExtensionInterface $extensionAttributes)
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
