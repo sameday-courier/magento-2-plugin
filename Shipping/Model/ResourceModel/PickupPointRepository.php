@@ -194,6 +194,23 @@ class PickupPointRepository implements PickupPointRepositoryInterface
     /**
      * @inheritdoc
      */
+    public function getDefaultPickupPoint()
+    {
+        $searchCriteria = $this->searchCriteriaBuilder
+            ->addFilter(PickupPointInterface::IS_DEFAULT, true)
+            ->create();
+
+        $items = $this->getList($searchCriteria)->getItems();
+        if (!$items) {
+            throw NoSuchEntityException::singleField(PickupPointInterface::IS_DEFAULT, true);
+        }
+
+        return $items[0];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getListByTesting($isTesting)
     {
         $searchCriteria = $this->searchCriteriaBuilder

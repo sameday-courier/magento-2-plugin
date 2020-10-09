@@ -61,6 +61,11 @@ interface ServiceRepositoryInterface
     public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria);
 
     /**
+     * @return ServiceSearchResultsInterface
+     */
+    public function getAllActive();
+
+    /**
      * Delete service.
      *
      * @param ServiceInterface $service
