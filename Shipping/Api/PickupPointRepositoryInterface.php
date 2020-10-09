@@ -61,6 +61,13 @@ interface PickupPointRepositoryInterface
     public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria);
 
     /**
+     * Get the default pickup point
+     *
+     * @return PickupPointInterface
+     */
+    public function getDefaultPickupPoint();
+
+    /**
      * Delete pickup point.
      *
      * @param PickupPointInterface $pickupPoint
