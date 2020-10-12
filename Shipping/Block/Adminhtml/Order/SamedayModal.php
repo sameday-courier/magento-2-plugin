@@ -12,8 +12,6 @@ class SamedayModal extends Template
     private $storedDataHelper;
 
     /**
-     * Constructor
-     *
      * @param Context $context
      * @param StoredDataHelper $storedDataHelper
      * @param array $data
