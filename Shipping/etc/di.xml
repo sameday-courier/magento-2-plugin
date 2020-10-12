@@ -7,6 +7,11 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Magento\Sales\Block\Adminhtml\Order\View\Info">
+        <plugin name="addMyButton" type="SamedayCourier\Shipping\Plugin\Block\Adminhtml\Order\View"/>
+    </type>
+
     <!--<virtualType name="SamedayCourier\Shipping\Model\ResourceModel\Service\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">-->
         <!--<arguments>-->
             <!--<argument name="mainTable" xsi:type="string">samedaycourier_shipping_service</argument>-->

@@ -1,0 +1,70 @@
+<?php
+/**
+ * @var $block \SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal
+ */
+?>
+
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?php /* @escapeNotVerified */ echo __('Sameday Courier') ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <button id="sendordersms">Generate awb</button>
+        <?= $block->getInfo() ?>
+    </div>
+</section>
+
+<div id="popup-modal" style="display: none">
+    <form action="<?= $block->escapeUrl($block->getFormUrl())?>" method="post"
+          id="order-view-add-warranty-form">
+        <input name="firstname" type="text">
+        <input name="lastname" type="text">
+        <input name="phone" type="text">
+        <input name="bookingTime" type="date">
+
+        <input type="button" value="Submit" id="order-view-add-warranty">
+    </form>
+</div>
+
+<script>
+    require(
+        [
+            'jquery',
+            'Magento_Ui/js/modal/modal'
+        ],
+        function (
+            $,
+            modal
+        ) {
+            var options = {
+                type: 'popup',
+                responsive: true,
+                innerScroll: true,
+                title: 'Modal Title',
+                modalClass: 'custom-modal',
+                buttons: [{
+                    text: $.mage.__('Close'),
+                    class: '',
+                    click: function () {
+                        this.closeModal();
+                    }
+                }]
+            };
+
+            var popup = modal(options, $('#popup-modal'));
+            $("#sendordersms").click(function() {
+                $("#popup-modal").modal('openModal');
+            });
+
+            $('#order-view-add-warranty').click(function () {
+                $('#order-view-add-warranty-form').append($('<input>', {
+                    'name': 'form_key',
+                    'value': window.FORM_KEY,
+                    'type': 'hidden'
+                }));
+                $('#order-view-add-warranty-form').submit();
+
+            });
+        }
+    );
+</script>
