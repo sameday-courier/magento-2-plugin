@@ -3,11 +3,18 @@
 namespace SamedayCourier\Shipping\Plugin\Block\Adminhtml\Order;
 
 use Magento\Sales\Block\Adminhtml\Order\View\Info;
+use SamedayCourier\Shipping\Api\AwbRepositoryInterface;
+use SamedayCourier\Shipping\Api\Data\AwbInterface;
 use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
 
 class View
 {
-    private const SHIPPING_METHOD_PREFIX = 'samedaycourier';
+    private $awbRepository;
+
+    public function __construct(AwbRepositoryInterface $awbRepository)
+    {
+        $this->awbRepository = $awbRepository;
+    }
 
     /**
      * @param Info $subject
@@ -19,27 +26,31 @@ class View
         Info $subject,
         $result
     ) {
-        if($this->isEligibleForAwbGeneration($subject) && $subject->getNameInLayout() == 'order_info'){
-            return $this->createAwbModalHtml($subject, $result);
+        if ($subject->getNameInLayout() == 'order_info')
+        {
+            $orderHasAwb = $this->orderHasAwb($subject);
+            if(!$orderHasAwb){
+                return $this->createAwbModalHtml($subject, $result);
+            }
+
+            return $this->createEditAwbModalHtml($subject, $result, $orderHasAwb);
         }
+
 
         return $result;
     }
 
     /**
-     * Check if shipping method is sameday courier and
-     * there is no awb generated
+     * Check if there is no awb generated
      *
      * @param Info $subject
      *
-     * @return bool
+     * @return false|AwbInterface
      */
-    private function isEligibleForAwbGeneration(Info $subject)
+    private function orderHasAwb(Info $subject)
     {
-        $shippingMethod = $subject->getOrder()->getShippingMethod();
-
-        /** @TODO: check if any awb is generated for this order */
-        return strpos($shippingMethod, self::SHIPPING_METHOD_PREFIX) !== false;
+        $awb = $this->awbRepository->getByOrderId($subject->getOrder()->getId());
+        return isset($awb) ? $awb : false;
     }
 
     /**
@@ -52,12 +63,7 @@ class View
      */
     private function createAwbModalHtml(Info $subject, $result)
     {
-        $block = $subject
-            ->getLayout()
-            ->createBlock(
-                SamedayModal::class,
-                $subject->getNameInLayout().'_modal_box'
-            );
+        $block = $this->createSamedayModalBlock($subject);
 
         $awbModal = $block
             ->setOrder($subject->getOrder())
@@ -65,5 +71,44 @@ class View
             ->toHtml();
 
         return $result . $awbModal;
+    }
+
+    /**
+     * @param Info $subject
+     * @param $result
+     * @param AwbInterface $awb
+     *
+     * @return string
+     */
+    private function createEditAwbModalHtml(Info $subject, $result, AwbInterface $awb)
+    {
+        $block = $this->createSamedayModalBlock($subject, ['awb' => $awb]);
+
+        $awbModal = $block
+            ->setOrder($subject->getOrder())
+            ->setTemplate('SamedayCourier_Shipping::order/samedaypostawbmodal.phtml')
+            ->toHtml();
+
+        return $result . $awbModal;
+    }
+
+    /**
+     * @param Info $subject
+     * @param array $arguments
+     *
+     * @return \Magento\Framework\View\Element\BlockInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function createSamedayModalBlock(Info $subject, array $arguments = [])
+    {
+        return $subject
+            ->getLayout()
+            ->createBlock(
+                SamedayModal::class,
+                $subject->getNameInLayout().'_modal_box',
+                [
+                    'data' => $arguments
+                ]
+            );
     }
 }

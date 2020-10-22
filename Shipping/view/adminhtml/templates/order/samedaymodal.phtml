@@ -14,9 +14,8 @@
 </section>
 
 <div id="popup-add-awb" style="display: none">
-    <form action="<?= $block->escapeUrl($block->getFormUrl())?>" method="post"
+    <form action="<?= $block->escapeUrl($block->getRouteAddAwb())?>" method="post"
           id="popup-add-awb-form">
-
         <?= __('Repayment') ?> <input name="repayment" type="text" value="<?= $block->getOrderDetails()['repayment'] ?>"> <br />
         <?= __('Insured value') ?> <input name="insured_value" type="number" value="0"> <br />
         <?= __('Package weight') ?> <input name="package_weight" type="number" value="<?= $block->getOrderDetails()['weight'] ?>"> <br />
@@ -58,6 +57,7 @@
 
         <?= __('Open package') ?> <input name="open_package" type="checkbox" value="1"> <br />
         <?= __('Observation') ?> <textarea name="observation"></textarea> <br />
+        <input type="hidden" name="order_id" value="<?= $block->getOrder()->getId() ?>">
 
         <input type="button" value="Submit" id="order-view-add-warranty"> <br />
     </form>

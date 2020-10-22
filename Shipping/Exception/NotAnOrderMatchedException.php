@@ -1,5 +1,7 @@
 <?php
 
-class NotAnOrderMatchedException extends Exception
+namespace SamedayCourier\Shipping\Exception;
+
+class NotAnOrderMatchedException extends \Exception
 {
 }

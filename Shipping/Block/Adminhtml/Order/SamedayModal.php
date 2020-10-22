@@ -4,7 +4,7 @@ namespace SamedayCourier\Shipping\Block\Adminhtml\Order;
 
 use \Magento\Backend\Block\Template\Context;
 use \Magento\Backend\Block\Template;
-use NotAnOrderMatchedException;
+use SamedayCourier\Shipping\Exception\NotAnOrderMatchedException;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
 
 class SamedayModal extends Template
@@ -50,7 +50,7 @@ class SamedayModal extends Template
         ];
     }
 
-    public function getFormUrl()
+    public function getRouteAddAwb()
     {
         if(!$this->hasData('order')){
             throw new NotAnOrderMatchedException();
@@ -58,7 +58,19 @@ class SamedayModal extends Template
 
         $orderId = $this->getOrder()->getId();
 
-        return $this->getUrl('samedaycourier_shipping/order/order',[
+        return $this->getUrl('samedaycourier_shipping/order/addawb', [
+            'order_id' => $orderId
+        ]);
+    }
+
+    public function getRouteAddParcel()
+    {
+        if(!$this->hasData('order')){
+            throw new NotAnOrderMatchedException();
+        }
+
+        $orderId = $this->getOrder()->getId();
+        return $this->getUrl('samedaycourier_shipping/order/addparcel', [
             'order_id' => $orderId
         ]);
     }
