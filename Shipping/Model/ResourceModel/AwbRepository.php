@@ -70,4 +70,29 @@ class AwbRepository implements AwbRepositoryInterface
 
         $this->awbResourceModel->save($awbModel);
     }
+
+    /**
+     * @throws \Exception
+     */
+    public function delete(AwbInterface $awb)
+    {
+        return $this->deleteById($awb->getId());
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function deleteById($id)
+    {
+        $awbModel = $this->awbFactory->create();
+        $this->awbResourceModel->load($awbModel, $id);
+
+        if (!$awbModel->getId()) {
+            return false;
+        }
+
+        $this->awbResourceModel->delete($awbModel);
+
+        return true;
+    }
 }

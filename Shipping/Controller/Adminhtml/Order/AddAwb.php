@@ -18,6 +18,8 @@ use SamedayCourier\Shipping\Api\AwbRepositoryInterface;
 use SamedayCourier\Shipping\Api\Data\AwbInterfaceFactory;
 use SamedayCourier\Shipping\Exception\NotAnOrderMatchedException;
 use SamedayCourier\Shipping\Helper\ApiHelper;
+use Sameday\Responses\SamedayPostAwbResponse;
+use Magento\Framework\Message\ManagerInterface;
 
 class AddAwb extends AdminOrder implements HttpPostActionInterface
 {
@@ -29,6 +31,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
     private $awbRepository;
     private $awbFactory;
     private $apiHelper;
+    private $manager;
 
     public function __construct(
         Action\Context $context,
@@ -44,7 +47,8 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         LoggerInterface $logger,
         AwbRepositoryInterface $awbRepository,
         AwbInterfaceFactory $awbFactory,
-        ApiHelper $apiHelper
+        ApiHelper $apiHelper,
+        ManagerInterface $manager
     )
     {
         parent::__construct($context, $coreRegistry, $fileFactory, $translateInline, $resultPageFactory, $resultJsonFactory, $resultLayoutFactory, $resultRawFactory, $orderManagement, $orderRepository, $logger);
@@ -52,6 +56,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         $this->awbRepository = $awbRepository;
         $this->awbFactory = $awbFactory;
         $this->apiHelper = $apiHelper;
+        $this->manager = $manager;
     }
 
     /**
@@ -65,12 +70,13 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         if (!$order) {
             throw new NotAnOrderMatchedException();
         }
-        
+
+        $packageWeight = $values['package_weight'] >= 1 ? $values['package_weight'] : 1;
         $apiRequest = new SamedayPostAwbRequest(
             $values['pickup_point'],
             null,
             (new PackageType(PackageType::PARCEL)),
-            [(new ParcelDimensionsObject($values['package_weight']))], // @todo min package weight = 1
+            [(new ParcelDimensionsObject($packageWeight))],
             $values['service'],
             (new AwbPaymentType(AwbPaymentType::CLIENT)),
             (new AwbRecipientEntityObject(
@@ -84,35 +90,20 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             $values['insured_value'],
             $values['awb_payment']
         );
-
+        /** @var SamedayPostAwbResponse $response */
         $response = $this->apiHelper->doRequest($apiRequest, 'postAwb');
-        var_dump($response);
-        exit;
-        try {
-            $awb = $this->awbRepository->getByOrderId((int) $values['order_id']);
-        } catch (NoSuchEntityException $e) {
-            $awb = $this->awbFactory->create();
-        }
 
-        $awb
+        $awb = $this->awbFactory->create()
             ->setOrderId($values['order_id'])
-            ->setAwbNumber("testawbNumber")
+            ->setAwbNumber($response->getAwbNumber())
             ->setAwbCost($values['repayment'])
-            ->setParcels("nothinghere");
+            ->setParcels(serialize($response->getParcels()));
 
         $this->awbRepository->save($awb);
 
-        echo "<pre>";
-        print_r($values);
-        echo "</pre>";
-
-
-        echo "<pre>";
-            print_r($awb->getAwbNumber());
-        echo "</pre>";
-         exit;
+        $this->manager->addSuccessMessage("Sameday awb successfully created!");
         $resultRedirect = $this->resultRedirectFactory->create();
-        $resultRedirect->setPath('sales/order/view', ['order_id' => $order->getId()]);
+        $resultRedirect->setPath('sales/order/view', ['order_id' => $values['order_id']]);
 
         return $resultRedirect;
     }

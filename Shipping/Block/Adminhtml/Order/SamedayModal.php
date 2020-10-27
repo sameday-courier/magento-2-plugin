@@ -74,4 +74,9 @@ class SamedayModal extends Template
             'order_id' => $orderId
         ]);
     }
+
+    public function getRouteRemoveAwb()
+    {
+        return $this->getUrl('samedaycourier_shipping/order/removeawb');
+    }
 }

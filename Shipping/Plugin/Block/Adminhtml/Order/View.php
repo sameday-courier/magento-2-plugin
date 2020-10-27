@@ -49,8 +49,12 @@ class View
      */
     private function orderHasAwb(Info $subject)
     {
-        $awb = $this->awbRepository->getByOrderId($subject->getOrder()->getId());
-        return isset($awb) ? $awb : false;
+        try {
+            return $this->awbRepository->getByOrderId($subject->getOrder()->getId());
+        } catch (\Exception $exception)
+        {
+            return false;
+        }
     }
 
     /**
@@ -67,7 +71,7 @@ class View
 
         $awbModal = $block
             ->setOrder($subject->getOrder())
-            ->setTemplate('SamedayCourier_Shipping::order/samedaymodal.phtml')
+            ->setTemplate('SamedayCourier_Shipping::order/sameday_create_awb_modal.phtml')
             ->toHtml();
 
         return $result . $awbModal;
@@ -86,7 +90,7 @@ class View
 
         $awbModal = $block
             ->setOrder($subject->getOrder())
-            ->setTemplate('SamedayCourier_Shipping::order/samedaypostawbmodal.phtml')
+            ->setTemplate('SamedayCourier_Shipping::order/sameday_post_awb_handling_modal.phtml')
             ->toHtml();
 
         return $result . $awbModal;
