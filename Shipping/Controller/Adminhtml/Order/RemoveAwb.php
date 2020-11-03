@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SamedayCourier\Shipping\Controller\Adminhtml\Order;
 
 use Magento\Framework\App\Action\Action;
@@ -13,8 +15,6 @@ use Magento\Framework\App\ObjectManager;
 use SamedayCourier\Shipping\Api\AwbRepositoryInterface;
 use Sameday\Requests\SamedayDeleteAwbRequest;
 use SamedayCourier\Shipping\Helper\ApiHelper;
-use Sameday\Responses\SamedayDeleteAwbResponse;
-
 
 class RemoveAwb extends Action
 {
@@ -42,10 +42,12 @@ class RemoveAwb extends Action
         }
 
         $apiRequest = new SamedayDeleteAwbRequest($params['sameday_awb_number']);
-        $this->apiHelper->doRequest($apiRequest, 'deleteAwb');
+        $response = $this->apiHelper->doRequest($apiRequest, 'deleteAwb');
+        if ($response) {
+            $this->awbRepository->deleteById($params['awb_id']);
+            $this->manager->addSuccessMessage("Awb removed successfully!");
+        }
 
-        $this->awbRepository->deleteById($params['awb_id']);
-        $this->manager->addSuccessMessage("Awb removed successfully!");
         $resultJson = $this->resultJsonFactory->create(ResultFactory::TYPE_JSON);
         return $resultJson->setData(['success' => true]);
     }

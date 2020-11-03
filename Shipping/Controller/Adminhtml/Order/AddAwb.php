@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SamedayCourier\Shipping\Controller\Adminhtml\Order;
 
 use Magento\Backend\App\Action;
@@ -90,18 +92,20 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             $values['insured_value'],
             $values['awb_payment']
         );
-        /** @var SamedayPostAwbResponse $response */
+        /** @var SamedayPostAwbResponse|false $response */
         $response = $this->apiHelper->doRequest($apiRequest, 'postAwb');
 
-        $awb = $this->awbFactory->create()
-            ->setOrderId($values['order_id'])
-            ->setAwbNumber($response->getAwbNumber())
-            ->setAwbCost($values['repayment'])
-            ->setParcels(serialize($response->getParcels()));
+        if ($response) {
+            $awb = $this->awbFactory->create()
+                ->setOrderId($values['order_id'])
+                ->setAwbNumber($response->getAwbNumber())
+                ->setAwbCost($values['repayment'])
+                ->setParcels(serialize($response->getParcels()));
 
-        $this->awbRepository->save($awb);
+            $this->awbRepository->save($awb);
+            $this->manager->addSuccessMessage("Sameday awb successfully created!");
+        }
 
-        $this->manager->addSuccessMessage("Sameday awb successfully created!");
         $resultRedirect = $this->resultRedirectFactory->create();
         $resultRedirect->setPath('sales/order/view', ['order_id' => $values['order_id']]);
 
