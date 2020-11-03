@@ -6,7 +6,6 @@ namespace SamedayCourier\Shipping\Controller\Adminhtml\Order;
 
 use Magento\Backend\App\Action;
 use Magento\Framework\App\Action\HttpPostActionInterface;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Api\OrderManagementInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Controller\Adminhtml\Order as AdminOrder;
