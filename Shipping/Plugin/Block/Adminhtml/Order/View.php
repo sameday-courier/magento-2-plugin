@@ -3,17 +3,22 @@
 namespace SamedayCourier\Shipping\Plugin\Block\Adminhtml\Order;
 
 use Magento\Sales\Block\Adminhtml\Order\View\Info;
+use Sameday\Requests\SamedayGetParcelStatusHistoryRequest;
 use SamedayCourier\Shipping\Api\AwbRepositoryInterface;
 use SamedayCourier\Shipping\Api\Data\AwbInterface;
 use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
+use SamedayCourier\Shipping\Helper\ApiHelper;
+
 
 class View
 {
     private $awbRepository;
+    private $apiHelper;
 
-    public function __construct(AwbRepositoryInterface $awbRepository)
+    public function __construct(AwbRepositoryInterface $awbRepository, ApiHelper $apiHelper)
     {
         $this->awbRepository = $awbRepository;
+        $this->apiHelper = $apiHelper;
     }
 
     /**
@@ -86,7 +91,13 @@ class View
      */
     private function createEditAwbModalHtml(Info $subject, $result, AwbInterface $awb)
     {
-        $block = $this->createSamedayModalBlock($subject, ['awb' => $awb]);
+        $parcelsHistory = [];
+        foreach (unserialize($awb->getParcels()) as $parcel) {
+            $apiRequest = new SamedayGetParcelStatusHistoryRequest($parcel->getAwbNumber());
+            $parcelsHistory[] = $this->apiHelper->doRequest($apiRequest, 'getParcelStatusHistory');
+        }
+
+        $block = $this->createSamedayModalBlock($subject, ['awb' => $awb, 'parcelsHistory' => $parcelsHistory]);
 
         $awbModal = $block
             ->setOrder($subject->getOrder())

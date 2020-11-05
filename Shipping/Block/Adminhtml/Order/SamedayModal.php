@@ -79,4 +79,17 @@ class SamedayModal extends Template
     {
         return $this->getUrl('samedaycourier_shipping/order/removeawb');
     }
+
+    public function getRouteAwbAsPdf()
+    {
+        if(!$this->hasData('order')){
+            throw new NotAnOrderMatchedException();
+        }
+
+        $orderId = $this->getOrder()->getId();
+
+        return $this->getUrl('samedaycourier_shipping/order/showpdf', [
+            'order_id' => $orderId
+        ]);
+    }
 }

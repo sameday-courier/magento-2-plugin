@@ -3,6 +3,9 @@
  * @var $block \SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal
  */
 $awb = $block->getData('awb');
+
+/** @var \Sameday\Responses\SamedayGetAwbStatusHistoryResponse $awbHistory */
+$parcelsHistory = $block->getData('parcelsHistory');
 ?>
 
 <section class="admin__page-section">
@@ -12,7 +15,7 @@ $awb = $block->getData('awb');
     <div class="admin__page-section-content">
         <button id="add_parcel_modal"><?= __('Add new parcel') ?></button>
         <button id="awb_history_modal"><?= __('Awb history') ?></button>
-        <button><?= __('Show as pdf') ?></button>
+        <a href="<?= $block->escapeUrl($block->getRouteAwbAsPdf())?>"><?= __('Show as pdf') ?></a>
         <button id="remove_awb"><?= __('Remove Awb') ?></button>
         <a target="_blank" href="https://eawb.sameday.ro/awb?awbOrParcelNumber=<?= $awb->getAwbNumber() ?>&tab=allAwbs"><?= __('Sameday eAwb') ?></a>
     </div>
@@ -42,15 +45,38 @@ $awb = $block->getData('awb');
 <div id="popup-awb-history" style="display: none">
     <table>
         <thead>
-            <tr>
-                <th scope="col"><?= __('Parcel number') ?></th>
-                <th scope="col"><?= __('Parcel weight') ?></th>
-                <th scope="col"><?= __('Delivered') ?></th>
-                <th scope="col"><?= __('Delivery attempts') ?></th>
-                <th scope="col"><?= __('Is picked up') ?></th>
-                <th scope="col"><?= __('Picked up at') ?></th>
-            </tr>
+            <th scope="col"><?= __('Parcel number') ?></th>
+            <th scope="col"><?= __('Parcel weight') ?></th>
+            <th scope="col"><?= __('Delivered') ?></th>
+            <th scope="col"><?= __('Delivery attempts') ?></th>
+            <th scope="col"><?= __('Is picked up') ?></th>
+            <th scope="col"><?= __('Picked up at') ?></th>
         </thead>
+
+            <?php foreach ($parcelsHistory as $parcelHistory) {
+                $summary = $parcelHistory->getSummary();
+                $history = $parcelHistory->getHistory();
+            ?>
+                <tr>
+                    <td><?= $summary->getParcelAwbNumber(); ?></td>
+                    <td><?= $summary->getParcelWeight(); ?></td>
+                    <td><?= $summary->isDelivered(); ?></td>
+                    <td><?= $summary->getDeliveryAttempts(); ?></td>
+                    <td><?= $summary->isPickedUp(); ?></td>
+                    <td><?= $summary->getPickedUpAt(); ?></td>
+                </tr>
+                <?php foreach ($history as $packageHistory) { ?>
+                    <tr>
+                        <td><?= $packageHistory->getName() ?></td>
+                        <td><?= $packageHistory->getLabel() ?></td>
+                        <td><?= $packageHistory->getState() ?></td>
+                        <td><?= $packageHistory->getDate()->format('Y-m-d H:i:s') ?></td>
+                        <td><?= $packageHistory->getCounty() ?></td>
+                        <td><?= $packageHistory->getTransitLocation() ?></td>
+                        <td><?= $packageHistory->getReason() ?></td>
+                    </tr>
+                <?php } ?>
+            <?php } ?>
     </table>
 </div>
 
@@ -132,7 +158,6 @@ $awb = $block->getData('awb');
                                 type: "POST",
                                 dataType: 'json'
                             }).done(function (data) {
-                                console.log(data);
                                 location.reload();
                             });
                         }
