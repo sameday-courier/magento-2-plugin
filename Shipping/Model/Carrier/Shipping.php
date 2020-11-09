@@ -19,7 +19,6 @@ use Sameday\Objects\PostAwb\Request\AwbRecipientEntityObject;
 use Sameday\Objects\Types\AwbPaymentType;
 use Sameday\Objects\Types\PackageType;
 use Sameday\Requests\SamedayPostAwbEstimationRequest;
-use Sameday\Sameday;
 use SamedayCourier\Shipping\Api\PickupPointRepositoryInterface;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
 use SamedayCourier\Shipping\Helper\ApiHelper as SamedayApiHelper;
@@ -122,11 +121,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
     private function shippingEstimateCost(RateRequest $request, int $serviceId)
     {
         $defaultPickupPoint = $this->pickupPointRepository->getDefaultPickupPoint();
-
         $packageWeight = $request->getData('package_weight') ?? 1;
-
-        $sameday = new Sameday($this->samedayApiHelper->initClient());
-
         $apiRequest = new SamedayPostAwbEstimationRequest(
             $defaultPickupPoint->getSamedayId(),
             null,
@@ -146,6 +141,6 @@ class Shipping extends AbstractCarrier implements CarrierInterface
             $request->getData('package_value_with_discount')
         );
 
-        return $sameday->postAwbEstimation($apiRequest);
+        return $this->samedayApiHelper->doRequest($apiRequest, 'postAwbEstimation');
     }
 }

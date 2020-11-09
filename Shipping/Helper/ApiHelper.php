@@ -6,6 +6,11 @@ use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
+use Magento\Framework\Message\ManagerInterface;
+use Psr\Log\LoggerInterface;
+use Sameday\Requests\SamedayRequestInterface;
+use Sameday\Responses\SamedayResponseInterface;
+use Sameday\Sameday;
 
 class ApiHelper extends AbstractHelper
 {
@@ -20,18 +25,30 @@ class ApiHelper extends AbstractHelper
     private $encryptor;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var ManagerInterface
+     */
+    private $messageManager;
+
+    /**
      * ApiHelper constructor.
      *
      * @param Context $context
      * @param ProductMetadataInterface $productMetadata
      * @param EncryptorInterface $encryptor
      */
-    public function __construct(Context $context, ProductMetadataInterface $productMetadata, EncryptorInterface $encryptor)
+    public function __construct(Context $context, ProductMetadataInterface $productMetadata, EncryptorInterface $encryptor, LoggerInterface $logger, ManagerInterface $messageManager)
     {
         parent::__construct($context);
 
         $this->productMetadata = $productMetadata;
         $this->encryptor = $encryptor;
+        $this->logger = $logger;
+        $this->messageManager = $messageManager;
     }
 
     /**
@@ -58,5 +75,24 @@ class ApiHelper extends AbstractHelper
             "{$this->productMetadata->getName()} ({$this->productMetadata->getEdition()})",
             $this->productMetadata->getVersion()
         );
+    }
+
+    /**
+     * @param SamedayRequestInterface $request
+     * @param string $type
+     *
+     * @return false|SamedayResponseInterface
+     */
+    public function doRequest(SamedayRequestInterface $request, string $type = '')
+    {
+        try {
+            $sameday = new Sameday($this->initClient());
+            return $sameday->{$type}($request);
+        } catch(\Exception $e) {
+            $this->messageManager->addError(__("SamedayCourier communication error occured. Please try again later"));
+            $this->logger->error('Sameday communication error', ['error' => $e]);
+        }
+
+        return false;
     }
 }

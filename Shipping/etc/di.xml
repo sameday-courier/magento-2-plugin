@@ -7,6 +7,11 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Magento\Sales\Block\Adminhtml\Order\View\Info">
+        <plugin name="addMyButton" type="SamedayCourier\Shipping\Plugin\Block\Adminhtml\Order\View"/>
+    </type>
+
     <!--<virtualType name="SamedayCourier\Shipping\Model\ResourceModel\Service\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">-->
         <!--<arguments>-->
             <!--<argument name="mainTable" xsi:type="string">samedaycourier_shipping_service</argument>-->
@@ -34,4 +39,8 @@
     <preference for="SamedayCourier\Shipping\Api\Data\LockerInterface" type="SamedayCourier\Shipping\Model\Data\Locker" />
     <preference for="SamedayCourier\Shipping\Api\LockerRepositoryInterface" type="SamedayCourier\Shipping\Model\ResourceModel\LockerRepository" />
     <preference for="SamedayCourier\Shipping\Api\Data\LockerSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
+
+    <preference for="SamedayCourier\Shipping\Api\Data\AwbInterface" type="SamedayCourier\Shipping\Model\Data\Awb" />
+    <preference for="SamedayCourier\Shipping\Api\AwbRepositoryInterface" type="SamedayCourier\Shipping\Model\ResourceModel\AwbRepository" />
+    <preference for="SamedayCourier\Shipping\Api\Data\AwbSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
 </config>
