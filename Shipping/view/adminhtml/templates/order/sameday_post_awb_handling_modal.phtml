@@ -1,0 +1,169 @@
+<?php
+/**
+ * @var $block \SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal
+ */
+$awb = $block->getData('awb');
+
+/** @var \Sameday\Responses\SamedayGetAwbStatusHistoryResponse $awbHistory */
+$parcelsHistory = $block->getData('parcelsHistory');
+?>
+
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?php /* @escapeNotVerified */ echo __('Sameday Courier') ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <button id="add_parcel_modal"><?= __('Add new parcel') ?></button>
+        <button id="awb_history_modal"><?= __('Awb history') ?></button>
+        <a href="<?= $block->escapeUrl($block->getRouteAwbAsPdf())?>"><?= __('Show as pdf') ?></a>
+        <button id="remove_awb"><?= __('Remove Awb') ?></button>
+        <a target="_blank" href="https://eawb.sameday.ro/awb?awbOrParcelNumber=<?= $awb->getAwbNumber() ?>&tab=allAwbs"><?= __('Sameday eAwb') ?></a>
+    </div>
+</section>
+
+<?php
+/**
+ * Add parcel modal
+ */
+?>
+<div id="popup-add-parcel" style="display: none">
+    <form action="<?= $block->escapeUrl($block->getRouteAddParcel())?>" method="post" id="popup-add-parcel-form">
+        <?= __('Parcel weight') ?> <input name="weight" type="number" value="1"> <br />
+        <?= __('Parcel length') ?> <input name="insured_value" type="number"> <br />
+        <?= __('Package weight') ?> <input name="package_weight" type="number" value="<?= $block->getOrderDetails()['weight'] ?>"> <br />
+        <?= __('Package length') ?> <input name="package_length" type="number"> <br />
+        <?= __('Package width') ?> <input name="package_width" type="number"> <br />
+        <input type="button" value="Add new parcel" id="order-view-add-warranty"> <br />
+    </form>
+</div>
+
+<?php
+/**
+ * Awb history modal
+ */
+?>
+<div id="popup-awb-history" style="display: none">
+    <table>
+        <thead>
+            <th scope="col"><?= __('Parcel number') ?></th>
+            <th scope="col"><?= __('Parcel weight') ?></th>
+            <th scope="col"><?= __('Delivered') ?></th>
+            <th scope="col"><?= __('Delivery attempts') ?></th>
+            <th scope="col"><?= __('Is picked up') ?></th>
+            <th scope="col"><?= __('Picked up at') ?></th>
+        </thead>
+
+            <?php foreach ($parcelsHistory as $parcelHistory) {
+                $summary = $parcelHistory->getSummary();
+                $history = $parcelHistory->getHistory();
+            ?>
+                <tr>
+                    <td><?= $summary->getParcelAwbNumber(); ?></td>
+                    <td><?= $summary->getParcelWeight(); ?></td>
+                    <td><?= $summary->isDelivered(); ?></td>
+                    <td><?= $summary->getDeliveryAttempts(); ?></td>
+                    <td><?= $summary->isPickedUp(); ?></td>
+                    <td><?= $summary->getPickedUpAt(); ?></td>
+                </tr>
+                <?php foreach ($history as $packageHistory) { ?>
+                    <tr>
+                        <td><?= $packageHistory->getName() ?></td>
+                        <td><?= $packageHistory->getLabel() ?></td>
+                        <td><?= $packageHistory->getState() ?></td>
+                        <td><?= $packageHistory->getDate()->format('Y-m-d H:i:s') ?></td>
+                        <td><?= $packageHistory->getCounty() ?></td>
+                        <td><?= $packageHistory->getTransitLocation() ?></td>
+                        <td><?= $packageHistory->getReason() ?></td>
+                    </tr>
+                <?php } ?>
+            <?php } ?>
+    </table>
+</div>
+
+<script>
+    require(
+        [
+            'jquery',
+            'Magento_Ui/js/modal/modal',
+            'Magento_Ui/js/modal/confirm'
+        ],
+        function ($, modal, confirmation) {
+            $("#add_parcel_modal").click(function() {
+                var options = {
+                    type: 'popup',
+                    responsive: true,
+                    innerScroll: true,
+                    title: 'Add parcel',
+                    modalClass: 'custom-modal',
+                    buttons: [{
+                        text: $.mage.__('Close'),
+                        class: '',
+                        click: function () {
+                            this.closeModal();
+                        }
+                    }]
+                };
+
+                var popup = modal(options, $('#popup-add-parcel'));
+                $("#popup-add-parcel").modal('openModal');
+            });
+
+            $('#popup-add-parcel-form').click(function () {
+                $('#popup-add-parcel-form').append($('<input>', {
+                    'name': 'form_key',
+                    'value': window.FORM_KEY,
+                    'type': 'hidden'
+                }));
+                $('#popup-add-parcel-form').submit();
+            });
+
+            // awb history
+            $("#awb_history_modal").click(function() {
+                var options = {
+                    type: 'popup',
+                    responsive: true,
+                    innerScroll: true,
+                    title: 'Awb history',
+                    modalClass: 'custom-modal',
+                    buttons: [{
+                        text: $.mage.__('Close'),
+                        class: '',
+                        click: function () {
+                            this.closeModal();
+                        }
+                    }]
+                };
+
+                var popup = modal(options, $('#popup-awb-history'));
+                $("#popup-awb-history").modal('openModal');
+            });
+
+            // remove awb
+            $("#remove_awb").click(function() {
+                confirmation({
+                    title: $.mage.__('Remove awb confirmation'),
+                    content: $.mage.__('Are you sure you want to remove this awb?'),
+                    actions: {
+                        confirm: function() {
+                            let param = {
+                                "form_key": window.FORM_KEY,
+                                "awb_id": <?= $awb->getId() ?>,
+                                "sameday_awb_number": "<?= $awb->getAwbNumber() ?>"
+                            }
+
+                            $.ajax({
+                                showLoader: true,
+                                url: "<?= $block->escapeUrl($block->getRouteRemoveAwb()) ?>",
+                                data: param,
+                                type: "POST",
+                                dataType: 'json'
+                            }).done(function (data) {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            });
+        }
+    );
+</script>
