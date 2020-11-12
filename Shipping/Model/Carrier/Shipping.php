@@ -94,10 +94,9 @@ class Shipping extends AbstractCarrier implements CarrierInterface
         }
 
         $result = $this->_rateResultFactory->create();
+        $isTesting = (bool) $this->getConfigData('carriers/samedaycourier/testing');
 
-
-
-        $services = $this->serviceRepository->getAllActive()->getItems();
+        $services = $this->serviceRepository->getAllActive($isTesting)->getItems();
         foreach ($services as $service) {
             $method = $this->_rateMethodFactory->create();
 
@@ -105,7 +104,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
             $method->setCarrierTitle($this->getConfigData('title'));
 
             $method->setMethod($service->getName());
-            $method->setMethodTitle($service->getName());
+            $method->setMethodTitle('*' . $service->getName());
 
             $shippingCostEstimation = $this->shippingEstimateCost($request, $service->getSamedayId());
             $method
