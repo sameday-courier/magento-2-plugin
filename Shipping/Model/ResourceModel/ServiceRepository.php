@@ -206,10 +206,11 @@ class ServiceRepository implements ServiceRepositoryInterface
     /**
      * @inheritdoc
      */
-    public function getAllActive()
+    public function getAllActive($isTesting)
     {
         $searchCriteria = $this->searchCriteriaBuilder
             ->addFilter(ServiceInterface::STATUS, true)
+            ->addFilter(ServiceInterface::IS_TESTING, $isTesting)
             ->create();
 
         return $this->getList($searchCriteria);
