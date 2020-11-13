@@ -38,6 +38,7 @@ class Lockers extends Action
         /** @var \SamedayCourier\Shipping\Model\Data\Locker $locker */
         foreach ($lockers->getItems() as $locker) {
             $dump[] = [
+                'id' => (int) $locker['id'],
                 'name' => $locker['name'],
                 'city' => $locker['city'],
                 'county' => $locker['county'],
