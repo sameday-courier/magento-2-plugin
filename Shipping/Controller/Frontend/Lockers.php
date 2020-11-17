@@ -38,16 +38,17 @@ class Lockers extends Action
         $dump = [];
         /** @var \SamedayCourier\Shipping\Model\Data\Locker $locker */
         foreach ($lockers->getItems() as $locker) {
-            $dump[] = [
+            $dump[$locker['city']][] = [
                 'id' => (int) $locker['id'],
                 'name' => $locker['name'],
                 'city' => $locker['city'],
                 'county' => $locker['county'],
             ];
         }
+        ksort($dump);
 
         $block = $page->getLayout()->getBlock('samedaycourier_shipping.template.lockers');
-        $block->setData('lockers', $dump);
+        $block->setData('cities', $dump);
 
         return $this->getResponse()->setBody($block->toHtml());
     }

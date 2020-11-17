@@ -4,8 +4,12 @@
         <select name='samedaycourier_locker' id="samedaycourier_shipping_lockers">
             <?php
             $options = '';
-            foreach ($block['lockers'] as $locker) {
-                $options .= sprintf('<option name="%s" value="%d">%s</option>', $locker['id'], $locker['id'], $locker['name']);
+            foreach ($block['cities'] as $cityLockers => $lockers) {
+                $options .= '<optgroup label="'. $cityLockers .'">';
+                foreach ($lockers as $locker) {
+                    $options .= sprintf('<option name="%s" value="%d">%s</option>', $locker['id'], $locker['id'], $locker['name']);
+                }
+                $options .= '</optgroup>';
             }
             ?>
 
