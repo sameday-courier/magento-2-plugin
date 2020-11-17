@@ -90,6 +90,22 @@ class Service extends AbstractExtensibleObject implements ServiceInterface
     /**
      * @inheritdoc
      */
+    public function getCode()
+    {
+        return $this->_get(self::CODE);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setCode($code)
+    {
+        return $this->setData(self::CODE, $code);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getPrice()
     {
         return $this->_get(self::PRICE);

@@ -87,6 +87,7 @@ class Refresh extends Action
                     // Service not found, add it.
                     $service = $this->serviceFactory->create()
                         ->setName($serviceObject->getName())
+                        ->setCode($serviceObject->getCode())
                         ->setIsPriceFree(false)
                         ->setStatus(ServiceInterface::STATUS_DISABLED);
                 }

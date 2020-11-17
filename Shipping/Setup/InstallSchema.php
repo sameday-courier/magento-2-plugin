@@ -123,6 +123,11 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
                 255
             )
             ->addColumn(
+                'code',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255
+            )
+            ->addColumn(
                 'price',
                 \Magento\Framework\DB\Ddl\Table::TYPE_DECIMAL,
                 null,

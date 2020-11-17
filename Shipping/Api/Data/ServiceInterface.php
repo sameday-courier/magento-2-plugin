@@ -17,6 +17,7 @@ interface ServiceInterface extends ExtensibleDataInterface
     const SAMEDAY_NAME = 'sameday_name';
     const IS_TESTING = 'is_testing';
     const NAME = 'name';
+    const CODE = 'code';
     const PRICE = 'price';
     const IS_PRICE_FREE = 'is_price_free';
     const PRICE_FREE = 'price_free';
@@ -87,6 +88,20 @@ interface ServiceInterface extends ExtensibleDataInterface
      * @return $this
      */
     public function setName($name);
+
+    /**
+     * Get service code
+     *
+     * @return string
+     */
+    public function getCode();
+
+    /**
+     * @param string $code
+     *
+     * @return $this
+     */
+    public function setCode($code);
 
     /**
      * @return float
