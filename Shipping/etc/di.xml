@@ -12,12 +12,6 @@
         <plugin name="addMyButton" type="SamedayCourier\Shipping\Plugin\Block\Adminhtml\Order\View"/>
     </type>
 
-    <!--<virtualType name="SamedayCourier\Shipping\Model\ResourceModel\Service\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">-->
-        <!--<arguments>-->
-            <!--<argument name="mainTable" xsi:type="string">samedaycourier_shipping_service</argument>-->
-            <!--<argument name="resourceModel" xsi:type="string">SamedayCourier\Shipping\Model\ResourceModel\Service</argument>-->
-        <!--</arguments>-->
-    <!--</virtualType>-->
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
             <argument name="collections" xsi:type="array">

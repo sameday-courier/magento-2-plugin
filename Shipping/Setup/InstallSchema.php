@@ -21,6 +21,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
         $this->setupServices($setup);
         $this->setupLockers($setup);
         $this->setupAwbs($setup);
+        $this->setupOrderLocker($setup);
 
         $setup->endSetup();
     }
@@ -265,6 +266,28 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
             $setup->getTable('sales_order'),
             'entity_id',
             \Magento\Framework\DB\Ddl\Table::ACTION_NO_ACTION
+        );
+    }
+
+    /**
+     * @param SchemaSetupInterface $setup
+     */
+    private function setupOrderLocker($setup)
+    {
+        if ($setup->getConnection()->tableColumnExists('sales_order', 'samedaycourier_locker')) {
+            return;
+        }
+
+        $setup->getConnection()->addColumn(
+            $setup->getTable(
+                'sales_order'),
+            'samedaycourier_locker',
+            [
+                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                'unsigned' => true,
+                'nullable' => true,
+                'comment' => 'SamedayCourier Locker'
+            ]
         );
     }
 }

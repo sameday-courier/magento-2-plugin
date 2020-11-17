@@ -1,0 +1,15 @@
+<tr>
+    <td colspan="100" class="samedaycourier-lockers-wrapper">
+        <label for="samedaycourier_shipping_lockers"><span><?= __('Please select a locker') ?></span></label>
+        <select name='samedaycourier_locker' id="samedaycourier_shipping_lockers">
+            <?php
+            $options = '';
+            foreach ($block['lockers'] as $locker) {
+                $options .= sprintf('<option name="%s" value="%d">%s</option>', $locker['id'], $locker['id'], $locker['name']);
+            }
+            ?>
+
+            <?= $options; ?>
+        </select>
+    </td>
+</tr>
