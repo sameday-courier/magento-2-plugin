@@ -19,6 +19,7 @@ use Sameday\Objects\PostAwb\Request\AwbRecipientEntityObject;
 use Sameday\Objects\Types\AwbPaymentType;
 use Sameday\Objects\Types\PackageType;
 use Sameday\Requests\SamedayPostAwbEstimationRequest;
+use SamedayCourier\Shipping\Api\Data\ServiceInterface;
 use SamedayCourier\Shipping\Api\PickupPointRepositoryInterface;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
 use SamedayCourier\Shipping\Helper\ApiHelper as SamedayApiHelper;
@@ -32,6 +33,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
     private $samedayApiHelper;
     private $serviceRepository;
     private $pickupPointRepository;
+    private $scopeConfig;
 
     public function __construct(
         SamedayApiHelper $samedayApiHelper,
@@ -49,6 +51,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
         $this->_rateMethodFactory = $rateMethodFactory;
         $this->serviceRepository = $serviceRepository;
         $this->pickupPointRepository = $pickupPointRepository;
+        $this->scopeConfig = $scopeConfig;
 
         parent::__construct($scopeConfig, $rateErrorFactory, $logger, $data);
     }
@@ -94,7 +97,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
         }
 
         $result = $this->_rateResultFactory->create();
-        $isTesting = (bool) $this->getConfigData('carriers/samedaycourier/testing');
+        $isTesting = (bool) $this->scopeConfig->getValue('carriers/samedaycourier/testing');
 
         $services = $this->serviceRepository->getAllActive($isTesting)->getItems();
         foreach ($services as $service) {
@@ -104,7 +107,13 @@ class Shipping extends AbstractCarrier implements CarrierInterface
             $method->setCarrierTitle($this->getConfigData('title'));
 
             $method->setMethod($service->getName());
-            $method->setMethodTitle('*' . $service->getName());
+
+            // if service has locker, append "*" to service name
+            // used to determine which service will display a dropdown with lockers' list
+            $serviceName = in_array($service->getCode(), ServiceInterface::SERVICES_WITH_LOCKERS) ?
+                '*' . $service->getName() :  $service->getName();
+
+            $method->setMethodTitle($serviceName);
 
             $shippingCostEstimation = $this->shippingEstimateCost($request, $service->getSamedayId());
             $method
