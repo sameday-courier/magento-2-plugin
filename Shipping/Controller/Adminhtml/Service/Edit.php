@@ -46,6 +46,7 @@ class Edit extends \Magento\Backend\App\Action
         $service
             ->setName($data['service']['name'])
             ->setIsPriceFree((bool) $data['service']['is_price_free'] === true)
+            ->setUseEstimatedCost((bool) $data['service']['use_estimated_cost'] === true)
             ->setPriceFree($data['service']['price_free'])
             ->setPrice($data['service']['price'])
             ->setStatus($data['service']['status']);

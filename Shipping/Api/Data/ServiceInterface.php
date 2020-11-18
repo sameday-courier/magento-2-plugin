@@ -22,7 +22,7 @@ interface ServiceInterface extends ExtensibleDataInterface
     const IS_PRICE_FREE = 'is_price_free';
     const PRICE_FREE = 'price_free';
     const STATUS = 'status';
-    const WORKING_DAYS = 'working_days';
+    const USE_ESTIMATED_COST = 'use_estimated_cost';
     /**#@-*/
 
     const STATUS_DISABLED = 0;
@@ -154,16 +154,16 @@ interface ServiceInterface extends ExtensibleDataInterface
     public function setStatus($status);
 
     /**
-     * @return array
+     * @return bool
      */
-    public function getWorkingDays();
+    public function getUseEstimatedCost();
 
     /**
-     * @param array $workingDays
+     * @param bool $useEstimatedCost
      *
      * @return $this
      */
-    public function setWorkingDays($workingDays);
+    public function setUseEstimatedCost($useEstimatedCost);
 
     /**
      * Retrieve existing extension attributes object or create a new one.

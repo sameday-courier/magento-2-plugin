@@ -170,17 +170,17 @@ class Service extends AbstractExtensibleObject implements ServiceInterface
     /**
      * @inheritdoc
      */
-    public function getWorkingDays()
+    public function getUseEstimatedCost()
     {
-        return $this->_get(self::WORKING_DAYS);
+        return $this->_get(self::USE_ESTIMATED_COST);
     }
 
     /**
-     * @inheritdoc
+     * @inheridoc
      */
-    public function setWorkingDays($workingDays)
+    public function setUseEstimatedCost($useEstimatedCost)
     {
-        return $this->setData(self::WORKING_DAYS, $workingDays);
+        return $this->setData(self::USE_ESTIMATED_COST, $useEstimatedCost);
     }
 
     /**

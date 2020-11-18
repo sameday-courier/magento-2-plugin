@@ -71,7 +71,7 @@ class Service extends AbstractExtensibleModel
             ->setIsPriceFree($this->getData('is_price_free'))
             ->setPriceFree($this->getData('price_free'))
             ->setStatus($this->getData('status'))
-            ->setWorkingDays($this->getData('working_days'));
+            ->setUseEstimatedCost($this->getData('use_estimated_cost'));
 
         return $serviceDataObject;
     }

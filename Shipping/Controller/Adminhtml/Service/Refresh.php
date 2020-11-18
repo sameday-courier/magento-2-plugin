@@ -90,6 +90,7 @@ class Refresh extends Action
                         ->setCode($serviceObject->getCode())
                         ->setPrice(0)
                         ->setIsPriceFree(false)
+                        ->setUseEstimatedCost(false)
                         ->setStatus(ServiceInterface::STATUS_DISABLED);
                 }
 

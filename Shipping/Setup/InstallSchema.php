@@ -144,12 +144,12 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
                 ['precision' => 10, 'scale' => 2]
             )
             ->addColumn(
-                'status',
-                \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT
+                'use_estimated_cost',
+                \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN
             )
             ->addColumn(
-                'working_days',
-                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT
+                'status',
+                \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT
             );
 
         $setup->getConnection()->createTable($table);
