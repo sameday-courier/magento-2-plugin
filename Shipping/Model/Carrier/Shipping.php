@@ -2,15 +2,13 @@
 
 namespace SamedayCourier\Shipping\Model\Carrier;
 
+use Magento\Directory\Model\Region;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Shipping\Model\Carrier\AbstractCarrier;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
-use Magento\Shipping\Model\Config;
 use Magento\Shipping\Model\Rate\ResultFactory;
-use Magento\Store\Model\ScopeInterface;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
-use Magento\Quote\Model\Quote\Address\RateResult\Method;
 use Magento\Quote\Model\Quote\Address\RateResult\MethodFactory;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Psr\Log\LoggerInterface;
@@ -19,6 +17,7 @@ use Sameday\Objects\PostAwb\Request\AwbRecipientEntityObject;
 use Sameday\Objects\Types\AwbPaymentType;
 use Sameday\Objects\Types\PackageType;
 use Sameday\Requests\SamedayPostAwbEstimationRequest;
+use SamedayCourier\Shipping\Api\Data\ServiceInterface;
 use SamedayCourier\Shipping\Api\PickupPointRepositoryInterface;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
 use SamedayCourier\Shipping\Helper\ApiHelper as SamedayApiHelper;
@@ -32,6 +31,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
     private $samedayApiHelper;
     private $serviceRepository;
     private $pickupPointRepository;
+    private $scopeConfig;
 
     public function __construct(
         SamedayApiHelper $samedayApiHelper,
@@ -49,6 +49,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
         $this->_rateMethodFactory = $rateMethodFactory;
         $this->serviceRepository = $serviceRepository;
         $this->pickupPointRepository = $pickupPointRepository;
+        $this->scopeConfig = $scopeConfig;
 
         parent::__construct($scopeConfig, $rateErrorFactory, $logger, $data);
     }
@@ -94,22 +95,34 @@ class Shipping extends AbstractCarrier implements CarrierInterface
         }
 
         $result = $this->_rateResultFactory->create();
-        $isTesting = (bool) $this->getConfigData('carriers/samedaycourier/testing');
+        $isTesting = (bool) $this->scopeConfig->getValue('carriers/samedaycourier/testing');
 
         $services = $this->serviceRepository->getAllActive($isTesting)->getItems();
         foreach ($services as $service) {
+            $isLockerService = in_array($service->getCode(), ServiceInterface::SERVICES_WITH_LOCKERS);
+            if (sizeof($request->getAllItems()) > 1 && $isLockerService) {
+                continue;
+            }
+
             $method = $this->_rateMethodFactory->create();
 
             $method->setCarrier($this->getCarrierCode());
             $method->setCarrierTitle($this->getConfigData('title'));
 
             $method->setMethod($service->getName());
-            $method->setMethodTitle('*' . $service->getName());
+            $method->setMethodTitle($isLockerService ? '*' . $service->getName() : $service->getName());
 
-            $shippingCostEstimation = $this->shippingEstimateCost($request, $service->getSamedayId());
+            $shippingCost = $service->getPrice();
+            if ($service->getIsPriceFree() && $request->getPackageValueWithDiscount() >= $service->getPriceFree()) {
+                $shippingCost = 0;
+            } elseif ($service->getUseEstimatedCost()) {
+                $shippingCostEstimation = $this->shippingEstimateCost($request, $service->getSamedayId());
+                $shippingCost = $shippingCostEstimation ?  $shippingCostEstimation->getCost() : $service->getPrice();
+            }
+
             $method
-                ->setPrice($shippingCostEstimation->getCost())
-                ->setCost($shippingCostEstimation->getCost());
+                ->setPrice($shippingCost)
+                ->setCost($shippingCost);
 
             $result->append($method);
         }
@@ -121,6 +134,19 @@ class Shipping extends AbstractCarrier implements CarrierInterface
     {
         $defaultPickupPoint = $this->pickupPointRepository->getDefaultPickupPoint();
         $packageWeight = $request->getData('package_weight') ?? 1;
+
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $region = $objectManager->create(Region::class);
+        $regionName = $region->loadByCode($request->getData('dest_region_code'), $request->getData('dest_country_id'))->getName();
+        $city = $request->getData('dest_city');
+        if ($region->getCode() === 'B') {
+            $city = 'Sectorul 1';
+        }
+
+        if (null === $city) {
+            return false;
+        }
+
         $apiRequest = new SamedayPostAwbEstimationRequest(
             $defaultPickupPoint->getSamedayId(),
             null,
@@ -129,8 +155,8 @@ class Shipping extends AbstractCarrier implements CarrierInterface
             $serviceId,
             (new AwbPaymentType(AwbPaymentType::CLIENT)),
             (new AwbRecipientEntityObject(
-                1, //@todo $request->getData('dest_city'),
-                1, //@todo $request->getData('dest_region_code'),
+                $city,
+                $regionName,
                 $request->getData('dest_street'),
                 $request->getData('firstname') . ' ' .  $request->getData('lastname'),
                 $request->getData('telephone'),

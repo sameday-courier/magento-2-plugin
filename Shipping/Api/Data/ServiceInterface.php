@@ -17,16 +17,19 @@ interface ServiceInterface extends ExtensibleDataInterface
     const SAMEDAY_NAME = 'sameday_name';
     const IS_TESTING = 'is_testing';
     const NAME = 'name';
+    const CODE = 'code';
     const PRICE = 'price';
     const IS_PRICE_FREE = 'is_price_free';
     const PRICE_FREE = 'price_free';
     const STATUS = 'status';
-    const WORKING_DAYS = 'working_days';
+    const USE_ESTIMATED_COST = 'use_estimated_cost';
     /**#@-*/
 
     const STATUS_DISABLED = 0;
     const STATUS_ENABLED = 1;
     const STATUS_INTERVAL = 2;
+
+    const SERVICES_WITH_LOCKERS = ['LN', 'LS'];
 
     /**
      * @return int
@@ -89,6 +92,20 @@ interface ServiceInterface extends ExtensibleDataInterface
     public function setName($name);
 
     /**
+     * Get service code
+     *
+     * @return string
+     */
+    public function getCode();
+
+    /**
+     * @param string $code
+     *
+     * @return $this
+     */
+    public function setCode($code);
+
+    /**
      * @return float
      */
     public function getPrice();
@@ -137,16 +154,16 @@ interface ServiceInterface extends ExtensibleDataInterface
     public function setStatus($status);
 
     /**
-     * @return array
+     * @return bool
      */
-    public function getWorkingDays();
+    public function getUseEstimatedCost();
 
     /**
-     * @param array $workingDays
+     * @param bool $useEstimatedCost
      *
      * @return $this
      */
-    public function setWorkingDays($workingDays);
+    public function setUseEstimatedCost($useEstimatedCost);
 
     /**
      * Retrieve existing extension attributes object or create a new one.

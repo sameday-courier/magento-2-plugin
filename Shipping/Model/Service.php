@@ -66,11 +66,12 @@ class Service extends AbstractExtensibleModel
             ->setSamedayName($this->getData('sameday_name'))
             ->setIsTesting($this->getData('is_testing'))
             ->setName($this->getData('name'))
+            ->setCode($this->getData('code'))
             ->setPrice($this->getData('price'))
             ->setIsPriceFree($this->getData('is_price_free'))
             ->setPriceFree($this->getData('price_free'))
             ->setStatus($this->getData('status'))
-            ->setWorkingDays($this->getData('working_days'));
+            ->setUseEstimatedCost($this->getData('use_estimated_cost'));
 
         return $serviceDataObject;
     }

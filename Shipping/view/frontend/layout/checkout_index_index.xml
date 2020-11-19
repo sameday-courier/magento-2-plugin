@@ -1,0 +1,6 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <script src="SamedayCourier_Shipping::js/view/checkout/shipping/checkout.js" />
+        <css src="SamedayCourier_Shipping::css/view/checkout/shipping/checkout.css" />
+    </head>
+</page>

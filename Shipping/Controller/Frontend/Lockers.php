@@ -31,32 +31,25 @@ class Lockers extends Action
     public function execute()
     {
         $isTesting = (bool) $this->config->getValue('carriers/samedaycourier/testing');
-        $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
+        $page = $this->resultFactory->create(ResultFactory::TYPE_PAGE);
 
         $lockers = $this->lockerRepository->getListByTesting($isTesting);
+
         $dump = [];
         /** @var \SamedayCourier\Shipping\Model\Data\Locker $locker */
         foreach ($lockers->getItems() as $locker) {
-            $dump[] = [
+            $dump[$locker['city']][] = [
                 'id' => (int) $locker['id'],
                 'name' => $locker['name'],
                 'city' => $locker['city'],
                 'county' => $locker['county'],
             ];
         }
+        ksort($dump);
 
-        if (empty($dump)) {
-            return $resultJson
-                ->setHttpResponseCode(404)
-                ->setData(
-                    [
-                        'error' => [
-                            'message' => 'Lockers not found. Please import the lockers before continuing.'
-                        ]
-                    ]
-                );
-        }
+        $block = $page->getLayout()->getBlock('samedaycourier_shipping.template.lockers');
+        $block->setData('cities', $dump);
 
-        return $resultJson->setData($dump);
+        return $this->getResponse()->setBody($block->toHtml());
     }
 }
