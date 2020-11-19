@@ -113,7 +113,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
             $method->setMethodTitle($isLockerService ? '*' . $service->getName() : $service->getName());
 
             $shippingCost = $service->getPrice();
-            if ($service->getIsPriceFree() && $request->getPackageValueWithDiscount() > $service->getPriceFree()) {
+            if ($service->getIsPriceFree() && $request->getPackageValueWithDiscount() >= $service->getPriceFree()) {
                 $shippingCost = 0;
             } elseif ($service->getUseEstimatedCost()) {
                 $shippingCostEstimation = $this->shippingEstimateCost($request, $service->getSamedayId());
