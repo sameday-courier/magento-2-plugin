@@ -55,9 +55,10 @@ class AddParcel extends AdminOrder implements HttpPostActionInterface
         $apiRequest = new SamedayPostParcelRequest(
             $awb->getAwbNumber(),
             new ParcelDimensionsObject(
-                $values['weight'] ?: null,
-                $values['package_width'] ?: null,
-                $values['package_length'] ?: null
+                $values['parcel_weight'] ?: null,
+                $values['parcel_width'] ?: null,
+                $values['parcel_length'] ?: null,
+                $values['parcel_height'] ?: null
             ),
             count($parcels) + 1,
             null,
