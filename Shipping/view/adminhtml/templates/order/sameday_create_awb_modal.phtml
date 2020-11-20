@@ -4,6 +4,77 @@
  */
 ?>
 
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    input[type=text], select, textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        resize: vertical;
+    }
+
+    input[type=number], select, textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        resize: vertical;
+    }
+
+    label {
+        padding: 12px 12px 12px 0;
+        display: inline-block;
+    }
+
+    input[type=submit] {
+        background-color: #4CAF50;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        cursor: pointer;
+        float: right;
+    }
+
+    input[type=submit]:hover {
+        background-color: #45a049;
+    }
+
+    .container {
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        padding: 20px;
+    }
+
+    .col-25 {
+        float: left;
+        width: 25%;
+        margin-top: 6px;
+    }
+
+    .col-75 {
+        float: left;
+        width: 75%;
+        margin-top: 6px;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+    @media screen and (max-width: 600px) {
+        .col-25, .col-75, input[type=submit] {
+            width: 100%;
+            margin-top: 0;
+        }
+    }
+</style>
+
 <section class="admin__page-section">
     <div class="admin__page-section-title">
         <span class="title"><?php /* @escapeNotVerified */ echo __('Sameday Courier') ?></span>
@@ -14,53 +85,142 @@
 </section>
 
 <div id="popup-add-awb" style="display: none">
-    <form action="<?= $block->escapeUrl($block->getRouteAddAwb())?>" method="post"
-          id="popup-add-awb-form">
-        <?= __('Repayment') ?> <input name="repayment" type="text" value="<?= $block->getOrderDetails()['repayment'] ?>"> <br />
-        <?= __('Insured value') ?> <input name="insured_value" type="number" value="0"> <br />
-        <?= __('Package weight') ?> <input name="package_weight" type="number" value="<?= $block->getOrderDetails()['weight'] ?>"> <br />
-        <?= __('Package length') ?> <input name="package_length" type="number"> <br />
-        <?= __('Package width') ?> <input name="package_width" type="number"> <br />
+    <div class="container">
+        <form action="<?= $block->escapeUrl($block->getRouteAddAwb())?>" method="post" id="popup-add-awb-form">
+            <input type="hidden" name="order_id" value="<?= $block->getOrder()->getId() ?>">
+            <div class="row">
+                <div class="col-25">
+                    <label for="repayment">
+                        <?= __('Repayment') ?>
+                    </label>
+                </div>
+                <div class="col-75">
+                    <input name="repayment" id="repayment" type="number" step="any" min="0" value="<?= $block->getOrderDetails()['repayment'] ?>">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                    <label for="insured_value">
+                        <?= __('Insured value') ?>
+                    </label>
+                </div>
+                <div class="col-75">
+                    <input name="insured_value" id="insured_value" type="number" step="any" min="0" value="0">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                    <label for="package_weight">
+                        <?= __('Package weight') ?>
+                    </label>
+                </div>
+                <div class="col-75">
+                    <input name="package_weight" id="package_weight" type="number" step="any" min="0" value="<?= $block->getOrderDetails()['weight'] ?>">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                    <label for="package_length">
+                        <?= __('Package length') ?>
+                    </label>
+                </div>
+                <div class="col-75">
+                    <input name="package_length" id="package_length" type="number" step="any" min="0">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                    <label for="package_width">
+                        <?= __('Package width') ?>
+                    </label>
+                </div>
+                <div class="col-75">
+                     <input name="package_width" id="package_width" type="number" step="any" min="0">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                    <label for="package_height">
+                        <?= __('Package height') ?>
+                    </label>
+                </div>
+                <div class="col-75">
+                    <input name="package_height" id="package_height" type="number" step="any" min="0">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                    <?= __('Pickup point') ?>
+                </div>
+                <div class="col-75">
+                    <select name="pickup_point" id="pickup_point">
+                        <?php foreach ($block->getPickupPoints() as $pickupPoint): ?>
+                            <option value="<?= $pickupPoint->getSamedayId() ?>" <?= $pickupPoint->getIsDefault() == 1 ? 'selected' : '' ?>>
+                                <?= $pickupPoint->getSamedayAlias() ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                    <?= __('Package type') ?>
+                </div>
+                <div class="col-75">
+                    <select name="package_type" id="package_type">
+                        <option value="0"><?= _('Parcel') ?></option>
+                        <option value="1"><?= _('Envelope') ?></option>
+                        <option value="2"><?= _('Large parcel') ?></option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                    <?= __('Awb payment') ?>
+                </div>
+                <div class="col-75">
+                    <select name="awb_payment" id="awb_payment">
+                        <option value="0"><?= _('Client')?></option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                    <?= __('Service') ?>
+                </div>
+                <div class="col-75">
+                    <select name="service" id="service">
+                        <?php foreach ($block->getServices() as $service): ?>
+                            <option value="<?= $service->getSamedayId() ?>" <?= $service->getSamedayId() == $block->getOrderDetails()['serviceId'] ? 'selected' : '' ?>><?= $service->getSamedayName() ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                    <label for="subject">
+                        <?= __('Observation') ?>
+                    </label>
+                </div>
+                <div class="col-75">
+                    <textarea name="observation" id="observation" placeholder="<?= __('Write something...') ?>" style="height:50px"></textarea>
+                </div>
+            </div>
+<!--            <div class="row">-->
+<!--                <div class="col-25">-->
+<!--                    <label for="repayment">-->
 
-        <?= __('Pickup point') ?>
-        <select name="pickup_point">
-            <?php foreach ($block->getPickupPoints() as $pickupPoint): ?>
-                <option value="<?= $pickupPoint->getSamedayId() ?>"><?= $pickupPoint->getSamedayAlias() ?></option>
-             <?php endforeach; ?>
-        </select>
-
-        <br />
-
-        <?= __('Package type') ?>
-        <select name="package_type">
-            <option value="0"><?= _('Parcel') ?></option>
-            <option value="1"><?= _('Envelope') ?></option>
-        </select>
-
-        <br />
-
-        <?= __('Awb payment') ?>
-        <select name="awb_payment">
-            <option value="0"><?= _('Client')?></option>
-        </select>
-
-        <br />
-
-        <?= __('Service') ?>
-        <select name="service">
-            <?php foreach ($block->getServices() as $service): ?>
-                <option value="<?= $service->getSamedayId() ?>"><?= $service->getSamedayName() ?></option>
-            <?php endforeach; ?>
-        </select>
-
-        <br />
-
-        <?= __('Open package') ?> <input name="open_package" type="checkbox" value="1"> <br />
-        <?= __('Observation') ?> <textarea name="observation"></textarea> <br />
-        <input type="hidden" name="order_id" value="<?= $block->getOrder()->getId() ?>">
-
-        <input type="button" value="Submit" id="order-view-add-warranty"> <br />
-    </form>
+<!--                    </label>-->
+<!--                </div>-->
+<!--                <div class="col-75">-->
+<!--                    <input name="open_package" type="checkbox" value="1">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="row">-->
+<!--                <input type="button" value="Submit" id="generate_awb"> <br />-->
+<!--            </div>-->
+        </form>
+    </div>
 </div>
 
 <script>
@@ -79,13 +239,22 @@
                 innerScroll: true,
                 title: 'Generate awb',
                 modalClass: 'custom-modal',
-                buttons: [{
-                    text: $.mage.__('Close'),
-                    class: '',
-                    click: function () {
-                        this.closeModal();
+                buttons: [
+                    {
+                        text: $.mage.__('Close'),
+                        class: '',
+                        click: function () {
+                            this.closeModal();
+                        }
+                    },
+                    {
+                        text: $.mage.__('Generate Awb'),
+                        class: '',
+                        click: function () {
+                            $('#popup-add-awb-form').submit();
+                        }
                     }
-                }]
+                ]
             };
 
             var popup = modal(options, $('#popup-add-awb'));
@@ -99,8 +268,11 @@
                     'value': window.FORM_KEY,
                     'type': 'hidden'
                 }));
-                $('#popup-add-awb-form').submit();
             });
+
+            // $(document).on('click', '#generate_awb', function () {
+            //     $('#popup-add-awb-form').submit();
+            // });
         }
     );
 </script>
