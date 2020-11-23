@@ -7,124 +7,6 @@ $awb = $block->getData('awb');
 /** @var \Sameday\Responses\SamedayGetAwbStatusHistoryResponse $awbHistory */
 $parcelsHistory = $block->getData('parcelsHistory');
 ?>
-
-<style>
-    * {
-        box-sizing: border-box;
-    }
-
-    input[type=text], select, textarea {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ccc;
-        resize: vertical;
-    }
-
-    input[type=number], select, textarea {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ccc;
-        resize: vertical;
-    }
-
-    label {
-        padding: 12px 12px 12px 0;
-        display: inline-block;
-    }
-
-    input[type=submit] {
-        background-color: #41362f;
-        color: white;
-        padding: 12px 20px;
-        border: none;
-        cursor: pointer;
-        float: right;
-    }
-
-    input[type=submit]:hover {
-        background-color: #41362f;
-    }
-
-    .container {
-        border-radius: 5px;
-        background-color: #f2f2f2;
-        padding: 20px;
-    }
-
-    .col-25 {
-        float: left;
-        width: 25%;
-        margin-top: 6px;
-    }
-
-    .col-75 {
-        float: left;
-        width: 75%;
-        margin-top: 6px;
-    }
-
-    /* Clear floats after the columns */
-    .row:after {
-        content: "";
-        display: table;
-        clear: both;
-    }
-
-    .packages {
-        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-        border-collapse: collapse;
-        width: 100%;
-    }
-
-    .packages td, .packages th {
-        border: 1px solid #ddd;
-        padding: 8px;
-    }
-
-    .packages tr:nth-child(even){background-color: #f2f2f2;}
-
-    .packages tr:hover {background-color: #FFFFFE;}
-
-    .packages th {
-        padding-top: 14px;
-        padding-bottom: 14px;
-        text-align: left;
-        background-color: #f1f1f1;
-        color: #41362f;
-    }
-
-    .history {
-        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-        border-collapse: collapse;
-        width: auto;
-    }
-
-    .history td, .history th {
-        border: 1px solid #ddd;
-        padding: 8px;
-    }
-
-    .history tr:nth-child(even){background-color: #f2f2f2;}
-
-    .history tr:hover {background-color: #FFFFFE;}
-
-    .history th {
-        padding-top: 10px;
-        padding-bottom: 10px;
-        text-align: left;
-        background-color: #41362f;
-        color: #FFFFFE;
-    }
-
-    /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
-    @media screen and (max-width: 600px) {
-        .col-25, .col-75, input[type=submit] {
-            width: 100%;
-            margin-top: 0;
-        }
-    }
-</style>
-
 <section class="admin__page-section">
     <div class="admin__page-section-title">
         <span class="title"><?php /* @escapeNotVerified */ echo __('Sameday Courier') ?></span>
@@ -145,7 +27,7 @@ $parcelsHistory = $block->getData('parcelsHistory');
 ?>
 <div id="popup-add-parcel" style="display: none">
     <div class="container">
-        <form action="<?= $block->escapeUrl($block->getRouteAddParcel())?>" method="post" id="popup-add-parcel-form">
+        <form action="<?= $block->escapeUrl($block->getRouteAddParcel())?>" method="post" id="popup-add-parcel-form" class="samedaycourier_shipping_generate_awb_form">
         <div class="row">
             <div class="col-25">
                 <label for="repayment">
@@ -195,7 +77,11 @@ $parcelsHistory = $block->getData('parcelsHistory');
  * Awb history modal
  */
 ?>
-<div id="popup-awb-history" style="display: none">
+<div id="popup-awb-history" style="display: none" class="samedaycourier_shipping_awb_history">
+    <input type="hidden" value="<?= $block->escapeUrl($block->getRouteRemoveAwb()) ?>" id="get_url_remove_awb">
+    <input type="hidden" value="<?= $block->escapeUrl($awb->getId()) ?>" id="awb_id">
+    <input type="hidden" value="<?= $block->escapeUrl($awb->getAwbNumber()) ?>" id="sameday_awb_number">
+
 
     <?php
         $packageRows = '';
