@@ -133,7 +133,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
     private function shippingEstimateCost(RateRequest $request, int $serviceId)
     {
         $defaultPickupPoint = $this->pickupPointRepository->getDefaultPickupPoint();
-        $packageWeight = $request->getData('package_weight') ?? 1;
+        $packageWeight = max(1, $request->getData('package_weight'));
 
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $region = $objectManager->create(Region::class);
