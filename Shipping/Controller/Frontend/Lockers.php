@@ -41,8 +41,9 @@ class Lockers extends Action
             $dump[$locker['city']][] = [
                 'id' => (int) $locker['locker_id'],
                 'name' => $locker['name'],
-                'city' => $locker['city'],
+                'city' => $locker['city'] . ' (' . $locker['county'] . ')',
                 'county' => $locker['county'],
+                'address' => $locker['address']
             ];
         }
         ksort($dump);
