@@ -168,6 +168,11 @@ $parcelsHistory = $block->getData('parcelsHistory');
                             text: $.mage.__('Add parcel'),
                             class: '',
                             click: function () {
+                                $('#popup-add-parcel-form').append($('<input>', {
+                                    'name': 'form_key',
+                                    'value': window.FORM_KEY,
+                                    'type': 'hidden'
+                                }));
                                 $('#popup-add-parcel-form').submit();
                             }
                         }
@@ -176,14 +181,6 @@ $parcelsHistory = $block->getData('parcelsHistory');
 
                 var popup = modal(options, $('#popup-add-parcel'));
                 $("#popup-add-parcel").modal('openModal');
-            });
-
-            $('#popup-add-parcel-form').click(function () {
-                $('#popup-add-parcel-form').append($('<input>', {
-                    'name': 'form_key',
-                    'value': window.FORM_KEY,
-                    'type': 'hidden'
-                }));
             });
 
             $(document).on("click", ".showHistoryDetails", function() {

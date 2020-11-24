@@ -175,6 +175,11 @@
                         text: $.mage.__('Generate Awb'),
                         class: '',
                         click: function () {
+                            $('#popup-add-awb-form').append($('<input>', {
+                                'name': 'form_key',
+                                'value': window.FORM_KEY,
+                                'type': 'hidden'
+                            }));
                             $('#popup-add-awb-form').submit();
                         }
                     }
@@ -184,14 +189,6 @@
             var popup = modal(options, $('#popup-add-awb'));
             $("#openmodal").click(function() {
                 $("#popup-add-awb").modal('openModal');
-            });
-
-            $('#popup-add-awb-form').click(function () {
-                $('#popup-add-awb-form').append($('<input>', {
-                    'name': 'form_key',
-                    'value': window.FORM_KEY,
-                    'type': 'hidden'
-                }));
             });
         }
     );
