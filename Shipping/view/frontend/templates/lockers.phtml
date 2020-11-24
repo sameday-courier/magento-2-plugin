@@ -7,7 +7,7 @@
             foreach ($block['cities'] as $cityLockers => $lockers) {
                 $options .= '<optgroup label="'. $cityLockers .'">';
                 foreach ($lockers as $locker) {
-                    $options .= sprintf('<option name="%s" value="%d">%s</option>', $locker['id'], $locker['id'], $locker['name']);
+                    $options .= sprintf('<option name="%s" value="%d">%s - %s</option>', $locker['id'], $locker['id'], $locker['name'], $locker['address']);
                 }
                 $options .= '</optgroup>';
             }
