@@ -78,11 +78,6 @@ $parcelsHistory = $block->getData('parcelsHistory');
  */
 ?>
 <div id="popup-awb-history" style="display: none" class="samedaycourier_shipping_awb_history">
-    <input type="hidden" value="<?= $block->escapeUrl($block->getRouteRemoveAwb()) ?>" id="get_url_remove_awb">
-    <input type="hidden" value="<?= $block->escapeUrl($awb->getId()) ?>" id="awb_id">
-    <input type="hidden" value="<?= $block->escapeUrl($awb->getAwbNumber()) ?>" id="sameday_awb_number">
-
-
     <?php
         $packageRows = '';
 
