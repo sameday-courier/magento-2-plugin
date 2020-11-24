@@ -1,0 +1,116 @@
+.samedaycourier_shipping_generate_awb_form {
+    input[type=text], select, textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        resize: vertical;
+    }
+
+    input[type=number], select, textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        resize: vertical;
+    }
+
+    label {
+        padding: 12px 12px 12px 0;
+        display: inline-block;
+    }
+
+    input[type=submit] {
+        background-color: #4CAF50;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        cursor: pointer;
+        float: right;
+    }
+
+    input[type=submit]:hover {
+        background-color: #45a049;
+    }
+
+    .container {
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        padding: 20px;
+    }
+
+    .col-25 {
+        float: left;
+        width: 25%;
+        margin-top: 6px;
+    }
+
+    .col-75 {
+        float: left;
+        width: 75%;
+        margin-top: 6px;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+    @media screen and (max-width: 600px) {
+        .col-25, .col-75, input[type=submit] {
+            width: 100%;
+            margin-top: 0;
+        }
+    }
+}
+
+.samedaycourier_shipping_awb_history {
+    .packages {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .packages td, .packages th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    .packages tr:nth-child(even){background-color: #f2f2f2;}
+
+    .packages tr:hover {background-color: #FFFFFE;}
+
+    .packages th {
+        padding-top: 14px;
+        padding-bottom: 14px;
+        text-align: left;
+        background-color: #f1f1f1;
+        color: #41362f;
+    }
+
+    .history {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: auto;
+    }
+
+    .history td, .history th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    .history tr:nth-child(even){background-color: #f2f2f2;}
+
+    .history tr:hover {background-color: #FFFFFE;}
+
+    .history th {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        text-align: left;
+        background-color: #41362f;
+        color: #FFFFFE;
+    }
+}
+
+

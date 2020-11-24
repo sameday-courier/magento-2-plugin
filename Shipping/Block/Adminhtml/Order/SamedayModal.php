@@ -4,6 +4,7 @@ namespace SamedayCourier\Shipping\Block\Adminhtml\Order;
 
 use \Magento\Backend\Block\Template\Context;
 use \Magento\Backend\Block\Template;
+use Magento\Sales\Model\OrderFactory;
 use SamedayCourier\Shipping\Exception\NotAnOrderMatchedException;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
 
@@ -46,7 +47,8 @@ class SamedayModal extends Template
 
         return [
             'weight' => $order->getWight(),
-            'repayment' => $order->getGrandTotal()
+            'repayment' => $order->getGrandTotal(),
+            'serviceId' => explode('_', $order->getShippingMethod(), 2)[1],
         ];
     }
 

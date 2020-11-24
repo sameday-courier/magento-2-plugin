@@ -7,7 +7,6 @@ $awb = $block->getData('awb');
 /** @var \Sameday\Responses\SamedayGetAwbStatusHistoryResponse $awbHistory */
 $parcelsHistory = $block->getData('parcelsHistory');
 ?>
-
 <section class="admin__page-section">
     <div class="admin__page-section-title">
         <span class="title"><?php /* @escapeNotVerified */ echo __('Sameday Courier') ?></span>
@@ -27,14 +26,50 @@ $parcelsHistory = $block->getData('parcelsHistory');
  */
 ?>
 <div id="popup-add-parcel" style="display: none">
-    <form action="<?= $block->escapeUrl($block->getRouteAddParcel())?>" method="post" id="popup-add-parcel-form">
-        <?= __('Parcel weight') ?> <input name="weight" type="number" value="1"> <br />
-        <?= __('Parcel length') ?> <input name="insured_value" type="number"> <br />
-        <?= __('Package weight') ?> <input name="package_weight" type="number" value="<?= $block->getOrderDetails()['weight'] ?>"> <br />
-        <?= __('Package length') ?> <input name="package_length" type="number"> <br />
-        <?= __('Package width') ?> <input name="package_width" type="number"> <br />
-        <input type="button" value="Add new parcel" id="order-view-add-warranty"> <br />
+    <div class="container">
+        <form action="<?= $block->escapeUrl($block->getRouteAddParcel())?>" method="post" id="popup-add-parcel-form" class="samedaycourier_shipping_generate_awb_form">
+        <div class="row">
+            <div class="col-25">
+                <label for="repayment">
+                    <?= __('Parcel weight') ?>
+                </label>
+            </div>
+            <div class="col-75">
+                <input name="parcel_weight" type="number" value="1" step="any" min="0">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-25">
+                <label for="repayment">
+                    <?= __('Parcel length') ?>
+                </label>
+            </div>
+            <div class="col-75">
+                <input name="parcel_length" type="number" step="any" min="0">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-25">
+                <label for="repayment">
+                    <?= __('Parcel height') ?>
+                </label>
+            </div>
+            <div class="col-75">
+                <input name="parcel_height" type="number" step="any" min="0">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-25">
+                <label for="repayment">
+                    <?= __('Parcel width') ?>
+                </label>
+            </div>
+            <div class="col-75">
+                <input name="parcel_width" type="number" step="any" min="0">
+            </div>
+        </div>
     </form>
+    </div>
 </div>
 
 <?php
@@ -42,41 +77,72 @@ $parcelsHistory = $block->getData('parcelsHistory');
  * Awb history modal
  */
 ?>
-<div id="popup-awb-history" style="display: none">
-    <table>
-        <thead>
+<div id="popup-awb-history" style="display: none" class="samedaycourier_shipping_awb_history">
+    <input type="hidden" value="<?= $block->escapeUrl($block->getRouteRemoveAwb()) ?>" id="get_url_remove_awb">
+    <input type="hidden" value="<?= $block->escapeUrl($awb->getId()) ?>" id="awb_id">
+    <input type="hidden" value="<?= $block->escapeUrl($awb->getAwbNumber()) ?>" id="sameday_awb_number">
+
+
+    <?php
+        $packageRows = '';
+
+        foreach ($parcelsHistory as $package) {
+            $summary = $package->getSummary();
+            $packageHistory = $package->getHistory();
+            $historyRows = '';
+            foreach ($packageHistory as $history) {
+                $historyRows .=
+                    '<td>' . $history->getName() . '</td>' .
+                    '<td>' . $history->getLabel() . '</td>' .
+                    '<td>' . $history->getState() . '</td>' .
+                    '<td>' . $history->getDate()->format('Y-m-d H:i:s') . '</td>' .
+                    '<td>' . $history->getCounty() . '</td>' .
+                    '<td>' . $history->getTransitLocation() . '</td>' .
+                    '<td>' . $history->getReason() . '</td>'
+                ;
+            }
+            $packageRows .=
+                '<tr>' .
+                    '<td style="text-align: center; cursor:pointer;" class="showHistoryDetails" value="-" data-awb-number="'.$summary->getParcelAwbNumber().'"> <strong> + </strong> </td>' .
+                    '<td>' . $summary->getParcelAwbNumber() . '</td>' .
+                    '<td>' . $summary->getParcelWeight() . '</td>' .
+                    '<td>' . ($summary->isDelivered() ? "Yes" : "No") . '</td>' .
+                    '<td>' . $summary->getDeliveryAttempts() . ' </td>' .
+                    '<td>' . ($summary->isPickedUp() ? 'Yes' : 'No') . '</td>' .
+                    '<td>' . ($summary->getPickedUpAt() ? $summary->getPickedUpAt()->format('Y-m-d H:i:s') : '') .'</td>' .
+                '</tr>' .
+                '<tr>' .
+                    '<td colspan="7">' .
+                        '<table class="history" id="history-'.$summary->getParcelAwbNumber().'" style="width: 100%; display: none; text-align: center">' .
+                            '<tr>' .
+                                '<th style="width: 15%">' . __("Status") . '</th>' .
+                                '<th style="width: 15%">' . __("Label") . '</th>' .
+                                '<th style="width: 15%">' . __("State") . '</th>' .
+                                '<th style="width: 15%">' . __("Date") . '</th>' .
+                                '<th style="width: 15%">' . __("County") . '</th>' .
+                                '<th style="width: 15%">' . __("Translation") . '</th>' .
+                                '<th style="width: 15%">' . __("Reason") . '</th>' .
+                            '</tr>' .
+                            $historyRows .
+                        '</table>' .
+                    '</td>' .
+                '</tr>'
+
+
+            ;
+        }
+    ?>
+    <table class="packages" style="width: 100%">
+        <tr>
+            <th></th>
             <th scope="col"><?= __('Parcel number') ?></th>
             <th scope="col"><?= __('Parcel weight') ?></th>
             <th scope="col"><?= __('Delivered') ?></th>
             <th scope="col"><?= __('Delivery attempts') ?></th>
             <th scope="col"><?= __('Is picked up') ?></th>
             <th scope="col"><?= __('Picked up at') ?></th>
-        </thead>
-
-            <?php foreach ($parcelsHistory as $parcelHistory) {
-                $summary = $parcelHistory->getSummary();
-                $history = $parcelHistory->getHistory();
-            ?>
-                <tr>
-                    <td><?= $summary->getParcelAwbNumber(); ?></td>
-                    <td><?= $summary->getParcelWeight(); ?></td>
-                    <td><?= $summary->isDelivered(); ?></td>
-                    <td><?= $summary->getDeliveryAttempts(); ?></td>
-                    <td><?= $summary->isPickedUp(); ?></td>
-                    <td><?= $summary->getPickedUpAt(); ?></td>
-                </tr>
-                <?php foreach ($history as $packageHistory) { ?>
-                    <tr>
-                        <td><?= $packageHistory->getName() ?></td>
-                        <td><?= $packageHistory->getLabel() ?></td>
-                        <td><?= $packageHistory->getState() ?></td>
-                        <td><?= $packageHistory->getDate()->format('Y-m-d H:i:s') ?></td>
-                        <td><?= $packageHistory->getCounty() ?></td>
-                        <td><?= $packageHistory->getTransitLocation() ?></td>
-                        <td><?= $packageHistory->getReason() ?></td>
-                    </tr>
-                <?php } ?>
-            <?php } ?>
+        </tr>
+        <?= $packageRows ?>
     </table>
 </div>
 
@@ -95,13 +161,22 @@ $parcelsHistory = $block->getData('parcelsHistory');
                     innerScroll: true,
                     title: 'Add parcel',
                     modalClass: 'custom-modal',
-                    buttons: [{
-                        text: $.mage.__('Close'),
-                        class: '',
-                        click: function () {
-                            this.closeModal();
+                    buttons: [
+                        {
+                            text: $.mage.__('Close'),
+                            class: '',
+                            click: function () {
+                                this.closeModal();
+                            }
+                        },
+                        {
+                            text: $.mage.__('Add parcel'),
+                            class: '',
+                            click: function () {
+                                $('#popup-add-parcel-form').submit();
+                            }
                         }
-                    }]
+                    ]
                 };
 
                 var popup = modal(options, $('#popup-add-parcel'));
@@ -114,8 +189,24 @@ $parcelsHistory = $block->getData('parcelsHistory');
                     'value': window.FORM_KEY,
                     'type': 'hidden'
                 }));
-                $('#popup-add-parcel-form').submit();
             });
+
+            $(document).on("click", ".showHistoryDetails", function() {
+                let show = $(this).val();
+                let awbNumber = $(this).data("awb-number");
+                let table_id = "history-" + awbNumber;
+                if (show === "+") {
+                    $("#"+table_id).css("display","block");
+                    $(this).val("-");
+                    $(this).html("<strong> - </strong>");
+                } else {
+                    $("#"+table_id).css("display","none");
+                    $(this).val("+");
+                    $(this).html("<strong> + </strong>");
+                }
+            });
+
+            $(".showHistoryDetails").trigger("click");
 
             // awb history
             $("#awb_history_modal").click(function() {
