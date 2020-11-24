@@ -57,7 +57,8 @@ class AddParcel extends AdminOrder implements HttpPostActionInterface
             new ParcelDimensionsObject(
                 max(1, $values['weight']),
                 $values['package_width'] ?: null,
-                $values['package_length'] ?: null
+                $values['package_length'] ?: null,
+                $values['parcel_height'] ?: null
             ),
             count($parcels) + 1,
             null,
