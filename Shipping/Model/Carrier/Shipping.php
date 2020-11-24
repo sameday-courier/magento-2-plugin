@@ -166,6 +166,6 @@ class Shipping extends AbstractCarrier implements CarrierInterface
             $request->getData('package_value_with_discount')
         );
 
-        return $this->samedayApiHelper->doRequest($apiRequest, 'postAwbEstimation');
+        return $this->samedayApiHelper->doRequest($apiRequest, 'postAwbEstimation', false);
     }
 }
