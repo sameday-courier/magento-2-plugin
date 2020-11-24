@@ -89,7 +89,16 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
                 $order->getCustomerEmail()
             )),
             $values['insured_value'],
-            $values['awb_payment']
+            $values['awb_payment'],
+            null,
+            null,
+            [],
+            null,
+            null,
+            null,
+            null,
+            null,
+            $order->getData('samedaycourier_locker')
         );
         /** @var SamedayPostAwbResponse|false $response */
         $response = $this->apiHelper->doRequest($apiRequest, 'postAwb');

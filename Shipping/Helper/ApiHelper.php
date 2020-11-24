@@ -80,16 +80,19 @@ class ApiHelper extends AbstractHelper
     /**
      * @param SamedayRequestInterface $request
      * @param string $type
+     * @param bool $showFlashMessage
      *
      * @return false|SamedayResponseInterface
      */
-    public function doRequest(SamedayRequestInterface $request, string $type = '')
+    public function doRequest(SamedayRequestInterface $request, string $type = '', $showFlashMessage = true)
     {
         try {
             $sameday = new Sameday($this->initClient());
             return $sameday->{$type}($request);
         } catch(\Exception $e) {
-            $this->messageManager->addError(__("SamedayCourier communication error occured. Please try again later"));
+            if ($showFlashMessage) {
+                $this->messageManager->addError(__("SamedayCourier communication error occured. Please try again later"));
+            }
             $this->logger->error('Sameday communication error', ['error' => $e]);
         }
 
