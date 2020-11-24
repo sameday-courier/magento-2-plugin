@@ -78,11 +78,6 @@ $parcelsHistory = $block->getData('parcelsHistory');
  */
 ?>
 <div id="popup-awb-history" style="display: none" class="samedaycourier_shipping_awb_history">
-    <input type="hidden" value="<?= $block->escapeUrl($block->getRouteRemoveAwb()) ?>" id="get_url_remove_awb">
-    <input type="hidden" value="<?= $block->escapeUrl($awb->getId()) ?>" id="awb_id">
-    <input type="hidden" value="<?= $block->escapeUrl($awb->getAwbNumber()) ?>" id="sameday_awb_number">
-
-
     <?php
         $packageRows = '';
 
@@ -173,6 +168,11 @@ $parcelsHistory = $block->getData('parcelsHistory');
                             text: $.mage.__('Add parcel'),
                             class: '',
                             click: function () {
+                                $('#popup-add-parcel-form').append($('<input>', {
+                                    'name': 'form_key',
+                                    'value': window.FORM_KEY,
+                                    'type': 'hidden'
+                                }));
                                 $('#popup-add-parcel-form').submit();
                             }
                         }
@@ -181,14 +181,6 @@ $parcelsHistory = $block->getData('parcelsHistory');
 
                 var popup = modal(options, $('#popup-add-parcel'));
                 $("#popup-add-parcel").modal('openModal');
-            });
-
-            $('#popup-add-parcel-form').click(function () {
-                $('#popup-add-parcel-form').append($('<input>', {
-                    'name': 'form_key',
-                    'value': window.FORM_KEY,
-                    'type': 'hidden'
-                }));
             });
 
             $(document).on("click", ".showHistoryDetails", function() {
