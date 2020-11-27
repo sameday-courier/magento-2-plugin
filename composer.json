@@ -9,6 +9,8 @@
   "version": "1.0.0",
   "autoload": {
     "files": [ "registration.php" ],
-    "psr-4": {}
+    "psr-4": {
+      "SamedayCourier\\Shipping\\": ""
+    }
   }
 }
