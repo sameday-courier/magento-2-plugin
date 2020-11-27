@@ -104,11 +104,15 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         $response = $this->apiHelper->doRequest($apiRequest, 'postAwb');
 
         if ($response) {
+            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+            $serializer = $objectManager->create(\Magento\Framework\Serialize\SerializerInterface::class);
+            $parcels = $serializer->serilize($response->getParcels());
+
             $awb = $this->awbFactory->create()
                 ->setOrderId($values['order_id'])
                 ->setAwbNumber($response->getAwbNumber())
                 ->setAwbCost($values['repayment'])
-                ->setParcels(serialize($response->getParcels()));
+                ->setParcels($parcels);
 
             $this->awbRepository->save($awb);
             $this->manager->addSuccessMessage("Sameday awb successfully created!");

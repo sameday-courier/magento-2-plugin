@@ -50,7 +50,10 @@ class AddParcel extends AdminOrder implements HttpPostActionInterface
 
         /** @var AwbInterface $awb */
         $awb = $this->awbRepository->getByOrderId($order->getEntityId());
-        $parcels = unserialize($awb->getParcels());
+
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $serializer = $objectManager->create(\Magento\Framework\Serialize\SerializerInterface::class);
+        $parcels = $serializer->unserialize($awb->getParcels());
 
         $apiRequest = new SamedayPostParcelRequest(
             $awb->getAwbNumber(),
@@ -72,7 +75,11 @@ class AddParcel extends AdminOrder implements HttpPostActionInterface
             $parcel = new ParcelObject(count($parcels) + 1, $response->getParcelAwbNumber());
             $parcels[] = $parcel;
 
-            $awb->setParcels(serialize($parcels));
+            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+            $serializer = $objectManager->create(\Magento\Framework\Serialize\SerializerInterface::class);
+            $parcels = $serializer->serilize($parcels);
+
+            $awb->setParcels($parcels);
             $this->awbRepository->save($awb);
             $this->manager->addSuccessMessage("Awb updated successfully! Added a new parcel!");
         }

@@ -92,7 +92,12 @@ class View
     private function createEditAwbModalHtml(Info $subject, $result, AwbInterface $awb)
     {
         $parcelsHistory = [];
-        foreach (unserialize($awb->getParcels()) as $parcel) {
+
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $serializer = $objectManager->create(\Magento\Framework\Serialize\SerializerInterface::class);
+        $parcels = $serializer->unserialize($awb->getParcels());
+
+        foreach ($parcels as $parcel) {
             $apiRequest = new SamedayGetParcelStatusHistoryRequest($parcel->getAwbNumber());
             $parcelsHistory[] = $this->apiHelper->doRequest($apiRequest, 'getParcelStatusHistory');
         }
