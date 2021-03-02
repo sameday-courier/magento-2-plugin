@@ -134,15 +134,16 @@
                     <textarea name="observation" id="observation" placeholder="<?= __('Write something...') ?>" style="height:50px"></textarea>
                 </div>
             </div>
-<!--            <div class="row">-->
-<!--                <div class="col-25">-->
-<!--                    <label for="repayment">-->
-<!--                    </label>-->
-<!--                </div>-->
-<!--                <div class="col-75">-->
-<!--                    <input name="open_package" type="checkbox" value="1">-->
-<!--                </div>-->
-<!--            </div>-->
+            <div class="row">
+                <div class="col-25">
+                    <label for="subject">
+                        <?= __('Client Reference') ?>
+                    </label>
+                </div>
+                <div class="col-75">
+                    <input type="text" name="client_reference" id="client_reference" value="<?= $block->getOrderDetails()['reference']; ?>" placeholder="<?= __('Default value is order ID...') ?>" style="height:50px">
+                </div>
+            </div>
         </form>
     </div>
 </div>

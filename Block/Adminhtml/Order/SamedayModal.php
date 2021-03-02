@@ -46,6 +46,7 @@ class SamedayModal extends Template
         $order = $this->getOrder();
 
         return [
+            'reference' => $order->getId(),
             'weight' => $order->getWight(),
             'repayment' => $order->getGrandTotal(),
             'serviceId' => explode('_', $order->getShippingMethod(), 2)[1],
