@@ -168,6 +168,22 @@ class Service extends AbstractExtensibleObject implements ServiceInterface
     }
 
     /**
+     * @inheridoc
+     */
+    public function getLockerMaxItems()
+    {
+        return $this->_get(self::LOCKER_MAX_ITEMS);
+    }
+
+    /**
+     * @inheridoc
+     */
+    public function setLockerMaxItems($lockerMaxItems)
+    {
+        return $this->setData(self::LOCKER_MAX_ITEMS, $lockerMaxItems);
+    }
+
+    /**
      * @inheritdoc
      */
     public function getUseEstimatedCost()

@@ -148,6 +148,10 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
                 \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN
             )
             ->addColumn(
+                'locker_max_items',
+                \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT
+            )
+            ->addColumn(
                 'status',
                 \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT
             );

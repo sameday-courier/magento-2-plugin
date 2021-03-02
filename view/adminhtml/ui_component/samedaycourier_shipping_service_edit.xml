@@ -87,6 +87,16 @@
                 </item>
             </argument>
         </field>
+        <field name="locker_max_items">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">Locker max. items</item>
+                    <item name="dataType" xsi:type="string">number</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">service</item>
+                </item>
+            </argument>
+        </field>
         <field name="use_estimated_cost" formElement="checkbox">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
