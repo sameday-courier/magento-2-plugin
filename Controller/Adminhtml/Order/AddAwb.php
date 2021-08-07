@@ -94,7 +94,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             null,
             [],
             null,
-            $values['reference'],
+            $values['client_reference'] ?? null,
             null,
             null,
             $values['observation'],
@@ -106,7 +106,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         if ($response) {
             $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
             $serializer = $objectManager->create(\Magento\Framework\Serialize\SerializerInterface::class);
-            $parcels = $serializer->serilize($response->getParcels());
+            $parcels = $serializer->serialize($response->getParcels());
 
             $awb = $this->awbFactory->create()
                 ->setOrderId($values['order_id'])

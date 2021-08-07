@@ -77,7 +77,7 @@ class AddParcel extends AdminOrder implements HttpPostActionInterface
 
             $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
             $serializer = $objectManager->create(\Magento\Framework\Serialize\SerializerInterface::class);
-            $parcels = $serializer->serilize($parcels);
+            $parcels = $serializer->serialize($parcels);
 
             $awb->setParcels($parcels);
             $this->awbRepository->save($awb);
