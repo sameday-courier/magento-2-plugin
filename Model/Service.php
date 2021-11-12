@@ -70,6 +70,7 @@ class Service extends AbstractExtensibleModel
             ->setPrice($this->getData('price'))
             ->setIsPriceFree($this->getData('is_price_free'))
             ->setPriceFree($this->getData('price_free'))
+            ->setLockerMaxItems($this->getData('locker_max_items'))
             ->setStatus($this->getData('status'))
             ->setUseEstimatedCost($this->getData('use_estimated_cost'));
 
