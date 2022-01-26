@@ -57,11 +57,9 @@ class Active extends Value
             $password = $field->getFieldsetDataValue('password');
         }
 
-        $testing = (bool) $field->getFieldsetDataValue('testing');
 
         // Check if login is valid.
-        $client = $this->apiHelper->initClient($username, $password, $testing);
-        if (!$client->login()) {
+        if(!$this->apiHelper->connectionLogin($username, $password)){
             return false;
         }
 
