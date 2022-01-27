@@ -3,18 +3,24 @@
 namespace SamedayCourier\Shipping\Model\Config\Backend;
 
 use Magento\Framework\App\Config\Value;
+use Magento\Framework\Encryption\EncryptorInterface;
 use SamedayCourier\Shipping\Helper\ApiHelper;
 
 class Active extends Value
 {
     /**
+     * @var EncryptorInterface
+     */
+    private $encryptor;
+    /**
      * @var ApiHelper
      */
     private $apiHelper;
 
-    public function __construct(ApiHelper $apiHelper, \Magento\Framework\Model\Context $context, \Magento\Framework\Registry $registry, \Magento\Framework\App\Config\ScopeConfigInterface $config, \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList, \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null, \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null, array $data = [])
+    public function __construct(ApiHelper $apiHelper, \Magento\Framework\Model\Context $context, \Magento\Framework\Registry $registry, \Magento\Framework\App\Config\ScopeConfigInterface $config, EncryptorInterface $encryptor, \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList, \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null, \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null, array $data = [])
     {
         $this->apiHelper = $apiHelper;
+        $this->encryptor = $encryptor;
 
         parent::__construct($context, $registry, $config, $cacheTypeList, $resource, $resourceCollection, $data);
     }
@@ -55,6 +61,8 @@ class Active extends Value
         if ($field->getFieldsetDataValue('password') !== '******') {
             // Password updated.
             $password = $field->getFieldsetDataValue('password');
+        }else{
+            $password = $this->encryptor->decrypt($password);
         }
 
 
