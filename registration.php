@@ -1,9 +1,7 @@
 <?php
 
-use Magento\Framework\Component\ComponentRegistrar;
-
-/* Register module files */
-ComponentRegistrar::register(
-    ComponentRegistrar::MODULE, 'SamedayCourier_Shipping',
-    isset($file) ? dirname($file) : __DIR__
+\Magento\Framework\Component\ComponentRegistrar::register(
+    \Magento\Framework\Component\ComponentRegistrar::MODULE,
+    'SamedayCourier_Shipping',
+    __DIR__
 );
