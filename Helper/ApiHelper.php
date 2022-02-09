@@ -12,6 +12,7 @@ use Psr\Log\LoggerInterface;
 use Sameday\Requests\SamedayRequestInterface;
 use Sameday\Responses\SamedayResponseInterface;
 use Sameday\Sameday;
+use Sameday\SamedayClient;
 
 class ApiHelper extends AbstractHelper
 {
@@ -34,27 +35,38 @@ class ApiHelper extends AbstractHelper
      * @var ManagerInterface
      */
     private $messageManager;
+
+    /**
+     * @var WriterInterface
+     */
     protected $configWriter;
 
+    /**
+     * @var PersistenceDataHandler
+     */
+    protected $persistenceDataHandler;
+
     public const PRODUCTION_CODE = 0;
-    public const PRODUCTION_URL_PARAM = "API_URL_PROD";
     public const DEMO_CODE = 1;
+    public const PRODUCTION_URL_PARAM = "API_URL_PROD";
     public const DEMO_URL_PARAM = "API_URL_DEMO";
     public const ROMANIA_CODE = "ro";
     public const HUNGARY_CODE = "hu";
+
     public const SAMEDAY_ENVS = [
-        'ro' => [
-            'API_URL_PROD' => 'https://api.sameday.ro',
-            'API_URL_DEMO' => 'https://sameday-api.demo.zitec.com',
+        self::ROMANIA_CODE => [
+            self::PRODUCTION_URL_PARAM => 'https://api.sameday.ro',
+            self::DEMO_URL_PARAM => 'https://sameday-api.demo.zitec.com',
         ],
     ];
 
     /**
-     * ApiHelper constructor.
-     *
      * @param Context $context
      * @param ProductMetadataInterface $productMetadata
      * @param EncryptorInterface $encryptor
+     * @param LoggerInterface $logger
+     * @param ManagerInterface $messageManager
+     * @param WriterInterface $configWriter
      */
     public function __construct(
         Context $context,
@@ -62,7 +74,8 @@ class ApiHelper extends AbstractHelper
         EncryptorInterface $encryptor,
         LoggerInterface $logger,
         ManagerInterface $messageManager,
-        WriterInterface $configWriter
+        WriterInterface $configWriter,
+        PersistenceDataHandler $persistenceDataHandler
     )
     {
         parent::__construct($context);
@@ -72,6 +85,7 @@ class ApiHelper extends AbstractHelper
         $this->logger = $logger;
         $this->messageManager = $messageManager;
         $this->configWriter = $configWriter;
+        $this->persistenceDataHandler = $persistenceDataHandler;
     }
 
     /**
@@ -79,18 +93,18 @@ class ApiHelper extends AbstractHelper
      * @param string|null $password
      * @param bool|null $testing
      *
-     * @return \Sameday\SamedayClient
+     * @return SamedayClient
      *
      * @throws \Sameday\Exceptions\SamedaySDKException
      */
-    public function initClient($username = null, $password = null, $testing = null, $url_env = null, $country = null)
+    public function initClient($username = null, $password = null, $testing = null, $url_env = null, $country = null): SamedayClient
     {
         if($testing === null){
             $testing = $this->scopeConfig->getValue('carriers/samedaycourier/testing');
         }
 
         if($country === null){
-            $country = $this->scopeConfig->getValue('carriers/samedaycourier/country');
+            $country = $this->scopeConfig->getValue('carriers/samedaycourier/country') ?? self::ROMANIA_CODE;
         }
 
         if ($username === null && $password === null) {
@@ -98,7 +112,7 @@ class ApiHelper extends AbstractHelper
             $password = $this->encryptor->decrypt($this->scopeConfig->getValue('carriers/samedaycourier/password'));
         }
 
-        if ($testing == self::PRODUCTION_CODE) {
+        if ($testing === self::PRODUCTION_CODE) {
             $url_env_param = self::PRODUCTION_URL_PARAM;
         } else {
             $url_env_param = self::DEMO_URL_PARAM;
@@ -108,12 +122,14 @@ class ApiHelper extends AbstractHelper
             $url_env = self::SAMEDAY_ENVS[$country][$url_env_param];
         }
 
-        return new \Sameday\SamedayClient(
+        return new SamedayClient(
             $username,
             $password,
             $url_env,
             "{$this->productMetadata->getName()} ({$this->productMetadata->getEdition()})",
-            $this->productMetadata->getVersion()
+            $this->productMetadata->getVersion(),
+            'curl',
+            $this->persistenceDataHandler,
         );
     }
 
@@ -171,11 +187,13 @@ class ApiHelper extends AbstractHelper
             if($client->login()){
                 $this->configWriter->save('carriers/samedaycourier/testing', $testing_mode);
                 $this->configWriter->save('carriers/samedaycourier/country', $country);
+
                 return true;
             }
         } catch (Exception $exception) {
             $this->addMessage('danger', $this->l($exception->getMessage()));
         }
+
         return false;
     }
 
