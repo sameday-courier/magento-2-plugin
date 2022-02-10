@@ -30,7 +30,7 @@ interface ServiceInterface extends ExtensibleDataInterface
     const STATUS_ENABLED = 1;
     const STATUS_INTERVAL = 2;
 
-    const SERVICES_WITH_LOCKERS = ['LN', 'LS'];
+    const SERVICES_WITH_LOCKERS = ['LN'];
 
     /**
      * @return int
