@@ -30,7 +30,12 @@ define([
         window.LockerPlugin.init();
         let plugin = window.LockerPlugin.getInstance();
         plugin.open();
-        console.log('Incarca harta de lockere !');
+
+        plugin.subscribe((locker) => {
+           setCookie(locker.lockerId);
+
+           plugin.close();
+        });
     });
 
     return Component.extend({
