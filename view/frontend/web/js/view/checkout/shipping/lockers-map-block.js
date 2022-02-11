@@ -4,17 +4,13 @@ define([
     'uiComponent',
     'Magento_Checkout/js/model/quote',
     'Magento_Checkout/js/model/shipping-rate-registry',
+    'lockersPluginSdk',
 ], function ($, ko, Component, quote, rateReg) {
     'use strict';
 
     const setCookie = (lockerId) => {
         document.cookie = "samedaycourier_locker_id=" + lockerId + "; Path=/; Expires=Tue, 19 Jan 2038 03:14:07 UTC;";
     }
-
-    var e = document.createElement("script");
-    e.src = 'https://cdnsameday.azureedge.net/preprod-locker-plugin/lockerpluginsdk.js';
-    e.type="text/javascript";
-    document.getElementsByTagName("head")[0].appendChild(e);
 
     // Re-init Collect Rate after change the shipping method:
     $(document, 'select[name="region_id"]').on('change', function() {
