@@ -107,8 +107,8 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         /** @var SamedayPostAwbResponse|false $response */
         $response = $this->apiHelper->doRequest($apiRequest, 'postAwb');
         if ($response) {
-            if(!empty($response->getParcels()[0])) {
-                $parcels = $this->serializer->serialize($response->getParcels()[0]);
+            if (!empty($response->getParcels()[0])) {
+                $parcels = $this->serializer->serialize((array) $response->getParcels()[0]);
                 $awb = $this->awbFactory->create()
                     ->setOrderId($values['order_id'])
                     ->setAwbNumber($response->getAwbNumber())
@@ -116,9 +116,9 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
                     ->setParcels($parcels);
 
                 $this->awbRepository->save($awb);
-                $this->manager->addSuccessMessage("Sameday awb successfully created!");
-            }else{
-                $this->manager->addError(__("SamedayCourier communication error occured. Please try again later"));
+                $this->manager->addSuccessMessage(__("Sameday awb successfully created!"));
+            } else {
+                $this->manager->addErrorMessage(__("SamedayCourier communication error occurred. Please try again later"));
             }
         }
 
