@@ -111,7 +111,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
             $method->setCarrierTitle($this->getConfigData('title'));
 
             $method->setMethod($service->getSamedayId());
-            $method->setMethodTitle($isLockerService ? '*' . $service->getName() : $service->getName());
+            $method->setMethodTitle($service->getName());
 
             $shippingCost = $service->getPrice();
             if ($service->getIsPriceFree() && $request->getPackageValueWithDiscount() >= $service->getPriceFree()) {
