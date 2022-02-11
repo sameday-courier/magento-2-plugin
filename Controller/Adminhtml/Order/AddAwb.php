@@ -98,7 +98,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             null,
             [],
             null,
-            $values['client_reference'] ?? null,
+            null,
             null,
             null,
             $values['observation'],
