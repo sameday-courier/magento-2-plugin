@@ -109,19 +109,17 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         if ($response) {
             if(!empty($response->getParcels()[0])) {
                 $parcels = $this->serializer->serialize($response->getParcels()[0]);
-            }
-            if(empty($parcels)){
-                throw new NotAnOrderMatchedException();
-            }
-            
-            $awb = $this->awbFactory->create()
-                ->setOrderId($values['order_id'])
-                ->setAwbNumber($response->getAwbNumber())
-                ->setAwbCost($values['repayment'])
-                ->setParcels($parcels);
+                $awb = $this->awbFactory->create()
+                    ->setOrderId($values['order_id'])
+                    ->setAwbNumber($response->getAwbNumber())
+                    ->setAwbCost($values['repayment'])
+                    ->setParcels($parcels);
 
-            $this->awbRepository->save($awb);
-            $this->manager->addSuccessMessage("Sameday awb successfully created!");
+                $this->awbRepository->save($awb);
+                $this->manager->addSuccessMessage("Sameday awb successfully created!");
+            }else{
+                $this->manager->addError(__("SamedayCourier communication error occured. Please try again later"));
+            }
         }
 
         $resultRedirect = $this->resultRedirectFactory->create();

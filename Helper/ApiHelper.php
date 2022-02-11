@@ -129,7 +129,7 @@ class ApiHelper extends AbstractHelper
             "{$this->productMetadata->getName()} ({$this->productMetadata->getEdition()})",
             $this->productMetadata->getVersion(),
             'curl',
-            $this->persistenceDataHandler,
+            $this->persistenceDataHandler
         );
     }
 
