@@ -21,6 +21,7 @@ use SamedayCourier\Shipping\Exception\NotAnOrderMatchedException;
 use SamedayCourier\Shipping\Helper\ApiHelper;
 use Sameday\Responses\SamedayPostAwbResponse;
 use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\Serialize\SerializerInterface;
 
 class AddAwb extends AdminOrder implements HttpPostActionInterface
 {
@@ -33,6 +34,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
     private $awbFactory;
     private $apiHelper;
     private $manager;
+    private $serializer;
 
     public function __construct(
         Action\Context $context,
@@ -49,7 +51,8 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         AwbRepositoryInterface $awbRepository,
         AwbInterfaceFactory $awbFactory,
         ApiHelper $apiHelper,
-        ManagerInterface $manager
+        ManagerInterface $manager,
+        SerializerInterface $serializer
     )
     {
         parent::__construct($context, $coreRegistry, $fileFactory, $translateInline, $resultPageFactory, $resultJsonFactory, $resultLayoutFactory, $resultRawFactory, $orderManagement, $orderRepository, $logger);
@@ -58,6 +61,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         $this->awbFactory = $awbFactory;
         $this->apiHelper = $apiHelper;
         $this->manager = $manager;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -102,11 +106,11 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         );
         /** @var SamedayPostAwbResponse|false $response */
         $response = $this->apiHelper->doRequest($apiRequest, 'postAwb');
-
         if ($response) {
-            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-            $serializer = $objectManager->create(\Magento\Framework\Serialize\SerializerInterface::class);
-            $parcels = $serializer->serialize($response->getParcels());
+            if(!empty($response->getParcels()[0])) $parcels = $this->serializer->serialize($response->getParcels()[0]);
+            if(empty($parcels)){
+                throw new NotAnOrderMatchedException();
+            }
 
             $awb = $this->awbFactory->create()
                 ->setOrderId($values['order_id'])
