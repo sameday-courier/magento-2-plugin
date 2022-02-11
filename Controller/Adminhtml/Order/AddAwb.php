@@ -107,11 +107,13 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         /** @var SamedayPostAwbResponse|false $response */
         $response = $this->apiHelper->doRequest($apiRequest, 'postAwb');
         if ($response) {
-            if(!empty($response->getParcels()[0])) $parcels = $this->serializer->serialize($response->getParcels()[0]);
+            if(!empty($response->getParcels()[0])) {
+                $parcels = $this->serializer->serialize($response->getParcels()[0]);
+            }
             if(empty($parcels)){
                 throw new NotAnOrderMatchedException();
             }
-
+            
             $awb = $this->awbFactory->create()
                 ->setOrderId($values['order_id'])
                 ->setAwbNumber($response->getAwbNumber())
