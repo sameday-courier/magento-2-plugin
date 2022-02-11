@@ -21,6 +21,7 @@ use SamedayCourier\Shipping\Exception\NotAnOrderMatchedException;
 use SamedayCourier\Shipping\Helper\ApiHelper;
 use Sameday\Responses\SamedayPostAwbResponse;
 use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\Serialize\SerializerInterface;
 
 class AddAwb extends AdminOrder implements HttpPostActionInterface
 {
@@ -33,6 +34,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
     private $awbFactory;
     private $apiHelper;
     private $manager;
+    private $serializer;
 
     public function __construct(
         Action\Context $context,
@@ -49,7 +51,8 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         AwbRepositoryInterface $awbRepository,
         AwbInterfaceFactory $awbFactory,
         ApiHelper $apiHelper,
-        ManagerInterface $manager
+        ManagerInterface $manager,
+        SerializerInterface $serializer
     )
     {
         parent::__construct($context, $coreRegistry, $fileFactory, $translateInline, $resultPageFactory, $resultJsonFactory, $resultLayoutFactory, $resultRawFactory, $orderManagement, $orderRepository, $logger);
@@ -58,6 +61,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         $this->awbFactory = $awbFactory;
         $this->apiHelper = $apiHelper;
         $this->manager = $manager;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -94,7 +98,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             null,
             [],
             null,
-            $values['client_reference'] ?? null,
+            null,
             null,
             null,
             $values['observation'],
@@ -102,20 +106,27 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         );
         /** @var SamedayPostAwbResponse|false $response */
         $response = $this->apiHelper->doRequest($apiRequest, 'postAwb');
-
         if ($response) {
-            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-            $serializer = $objectManager->create(\Magento\Framework\Serialize\SerializerInterface::class);
-            $parcels = $serializer->serialize($response->getParcels());
+            if(!empty($response->getParcels()[0])) {
+                $parcelsResponse = $response->getParcels();
+                $parcelsArr = [];
+                foreach($parcelsResponse as $index => $parcelResponse){
+                    $parcelsArr[$index]['position'] = $parcelResponse->getPosition();
+                    $parcelsArr[$index]['awbNumber'] = $parcelResponse->getAwbNumber();
+                }
 
-            $awb = $this->awbFactory->create()
-                ->setOrderId($values['order_id'])
-                ->setAwbNumber($response->getAwbNumber())
-                ->setAwbCost($values['repayment'])
-                ->setParcels($parcels);
+                $parcels = $this->serializer->serialize($parcelsArr);
+                $awb = $this->awbFactory->create()
+                    ->setOrderId($values['order_id'])
+                    ->setAwbNumber($response->getAwbNumber())
+                    ->setAwbCost($values['repayment'])
+                    ->setParcels($parcels);
 
-            $this->awbRepository->save($awb);
-            $this->manager->addSuccessMessage("Sameday awb successfully created!");
+                $this->awbRepository->save($awb);
+                $this->manager->addSuccessMessage("Sameday awb successfully created!");
+            }else{
+                $this->manager->addErrorMessage(__("SamedayCourier communication error occured. Please try again later"));
+            }
         }
 
         $resultRedirect = $this->resultRedirectFactory->create();

@@ -98,7 +98,7 @@ class View
         $parcels = $serializer->unserialize($awb->getParcels());
 
         foreach ($parcels as $parcel) {
-            $apiRequest = new SamedayGetParcelStatusHistoryRequest($parcel->getAwbNumber());
+            $apiRequest = new SamedayGetParcelStatusHistoryRequest($parcel['awbNumber']);
             $parcelsHistory[] = $this->apiHelper->doRequest($apiRequest, 'getParcelStatusHistory');
         }
 

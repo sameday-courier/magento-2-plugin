@@ -72,7 +72,11 @@ class AddParcel extends AdminOrder implements HttpPostActionInterface
         /** @var SamedayPostParcelResponse $response */
         $response = $this->apiHelper->doRequest($apiRequest, 'postParcel');
         if ($response) {
-            $parcel = new ParcelObject(count($parcels) + 1, $response->getParcelAwbNumber());
+            $parcel = [
+                'position' => count($parcels) + 1,
+                'awbNumber' => $response->getParcelAwbNumber()
+            ];
+
             $parcels[] = $parcel;
 
             $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
