@@ -55,19 +55,6 @@ class AddParcel extends AdminOrder implements HttpPostActionInterface
         $serializer = $objectManager->create(\Magento\Framework\Serialize\SerializerInterface::class);
         $parcels = $serializer->unserialize($awb->getParcels());
 
-        $arrRequest = [
-            $awb->getAwbNumber(),
-            new ParcelDimensionsObject(
-                max(1, $values['parcel_weight']),
-                $values['parcel_width'] ?: null,
-                $values['parcel_length'] ?: null,
-                $values['parcel_height'] ?: null
-            ),
-            count($parcels) + 1,
-            null,
-            null,
-            true
-        ];
         $apiRequest = new SamedayPostParcelRequest(
             $awb->getAwbNumber(),
             new ParcelDimensionsObject(
