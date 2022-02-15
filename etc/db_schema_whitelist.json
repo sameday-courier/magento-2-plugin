@@ -1,0 +1,71 @@
+{
+    "samedaycourier_shipping_awb": {
+        "column": {
+            "id": true,
+            "order_id": true,
+            "awb_number": true,
+            "parcels": true,
+            "awb_cost": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "samedaycourier_shipping_locker": {
+        "column": {
+            "id": true,
+            "locker_id": true,
+            "name": true,
+            "county": true,
+            "city": true,
+            "address": true,
+            "postal code": true,
+            "lat": true,
+            "lng": true,
+            "is_testing": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "samedaycourier_shipping_pickuppoint": {
+        "column": {
+            "id": true,
+            "sameday_id": true,
+            "sameday_alias": true,
+            "is_testing": true,
+            "city": true,
+            "county": true,
+            "address": true,
+            "contact_persons": true,
+            "is_default": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "samedaycourier_shipping_service": {
+        "column": {
+            "id": true,
+            "sameday_id": true,
+            "sameday_name": true,
+            "is_testing": true,
+            "name": true,
+            "code": true,
+            "price": true,
+            "is_price_free": true,
+            "price_free": true,
+            "use_estimated_cost": true,
+            "locker_max_items": true,
+            "status": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "sales_order": {
+        "column": {
+            "samedaycourier_locker": true
+        }
+    }
+}
