@@ -1,0 +1,61 @@
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="samedaycourier_shipping_awb" resource="default" engine="innodb" comment="Samedaycourier AWB list">
+        <column xsi:type="int" identity="true" name="id" padding="11" unsigned="false" nullable="false" comment="AWB Local ID"/>
+        <column xsi:type="int" name="order_id" padding="11" unsigned="false" nullable="false" comment="Magento order ID"/>
+        <column xsi:type="varchar" name="awb_number" length="255" nullable="false" comment="AWB Number"/>
+        <column xsi:type="text" name="parcels" nullable="false" comment="AWB Parcels"/>
+        <column xsi:type="decimal" name="awb_cost" scale="2" nullable="false" comment="AWB Cost"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+    <table name="samedaycourier_shipping_locker" resource="default" engine="innodb" comment="Samedaycourier Pickuppoint list">
+        <column xsi:type="int" identity="true" name="id" padding="11" unsigned="false" nullable="false" comment="AWB Local ID for pickuppoint"/>
+        <column xsi:type="int" name="locker_id" padding="11" unsigned="false" nullable="false" comment="Sameday Locker ID"/>
+        <column xsi:type="varchar" name="name" length="255" nullable="false" comment="Name"/>
+        <column xsi:type="varchar" name="county" length="255" nullable="false" comment="County"/>
+        <column xsi:type="varchar" name="city" length="255" nullable="false" comment="City"/>
+        <column xsi:type="varchar" name="address" length="255" nullable="false" comment="Address"/>
+        <column xsi:type="varchar" name="postal code" length="255" nullable="false" comment="Postal code"/>
+        <column xsi:type="varchar" name="lat" length="255" nullable="false" comment="Latitude"/>
+        <column xsi:type="varchar" name="lng" length="255" nullable="false" comment="Longitude"/>
+        <column xsi:type="tinyint" name="is_testing" nullable="false" comment="Environment mode"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+    <table name="samedaycourier_shipping_pickuppoint" resource="default" engine="innodb" comment="Samedaycourier Pickuppoint list">
+        <column xsi:type="int" identity="true" name="id" padding="11" unsigned="false" nullable="false" comment="AWB Local ID for pickuppoint"/>
+        <column xsi:type="int" name="sameday_id" padding="11" unsigned="false" nullable="false" comment="Sameday ID"/>
+        <column xsi:type="varchar" name="sameday_alias" length="255" nullable="false" comment="Sameday Alias"/>
+        <column xsi:type="tinyint" name="is_testing" nullable="false" comment="Environment mode"/>
+        <column xsi:type="varchar" name="city" length="255" nullable="false" comment="City"/>
+        <column xsi:type="varchar" name="county" length="255" nullable="false" comment="County"/>
+        <column xsi:type="varchar" name="address" length="255" nullable="false" comment="Address"/>
+        <column xsi:type="text" name="contact_persons" comment="Contact persons"/>
+        <column xsi:type="tinyint" name="is_default" nullable="false" comment="Default pickuppoint"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+    <table name="samedaycourier_shipping_service" resource="default" engine="innodb" comment="Samedaycourier Pickuppoint list">
+        <column xsi:type="int" identity="true" name="id" padding="11" unsigned="false" nullable="false" comment="AWB Local ID for pickuppoint"/>
+        <column xsi:type="int" name="sameday_id" padding="11" unsigned="false" nullable="false" comment="Sameday ID"/>
+        <column xsi:type="varchar" name="sameday_name" length="255" nullable="false" comment="Sameday Name"/>
+        <column xsi:type="tinyint" name="is_testing" nullable="false" comment="Environment mode"/>
+        <column xsi:type="varchar" name="name" length="255" comment="Name"/>
+        <column xsi:type="varchar" name="code" length="255" comment="Code"/>
+        <column xsi:type="varchar" name="price" length="255" nullable="false" comment="Price"/>
+        <column xsi:type="tinyint" name="is_price_free" comment="Is price free"/>
+        <column xsi:type="decimal" name="price_free" scale="2" comment="Price free"/>
+        <column xsi:type="tinyint" name="use_estimated_cost" comment="Use estimated cost"/>
+        <column xsi:type="smallint" name="locker_max_items" padding="6" nullable="false" comment="Lockers max. items"/>
+        <column xsi:type="smallint" name="status" padding="6" nullable="false" comment="Status"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+    <table name="sales_order" resource="default" engine="innodb" comment="Samedaycourier Pickuppoint list">
+        <column xsi:type="int" name="samedaycourier_locker" padding="11" unsigned="false" comment="Sameday Locker ID"/>
+    </table>
+</schema>
