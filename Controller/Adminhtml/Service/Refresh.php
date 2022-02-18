@@ -11,6 +11,7 @@ use SamedayCourier\Shipping\Api\Data\ServiceInterface;
 use SamedayCourier\Shipping\Api\Data\ServiceInterfaceFactory;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
 use SamedayCourier\Shipping\Helper\ApiHelper;
+use Sameday\Exceptions\SamedaySDKException;
 
 class Refresh extends Action
 {
@@ -58,6 +59,9 @@ class Refresh extends Action
         $this->serviceRepository = $serviceRepository;
     }
 
+    /**
+     * @throws SamedaySDKException
+     */
     public function execute()
     {
         $sameday = new Sameday($this->apiHelper->initClient());

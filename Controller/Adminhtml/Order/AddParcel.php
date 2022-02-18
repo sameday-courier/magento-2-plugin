@@ -13,7 +13,6 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Controller\Adminhtml\Order as AdminOrder;
 use Psr\Log\LoggerInterface;
 use Sameday\Objects\ParcelDimensionsObject;
-use Sameday\Objects\PostAwb\ParcelObject;
 use Sameday\Requests\SamedayPostParcelRequest;
 use Sameday\Responses\SamedayPostParcelResponse;
 use SamedayCourier\Shipping\Api\Data\AwbInterface;

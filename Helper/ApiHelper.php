@@ -9,6 +9,7 @@ use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Psr\Log\LoggerInterface;
+use Sameday\Exceptions\SamedaySDKException;
 use Sameday\Requests\SamedayRequestInterface;
 use Sameday\Responses\SamedayResponseInterface;
 use Sameday\Sameday;
@@ -48,16 +49,18 @@ class ApiHelper extends AbstractHelper
 
     public const PRODUCTION_CODE = 0;
     public const DEMO_CODE = 1;
-    public const PRODUCTION_URL_PARAM = "API_URL_PROD";
-    public const DEMO_URL_PARAM = "API_URL_DEMO";
     public const ROMANIA_CODE = "ro";
     public const HUNGARY_CODE = "hu";
 
     public const SAMEDAY_ENVS = [
         self::ROMANIA_CODE => [
-            self::PRODUCTION_URL_PARAM => 'https://api.sameday.ro',
-            self::DEMO_URL_PARAM => 'https://sameday-api.demo.zitec.com',
+            self::PRODUCTION_CODE => 'https://api.sameday.ro',
+            self::DEMO_CODE => 'https://sameday-api.demo.zitec.com',
         ],
+        self::HUNGARY_CODE => [
+            self::PRODUCTION_CODE => 'https://api.sameday.hu',
+            self::DEMO_CODE => 'https://sameday-api-hu.demo.zitec.com',
+        ]
     ];
 
     /**
@@ -95,30 +98,21 @@ class ApiHelper extends AbstractHelper
      *
      * @return SamedayClient
      *
-     * @throws \Sameday\Exceptions\SamedaySDKException
+     * @throws SamedaySDKException
      */
-    public function initClient($username = null, $password = null, $testing = null, $url_env = null, $country = null): SamedayClient
+    public function initClient(string $username = null, string $password = null, $url_env = null): SamedayClient
     {
-        if($testing === null){
-            $testing = $this->scopeConfig->getValue('carriers/samedaycourier/testing');
-        }
-
-        if($country === null){
-            $country = $this->scopeConfig->getValue('carriers/samedaycourier/country') ?? self::ROMANIA_CODE;
-        }
+        $country = $this->getHostCountry();
+        $testing = (int) $this->scopeConfig->getValue('carriers/samedaycourier/testing');
 
         if ($username === null && $password === null) {
             $username = $this->scopeConfig->getValue('carriers/samedaycourier/username');
             $password = $this->encryptor->decrypt($this->scopeConfig->getValue('carriers/samedaycourier/password'));
         }
 
-        if ($testing === self::PRODUCTION_CODE) {
-            $url_env_param = self::PRODUCTION_URL_PARAM;
-        } else {
-            $url_env_param = self::DEMO_URL_PARAM;
-        }
+        $url_env_param = (int) ($testing === self::DEMO_CODE);
 
-        if($url_env === null) {
+        if ($url_env === null) {
             $url_env = self::SAMEDAY_ENVS[$country][$url_env_param];
         }
 
@@ -133,6 +127,11 @@ class ApiHelper extends AbstractHelper
         );
     }
 
+    public function getHostCountry()
+    {
+        return $this->scopeConfig->getValue('carriers/samedaycourier/country') ?? self::ROMANIA_CODE;
+    }
+
     /**
      * @param SamedayRequestInterface $request
      * @param string $type
@@ -143,79 +142,75 @@ class ApiHelper extends AbstractHelper
     public function doRequest(SamedayRequestInterface $request, string $type = '', $showFlashMessage = true)
     {
         try {
-            $sameday = new Sameday($this->initClient());
-            return $sameday->{$type}($request);
+            return (new Sameday($this->initClient()))->{$type}($request);
         } catch(\Exception $e) {
             if ($showFlashMessage) {
-                $this->messageManager->addError(__("SamedayCourier communication error occured. Please try again later"));
+                $this->messageManager->addErrorMessage(__("SamedayCourier communication error occurred. Please try again later"));
             }
-            $this->logger->error('Sameday communication error', ['error' => $e]);
+            $this->logger->error('Sameday communication error', ['error' => $e->getCode() . ' : ' . $e->getMessage()]);
         }
 
         return false;
     }
+
     /**
      * @param $form_values
-     * @param $testing_mode
-     * @param $country
      * @return bool
+     *
      * @throws SamedaySDKException
      */
-    public function loginClient($form_values = null, $testing_mode = null, $country = null)
+    public function loginClient($form_values): bool
     {
-        if($country === null) $country = self::ROMANIA_CODE;
-        if($testing_mode === null) $testing_mode = self::DEMO_CODE;
-        if(!in_array($testing_mode, [self::DEMO_CODE, self::PRODUCTION_CODE])) return false;
-        if($form_values !== null && !is_array($form_values)) return false;
-        if(!in_array($country, [self::ROMANIA_CODE, self::HUNGARY_CODE])) return false;
+        $isLogged = false;
+        $envModes = self::SAMEDAY_ENVS;
+        foreach ($envModes as $hostCountry => $envModesByHosts) {
+            if ($isLogged === true) {
+                break;
+            }
 
-        if($testing_mode === self::PRODUCTION_CODE){
-            $url = (!empty(self::SAMEDAY_ENVS)) ? self::SAMEDAY_ENVS[$country][self::PRODUCTION_URL_PARAM] : null;
-        }else{
-            $url =  (!empty(self::SAMEDAY_ENVS)) ? self::SAMEDAY_ENVS[$country][self::DEMO_URL_PARAM] : null;
+            foreach ($envModesByHosts as $key => $apiUrl) {
+                $sameday = $this->initClient(
+                    $form_values['username'],
+                    $form_values['password'],
+                    $apiUrl,
+                );
+
+                try {
+                    if ($sameday->login()) {
+                        $isTesting = (int) (self::DEMO_CODE === $key);
+                        $this->configWriter->save('carriers/samedaycourier/testing', $isTesting);
+                        $this->configWriter->save('carriers/samedaycourier/country', $hostCountry);
+                        $isLogged = true;
+
+                        break;
+                    }
+                } catch (\Exception $exception) {
+                    continue;
+                }
+            }
         }
 
-        $client = $this->initClient(
-            $form_values['username'],
-            $form_values['password'],
-            $testing_mode,
-            $url,
-            $country
-        );
-
-        try{
-            if($client->login()){
-                $this->configWriter->save('carriers/samedaycourier/testing', $testing_mode);
-                $this->configWriter->save('carriers/samedaycourier/country', $country);
-
-                return true;
-            }
-        } catch (Exception $exception) {
-            $this->addMessage('danger', $this->l($exception->getMessage()));
+        if ($isLogged) {
+            return true;
         }
 
         return false;
     }
 
     /**
-     * @param null $form_values
+     * @param null $username
+     * @param null $password
      * @return bool
+     *
      * @throws SamedaySDKException
      */
-    public function connectionLogin($username = null, $password = null)
+    public function connectionLogin($username = null, $password = null): bool
     {
-        $connected = false;
-
         $form_values = [
-            'username' => ($username !== null) ? $username : $this->scopeConfig->getValue('carriers/samedaycourier/username'),
-            'password' => ($password !== null) ? $password : $this->encryptor->decrypt($this->scopeConfig->getValue('carriers/samedaycourier/password'))
+            'username' => $username ?? $this->scopeConfig->getValue('carriers/samedaycourier/username'),
+            'password' => $password ?? $this->encryptor->decrypt($this->scopeConfig->getValue('carriers/samedaycourier/password')),
         ];
 
-        $arr_envs = (!empty(self::SAMEDAY_ENVS)) ? self::SAMEDAY_ENVS : null;
-        foreach($arr_envs as $index => $arr_env){
-            if($this->loginClient($form_values, self::PRODUCTION_CODE, $index) === true) $connected = true;
-            if($this->loginClient($form_values, self::DEMO_CODE, $index) === true) $connected = true;
-        }
-        return $connected;
+        return $this->loginClient($form_values);
     }
 }

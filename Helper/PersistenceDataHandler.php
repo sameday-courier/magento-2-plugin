@@ -25,7 +25,7 @@ class PersistenceDataHandler extends AbstractHelper implements SamedayPersistent
 
     public function get($key)
     {
-        $this->scopeConfig->getValue(self::PATH . $key);
+        return $this->scopeConfig->getValue(self::PATH . $key);
     }
 
     public function set($key, $value): void
