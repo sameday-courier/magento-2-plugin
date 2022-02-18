@@ -162,8 +162,8 @@ class Shipping extends AbstractCarrier implements CarrierInterface
                 $request->getData('firstname') . ' ' .  $request->getData('lastname'),
                 $request->getData('telephone'),
                 null,
-                null,
-                $request->getDestPostcode()
+                $request->getDestPostcode(),
+                null
             )),
             0,
             $request->getData('package_value_with_discount')
