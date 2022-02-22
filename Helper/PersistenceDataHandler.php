@@ -2,6 +2,7 @@
 
 namespace SamedayCourier\Shipping\Helper;
 
+use Magento\Framework\App\Cache\Manager;
 use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
@@ -16,11 +17,17 @@ class PersistenceDataHandler extends AbstractHelper implements SamedayPersistent
      */
     private $writer;
 
-    public function __construct(Context $context, WriterInterface $writer)
+    /**
+     * @var Manager
+     */
+    private $cacheManager;
+
+    public function __construct(Context $context, WriterInterface $writer, Manager $cacheManager)
     {
         parent::__construct($context);
 
         $this->writer = $writer;
+        $this->cacheManager = $cacheManager;
     }
 
     public function get($key)
@@ -31,5 +38,8 @@ class PersistenceDataHandler extends AbstractHelper implements SamedayPersistent
     public function set($key, $value): void
     {
         $this->writer->save(self::PATH . $key, $value);
+
+        // Flush Cache
+        $this->cacheManager->flush($this->cacheManager->getAvailableTypes());
     }
 }

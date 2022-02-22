@@ -70,6 +70,7 @@ class ApiHelper extends AbstractHelper
      * @param LoggerInterface $logger
      * @param ManagerInterface $messageManager
      * @param WriterInterface $configWriter
+     * @param PersistenceDataHandler $persistenceDataHandler
      */
     public function __construct(
         Context $context,
@@ -180,6 +181,10 @@ class ApiHelper extends AbstractHelper
                         $isTesting = (int) (self::DEMO_CODE === $key);
                         $this->configWriter->save('carriers/samedaycourier/testing', $isTesting);
                         $this->configWriter->save('carriers/samedaycourier/country', $hostCountry);
+                        // Remove old persisted SamedayToken
+                        $this->configWriter->delete('carriers/samedaycourier/token');
+                        $this->configWriter->delete('carriers/samedaycourier/expires_at');
+
                         $isLogged = true;
 
                         break;

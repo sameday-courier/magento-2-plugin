@@ -12,19 +12,32 @@ class StoredDataHelper extends AbstractHelper
     private $pickupPointRepository;
     private $serviceRepository;
 
+    /**
+     * @var ApiHelper
+     */
+    private $apiHelper;
+
     public function __construct(Context $context,
-                                PickupPointRepositoryInterface $pickupPointRepository,
-                                ServiceRepositoryInterface $serviceRepository)
+            PickupPointRepositoryInterface $pickupPointRepository,
+            ServiceRepositoryInterface $serviceRepository,
+            ApiHelper $apiHelper
+        )
     {
         parent::__construct($context);
 
         $this->pickupPointRepository = $pickupPointRepository;
         $this->serviceRepository = $serviceRepository;
+        $this->apiHelper = $apiHelper;
     }
 
     private function isTesting()
     {
         return (bool) $this->scopeConfig->getValue('carriers/samedaycourier/testing');
+    }
+
+    public function getHostCountry()
+    {
+        return $this->apiHelper->getHostCountry();
     }
 
     public function getPickupPoints()
