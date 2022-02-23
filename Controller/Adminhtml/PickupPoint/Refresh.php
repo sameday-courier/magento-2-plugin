@@ -5,6 +5,7 @@ namespace SamedayCourier\Shipping\Controller\Adminhtml\PickupPoint;
 use Magento\Backend\App\Action;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Sameday\Exceptions\SamedaySDKException;
 use Sameday\Requests\SamedayGetPickupPointsRequest;
 use Sameday\Sameday;
 use SamedayCourier\Shipping\Api\Data\PickupPointInterface;
@@ -58,6 +59,9 @@ class Refresh extends Action
         $this->pickupPointRepository = $pickupPointRepository;
     }
 
+    /**
+     * @throws SamedaySDKException
+     */
     public function execute()
     {
         $sameday = new Sameday($this->apiHelper->initClient());

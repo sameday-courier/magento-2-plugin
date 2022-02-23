@@ -16,7 +16,7 @@ $parcelsHistory = $block->getData('parcelsHistory');
         <button id="awb_history_modal"><?= __('Awb history') ?></button>
         <a href="<?= $block->escapeUrl($block->getRouteAwbAsPdf())?>"><?= __('Show as pdf') ?></a>
         <button id="remove_awb"><?= __('Remove Awb') ?></button>
-        <a target="_blank" href="https://eawb.sameday.ro/awb?awbOrParcelNumber=<?= $awb->getAwbNumber() ?>&tab=allAwbs"><?= __('Sameday eAwb') ?></a>
+        <a target="_blank" href="https://eawb.sameday.<?= $block->getHostCountry() ?>/awb?awbOrParcelNumber=<?= $awb->getAwbNumber() ?>&tab=allAwbs"><?= __('Sameday eAwb') ?></a>
     </div>
 </section>
 

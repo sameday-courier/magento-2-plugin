@@ -59,8 +59,8 @@ class Shipping extends AbstractCarrier implements CarrierInterface
      */
     public function checkAvailableShipCountries(DataObject $request)
     {
-        if ($request->getData('dest_country_id') === 'RO') {
-            // Ship only to Romania.
+        if (strtolower($request->getData('dest_country_id')) === $this->samedayApiHelper->getHostCountry()) {
+            // Ship only to Sameday API host country.
             return $this;
         }
 
@@ -139,7 +139,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $region = $objectManager->create(Region::class);
         $regionName = $region->loadByCode($request->getData('dest_region_code'), $request->getData('dest_country_id'))->getName();
-        $city = $request->getData('dest_city');
+        $city = $request->getDestCity();
         if ($region->getCode() === 'B') {
             $city = 'Sectorul 1';
         }
@@ -157,11 +157,13 @@ class Shipping extends AbstractCarrier implements CarrierInterface
             (new AwbPaymentType(AwbPaymentType::CLIENT)),
             (new AwbRecipientEntityObject(
                 $city,
-                $regionName,
+                $regionName ?? $request->getDestRegionCode(),
                 $request->getData('dest_street'),
                 $request->getData('firstname') . ' ' .  $request->getData('lastname'),
                 $request->getData('telephone'),
-                ''
+                null,
+                null,
+                $request->getDestPostcode(),
             )),
             0,
             $request->getData('package_value_with_discount')

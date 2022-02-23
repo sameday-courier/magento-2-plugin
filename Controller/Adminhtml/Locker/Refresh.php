@@ -5,6 +5,7 @@ namespace SamedayCourier\Shipping\Controller\Adminhtml\Locker;
 use Magento\Backend\App\Action;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Sameday\Exceptions\SamedaySDKException;
 use Sameday\Requests\SamedayGetLockersRequest;
 use Sameday\Sameday;
 use SamedayCourier\Shipping\Api\Data\LockerInterfaceFactory;
@@ -57,6 +58,9 @@ class Refresh extends Action
         $this->lockerRepository = $lockerRepository;
     }
 
+    /**
+     * @throws SamedaySDKException
+     */
     public function execute()
     {
         $sameday = new Sameday($this->apiHelper->initClient());

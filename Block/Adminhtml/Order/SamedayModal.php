@@ -6,6 +6,7 @@ use \Magento\Backend\Block\Template\Context;
 use \Magento\Backend\Block\Template;
 use Magento\Sales\Model\OrderFactory;
 use SamedayCourier\Shipping\Exception\NotAnOrderMatchedException;
+use SamedayCourier\Shipping\Helper\ApiHelper;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
 
 class SamedayModal extends Template
@@ -25,6 +26,11 @@ class SamedayModal extends Template
         parent::__construct($context, $data);
 
         $this->storedDataHelper = $storedDataHelper;
+    }
+
+    public function getHostCountry()
+    {
+        return $this->storedDataHelper->getHostCountry();
     }
 
     public function getPickupPoints()
