@@ -9,6 +9,7 @@ use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Controller\ResultFactory;
 use SamedayCourier\Shipping\Api\LockerRepositoryInterface;
+use SamedayCourier\Shipping\Model\Data\Locker;
 
 class Lockers extends Action
 {
@@ -17,6 +18,7 @@ class Lockers extends Action
 
     private $config;
 
+    /** @var ResultFactory $resultFactory */
     protected $resultFactory;
 
     public function __construct(Context $context, LockerRepositoryInterface $lockerRepository, ScopeConfigInterface $config, ResultFactory $resultFactory)
@@ -25,32 +27,37 @@ class Lockers extends Action
 
         $this->lockerRepository = $lockerRepository;
         $this->config = $config;
+
         $this->resultFactory = $resultFactory;
     }
 
     public function execute()
     {
+        $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
+        $isShowLockersMap = (bool) $this->config->getValue('carriers/samedaycourier/show_lockers_map');
+
+        // If the client choose to use Sameday Locker map, is not need the local list of lockers and return empty data
+        if ($isShowLockersMap === true) {
+            $resultJson->setData([]);
+
+            return $resultJson;
+        }
+
         $isTesting = (bool) $this->config->getValue('carriers/samedaycourier/testing');
-        $page = $this->resultFactory->create(ResultFactory::TYPE_PAGE);
-
         $lockers = $this->lockerRepository->getListByTesting($isTesting);
-
         $dump = [];
-        /** @var \SamedayCourier\Shipping\Model\Data\Locker $locker */
+        /** @var Locker $locker */
         foreach ($lockers->getItems() as $locker) {
-            $dump[$locker['city'] . ' (' . $locker['county'] . ')'][] = [
-                'id' => (int) $locker['locker_id'],
-                'name' => $locker['name'],
-                'city' => $locker['city'] . ' (' . $locker['county'] . ')',
-                'county' => $locker['county'],
-                'address' => $locker['address']
+            $dump[$locker['city']]['label'] = $locker['city'] . ' (' . $locker['county'] . ')';
+            $dump[$locker['city']]['lockers'][] = [
+                'id' => $locker['id'],
+                'label' => $locker['name'] . ' - ' . $locker['address'],
             ];
         }
         ksort($dump);
 
-        $block = $page->getLayout()->getBlock('samedaycourier_shipping.template.lockers');
-        $block->setData('cities', $dump);
+        $resultJson->setData(array_values($dump));
 
-        return $this->getResponse()->setBody($block->toHtml());
+        return $resultJson;
     }
 }

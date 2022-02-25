@@ -4,10 +4,31 @@ define([
     'uiComponent',
     'Magento_Checkout/js/model/quote',
     'Magento_Checkout/js/model/shipping-rate-registry',
+    'mage/url',
     'lockersPluginSdk',
-], function ($, ko, Component, quote, rateReg) {
+], function ($, ko, Component, quote, rateReg, url) {
     'use strict';
 
+    const easyBoxService = 'samedaycourier_15';
+
+    const showLockersMode = {
+        'as_map': 'map',
+        'as_drop_down': 'drop-down',
+    }
+
+    // Get current selected locker from cookie.
+    const getCookie = () => {
+        let lockerId = '';
+        document.cookie.split(';').forEach(function (value) {
+            if (value.indexOf('samedaycourier_locker_id') > 0) {
+                lockerId = value.split('=')[1];
+            }
+        });
+
+        return lockerId;
+    }
+
+    // Store lockerId into cookie.
     const setCookie = (lockerId) => {
         document.cookie = "samedaycourier_locker_id=" + lockerId + "; Path=/; Expires=Tue, 19 Jan 2038 03:14:07 UTC;";
     }
@@ -34,19 +55,65 @@ define([
         });
     });
 
+    // get the list of imported lockers:
+    const getLockerList = () => {
+        let lockers = null;
+
+        url.setBaseUrl(BASE_URL);
+        $.ajax({
+            showLoader: true,
+            url: url.build('samedaycourier_shipping/frontend/lockers'),
+            type: "GET",
+            async: false,
+        }).done(function (data) {
+            lockers = data;
+        });
+
+        return lockers;
+    }
+
+    let viewModel = {}
+
+    viewModel.lockersList = ko.observableArray(getLockerList());
+    viewModel.selectedLocker = ko.observable(getCookie()); // Put default value here
+
     return Component.extend({
         defaults: {
             template: 'SamedayCourier_Shipping/checkout/shipping/lockers-map-template-block'
         },
 
         initObservable: function () {
-            this.selectedMethod = ko.computed(() => {
+            this.showLockersAs = ko.computed(() => {
                 let method = quote.shippingMethod();
 
-                return method != null ? method.carrier_code + '_' + method.method_code : null;
+                if (null !== method) {
+                    let methodName = method.carrier_code + '_' + method.method_code;
+
+                    if (methodName === easyBoxService && method.extension_attributes.show_lockers_map === true) {
+
+                        return showLockersMode.as_map;
+                    } else if (methodName === easyBoxService && method.extension_attributes.show_lockers_map === false) {
+
+                        return showLockersMode.as_drop_down;
+                    }
+                }
+
+                return null;
             }, this);
+
+            this.lockersList = viewModel.lockersList;
+            this.selectedLocker = viewModel.selectedLocker;
+
+            this.onLockerChange = (object, event) => {
+                if (event.originalEvent) {
+
+                    setCookie(object.selectedLocker._latestValue);
+                }
+            };
 
             return this;
         },
+
+
     });
 });
