@@ -44,6 +44,11 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
 
+                <field id="show_lockers_map" translate="label" type="select" sortOrder="500" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Show Sameday easyBox map on checkout page</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
                 <field id="sort_order" translate="label" type="text" sortOrder="500" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Sort Order</label>
                 </field>

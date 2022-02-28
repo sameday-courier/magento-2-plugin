@@ -1,7 +1,20 @@
-<div id="my-carrier-custom-block-wrapper" data-bind="visible: selectedMethod() === 'samedaycourier_15'">
+<div id="locker-map-wrapper" data-bind="visible: showLockersAs() === 'map'">
     <div class="primary">
         <button type="button" class="button action primary checkout" id="showLockerMap">
             <span data-bind="i18n: 'Show lockers map'"></span>
         </button>
+    </div>
+</div>
+<div id="locker-drop-down-wrapper" data-bind="visible: showLockersAs() === 'drop-down'">
+    <div class="primary">
+        <p>
+            <div class="form-group">
+                <select class="fieldValue" data-bind="foreach: lockersList, value: selectedLocker, event: {change: onLockerChange}">
+                    <optgroup data-bind="attr: {label: label}, foreach: lockers">
+                        <option data-bind="text: label, value: id"></option>
+                    </optgroup>
+                </select>
+            </div>
+        </p>
     </div>
 </div>
