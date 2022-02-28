@@ -2,7 +2,7 @@
   "name": "sameday/magento-2-plugin",
   "description": "Magento 2 plugin for Sameday Courier shipping",
   "require": {
-    "sameday-courier/php-sdk": "^1.2.0",
+    "sameday-courier/php-sdk": "^2.0.1",
     "php": "~7.0.2||~7.1.0||~7.2.0||~7.3.0||~7.4.0"
   },
   "type": "magento2-module",
