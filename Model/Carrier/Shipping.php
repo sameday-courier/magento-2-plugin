@@ -6,15 +6,13 @@ use Magento\Directory\Model\Region;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\DataObject;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Shipping\Model\Carrier\AbstractCarrier;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
 use Magento\Shipping\Model\Rate\ResultFactory;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
 use Magento\Quote\Model\Quote\Address\RateResult\MethodFactory;
 use Magento\Quote\Model\Quote\Address\RateRequest;
-use Magento\Checkout\Model\Session\Proxy;
+use Magento\Checkout\Model\Session;
 use Psr\Log\LoggerInterface;
 use Sameday\Objects\ParcelDimensionsObject;
 use Sameday\Objects\PostAwb\Request\AwbRecipientEntityObject;
@@ -43,7 +41,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
     public function __construct(
         SamedayApiHelper $samedayApiHelper,
         StoredDataHelper $storedDataHelper,
-        Proxy $cartSession,
+        Session $cartSession,
         ScopeConfigInterface $scopeConfig,
         ErrorFactory $rateErrorFactory,
         LoggerInterface $logger,
