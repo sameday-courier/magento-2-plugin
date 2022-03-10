@@ -4,13 +4,17 @@ namespace SamedayCourier\Shipping\Model\Carrier;
 
 use Magento\Directory\Model\Region;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\DataObject;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Shipping\Model\Carrier\AbstractCarrier;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
 use Magento\Shipping\Model\Rate\ResultFactory;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
 use Magento\Quote\Model\Quote\Address\RateResult\MethodFactory;
 use Magento\Quote\Model\Quote\Address\RateRequest;
+use Magento\Checkout\Model\Session\Proxy;
 use Psr\Log\LoggerInterface;
 use Sameday\Objects\ParcelDimensionsObject;
 use Sameday\Objects\PostAwb\Request\AwbRecipientEntityObject;
@@ -21,6 +25,7 @@ use SamedayCourier\Shipping\Api\Data\ServiceInterface;
 use SamedayCourier\Shipping\Api\PickupPointRepositoryInterface;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
 use SamedayCourier\Shipping\Helper\ApiHelper as SamedayApiHelper;
+use SamedayCourier\Shipping\Helper\StoredDataHelper;
 
 class Shipping extends AbstractCarrier implements CarrierInterface
 {
@@ -29,12 +34,16 @@ class Shipping extends AbstractCarrier implements CarrierInterface
     protected $_rateResultFactory;
     protected $_rateMethodFactory;
     private $samedayApiHelper;
+    private $storedDataHelper;
+    private $cartSession;
     private $serviceRepository;
     private $pickupPointRepository;
     private $scopeConfig;
 
     public function __construct(
         SamedayApiHelper $samedayApiHelper,
+        StoredDataHelper $storedDataHelper,
+        Proxy $cartSession,
         ScopeConfigInterface $scopeConfig,
         ErrorFactory $rateErrorFactory,
         LoggerInterface $logger,
@@ -45,6 +54,8 @@ class Shipping extends AbstractCarrier implements CarrierInterface
         array $data = []
     ) {
         $this->samedayApiHelper = $samedayApiHelper;
+        $this->storedDataHelper = $storedDataHelper;
+        $this->cartSession = $cartSession;
         $this->_rateResultFactory = $rateResultFactory;
         $this->_rateMethodFactory = $rateMethodFactory;
         $this->serviceRepository = $serviceRepository;
@@ -138,7 +149,21 @@ class Shipping extends AbstractCarrier implements CarrierInterface
         $defaultPickupPoint = $this->pickupPointRepository->getDefaultPickupPoint();
         $packageWeight = max(1, $request->getData('package_weight'));
 
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $objectManager = ObjectManager::getInstance();
+
+        $cart = $this->cartSession;
+        $paymentMethodCode = null;
+        if (null !== $cart) {
+            try {
+                $payment = $cart->getQuote()->getPayment();
+                $paymentMethodCode = $payment->getMethod();
+            } catch (\Exception $exception) {}
+        }
+        $repayment = 0;
+        if (null === $paymentMethodCode || $this->storedDataHelper::CASH_ON_DELIVERY_CODE === $paymentMethodCode) {
+            $repayment = $request->getData('package_value_with_discount');
+        }
+
         $region = $objectManager->create(Region::class);
         $regionName = $region->loadByCode($request->getData('dest_region_code'), $request->getData('dest_country_id'))->getName();
         $city = $request->getDestCity();
@@ -168,7 +193,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
                 $request->getDestPostcode(),
             )),
             0,
-            $request->getData('package_value_with_discount')
+            $repayment
         );
 
         return $this->samedayApiHelper->doRequest($apiRequest, 'postAwbEstimation', false);

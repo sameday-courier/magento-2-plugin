@@ -9,6 +9,8 @@ use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
 
 class StoredDataHelper extends AbstractHelper
 {
+    public const CASH_ON_DELIVERY_CODE = 'cashondelivery';
+
     private $pickupPointRepository;
     private $serviceRepository;
 

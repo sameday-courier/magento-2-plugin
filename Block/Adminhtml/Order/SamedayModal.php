@@ -4,9 +4,10 @@ namespace SamedayCourier\Shipping\Block\Adminhtml\Order;
 
 use \Magento\Backend\Block\Template\Context;
 use \Magento\Backend\Block\Template;
-use Magento\Sales\Model\OrderFactory;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Sales\Model\Order\Interceptor as Order;
+use Magento\Sales\Model\Order\Payment\Interceptor as Payment;
 use SamedayCourier\Shipping\Exception\NotAnOrderMatchedException;
-use SamedayCourier\Shipping\Helper\ApiHelper;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
 
 class SamedayModal extends Template
@@ -43,18 +44,33 @@ class SamedayModal extends Template
         return $this->storedDataHelper->getServices()->getItems();
     }
 
-    public function getOrderDetails()
+    /**
+     * @throws NotAnOrderMatchedException
+     * @throws LocalizedException
+     */
+    public function getOrderDetails(): array
     {
         if (!$this->hasData('order')) {
             throw new NotAnOrderMatchedException();
         }
 
+        /** @var Order $order */
         $order = $this->getOrder();
+
+        $repayment = 0;
+        $payment = $order->getPayment();
+        if ($payment instanceof Payment) {
+            $paymentCode = $payment->getMethodInstance()->getCode();
+
+            if (null === $paymentCode || $this->storedDataHelper::CASH_ON_DELIVERY_CODE === $paymentCode) {
+                $repayment = $order->getGrandTotal();
+            }
+        }
 
         return [
             'client_reference' => $order->getId(),
-            'weight' => $order->getWight(),
-            'repayment' => $order->getGrandTotal(),
+            'weight' => $order->getWeight(),
+            'repayment' => $repayment,
             'serviceId' => explode('_', $order->getShippingMethod(), 2)[1],
         ];
     }
