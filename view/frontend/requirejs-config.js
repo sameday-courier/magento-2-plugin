@@ -5,6 +5,6 @@
 
 var config = {
     "paths": {
-        "lockersPluginSdk": "https://cdnsameday.azureedge.net/preprod-locker-plugin/lockerpluginsdk",
+        "lockersPluginSdk": "https://cdn.sameday.ro/locker-plugin/lockerpluginsdk",
     }
 };

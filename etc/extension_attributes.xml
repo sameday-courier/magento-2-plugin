@@ -3,4 +3,7 @@
     <extension_attributes for="Magento\Quote\Api\Data\ShippingMethodInterface">
         <attribute code="showLockersMap" type="boolean"/>
     </extension_attributes>
+    <extension_attributes for="Magento\Quote\Api\Data\ShippingMethodInterface">
+        <attribute code="countryCode" type="string"/>
+    </extension_attributes>
 </config>
