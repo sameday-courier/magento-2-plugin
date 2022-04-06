@@ -44,7 +44,15 @@ define([
     });
 
     $(document).on('click', '#showLockerMap', () => {
-        window.LockerPlugin.init();
+
+        const lockerMapElement = $('#showLockerMap');
+        const lockerPluginInit = {
+            clientId: 'b8cb2ee3-41b9-4c3d-aafe-1527b453d65e',
+            countryCode: lockerMapElement.data('country_code').toUpperCase(),
+            langCode: lockerMapElement.data('country_code'),
+        }
+
+        window.LockerPlugin.init(lockerPluginInit);
         let plugin = window.LockerPlugin.getInstance();
         plugin.open();
 
@@ -99,6 +107,15 @@ define([
                 }
 
                 return null;
+            }, this);
+
+            this.getCountryCode = ko.computed(() => {
+                let method = quote.shippingMethod();
+                if (null !== method) {
+                    return method.extension_attributes.country_code;
+                }
+
+                return 'ro'; // default value always will be ro
             }, this);
 
             this.lockersList = viewModel.lockersList;

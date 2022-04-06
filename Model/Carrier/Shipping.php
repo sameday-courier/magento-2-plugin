@@ -122,6 +122,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
             $method->setMethod($service->getSamedayId());
             $method->setMethodTitle($service->getName());
 
+            $method->setCountryCode($this->scopeConfig->getValue('carriers/samedaycourier/country'));
             $method->setShowLockersMap((bool) $this->scopeConfig->getValue('carriers/samedaycourier/show_lockers_map'));
 
             $shippingCost = $service->getPrice();

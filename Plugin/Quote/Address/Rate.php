@@ -19,6 +19,10 @@ class Rate
             $result->setShowLockersMap(
                 $rate->getShowLockersMap()
             );
+
+            $result->setCountryCode(
+                $rate->getCountryCode()
+            );
         }
 
         return $result;
