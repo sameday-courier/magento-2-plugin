@@ -11,26 +11,37 @@ define([
 
     const easyBoxService = 'samedaycourier_15';
 
+    const samedayCourierLocker = 'samedaycourier_locker';
+
     const showLockersMode = {
         'as_map': 'map',
         'as_drop_down': 'drop-down',
     }
 
+    // Create custom isset() Helper
+    const isset = (accessor) => {
+        try {
+            return accessor() !== undefined && accessor() !== null
+        } catch (e) {
+            return false;
+        }
+    }
+
     // Get current selected locker from cookie.
-    const getCookie = () => {
-        let lockerId = '';
+    const getCookie = (key) => {
+        let cookie = '';
         document.cookie.split(';').forEach(function (value) {
-            if (value.indexOf('samedaycourier_locker_id') > 0) {
-                lockerId = value.split('=')[1];
+            if (value.split('=')[0].trim() === key) {
+                return cookie = value.split('=')[1];
             }
         });
 
-        return lockerId;
+        return cookie;
     }
 
     // Store lockerId into cookie.
-    const setCookie = (lockerId) => {
-        document.cookie = "samedaycourier_locker_id=" + lockerId + "; Path=/; Expires=Tue, 19 Jan 2038 03:14:07 UTC;";
+    const setCookie = (key, value) => {
+        document.cookie = `${key}=` + value + "; Path=/; Expires=Tue, 19 Jan 2038 03:14:07 UTC;";
     }
 
     // Re-init Collect Rate after change the shipping method:
@@ -57,9 +68,10 @@ define([
         plugin.open();
 
         plugin.subscribe((locker) => {
-           setCookie(locker.lockerId);
+            setCookie(samedayCourierLocker, JSON.stringify(locker));
+            $('#lockerDetails').html(showLockerDetails());
 
-           plugin.close();
+            plugin.close();
         });
     });
 
@@ -80,10 +92,21 @@ define([
         return lockers;
     }
 
+    // if already exists an locker selected get details about it from cookie:
+    const showLockerDetails = () => {
+        let locker = JSON.parse(getCookie(samedayCourierLocker));
+        if ('' !== locker) {
+            return `${locker.name}  ${locker.address} ${locker.city} (${locker.county})`;
+        }
+
+        return null;
+    }
+
     let viewModel = {}
 
     viewModel.lockersList = ko.observableArray(getLockerList());
-    viewModel.selectedLocker = ko.observable(getCookie()); // Put default value here
+    viewModel.selectedLocker = ko.observable(getCookie(samedayCourierLocker)); // Put default value here
+    viewModel.lockerDetails = ko.observable(showLockerDetails());
 
     return Component.extend({
         defaults: {
@@ -111,20 +134,21 @@ define([
 
             this.getCountryCode = ko.computed(() => {
                 let method = quote.shippingMethod();
-                if (null !== method) {
+                if (null !== method && isset(() => method.extension_attributes.country_code)) {
                     return method.extension_attributes.country_code;
                 }
 
-                return 'ro'; // default value always will be ro
+                return null;
             }, this);
 
             this.lockersList = viewModel.lockersList;
             this.selectedLocker = viewModel.selectedLocker;
+            this.lockerDetails = viewModel.lockerDetails;
 
             this.onLockerChange = (object, event) => {
                 if (event.originalEvent) {
 
-                    setCookie(object.selectedLocker._latestValue);
+                    setCookie(samedayCourierLocker, JSON.stringify(object.selectedLocker._latestValue));
                 }
             };
 
