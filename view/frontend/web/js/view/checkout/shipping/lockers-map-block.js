@@ -94,8 +94,9 @@ define([
 
     // if already exists an locker selected get details about it from cookie:
     const showLockerDetails = () => {
-        let locker = JSON.parse(getCookie(samedayCourierLocker));
-        if ('' !== locker) {
+        if ('' !== getCookie(samedayCourierLocker)) {
+            let locker = JSON.parse(getCookie(samedayCourierLocker));
+
             return `${locker.name}  ${locker.address} ${locker.city} (${locker.county})`;
         }
 
