@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace SamedayCourier\Shipping\Controller\Adminhtml\Order;
 
 use Magento\Backend\App\Action;
+use Magento\Directory\Model\Region;
 use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Sales\Api\OrderManagementInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Controller\Adminhtml\Order as AdminOrder;
@@ -77,6 +79,11 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         }
 
         $packageWeight = $values['package_weight'] >= 1 ? $values['package_weight'] : 1;
+
+        $objectManager = ObjectManager::getInstance();
+        $region = $objectManager->create(Region::class);
+        $regionName = $region->loadByCode($order->getBillingAddress()->getRegionCode(), $order->getBillingAddress()->getCountryId())->getName();
+
         $apiRequest = new SamedayPostAwbRequest(
             $values['pickup_point'],
             null,
@@ -85,8 +92,8 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             $values['service'],
             (new AwbPaymentType(AwbPaymentType::CLIENT)),
             (new AwbRecipientEntityObject(
-                1,
-                1,
+                $order->getBillingAddress()->getCity(),
+                $regionName,
                 $order->getBillingAddress()->getStreet()[0],
                 $order->getBillingAddress()->getFirstname() . ' ' . $order->getBillingAddress()->getLastname(),
                 $order->getBillingAddress()->getTelephone(),
