@@ -1,7 +1,7 @@
 <schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
     <table name="samedaycourier_shipping_awb" resource="default" engine="innodb" comment="Samedaycourier AWB list">
         <column xsi:type="int" identity="true" name="id" padding="11" unsigned="false" nullable="false" comment="AWB Local ID"/>
-        <column xsi:type="int" name="order_id" padding="11" unsigned="false" nullable="false" comment="Magento order ID"/>
+        <column xsi:type="int" name="order_id" padding="11" unsigned="true" nullable="false" comment="Magento order ID"/>
         <column xsi:type="varchar" name="awb_number" length="255" nullable="false" comment="AWB Number"/>
         <column xsi:type="text" name="parcels" nullable="false" comment="AWB Parcels"/>
         <column xsi:type="decimal" name="awb_cost" scale="2" nullable="false" comment="AWB Cost"/>
