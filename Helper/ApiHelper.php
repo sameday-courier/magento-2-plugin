@@ -95,8 +95,7 @@ class ApiHelper extends AbstractHelper
     /**
      * @param string|null $username
      * @param string|null $password
-     * @param bool|null $testing
-     *
+     * @param null $url_env
      * @return SamedayClient
      *
      * @throws SamedaySDKException

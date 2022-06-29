@@ -30,9 +30,13 @@ class CheckoutValidateLockers implements ObserverInterface
     public function execute(EventObserver $observer)
     {
         $order = $observer->getOrder();
-        $samedayLocker = $this->json->unserialize($this->request->getCookie('samedaycourier_locker', null));
-        if (null !== $samedayLocker && $order->getData()['shipping_method'] === 'samedaycourier_15') {
-            $order->setData('samedaycourier_locker', $samedayLocker['lockerId']);
+        $cookie = $this->request->getCookie('samedaycourier_locker', null);
+
+        if (null !== $cookie) {
+            $samedayLocker = $this->json->unserialize($cookie);
+            if (isset($samedayLocker['lockerId']) && $order->getData()['shipping_method'] === 'samedaycourier_15') {
+                $order->setData('samedaycourier_locker', $samedayLocker['lockerId']);
+            }
         }
     }
 }

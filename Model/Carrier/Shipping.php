@@ -189,7 +189,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
                 $request->getData('telephone'),
                 null,
                 null,
-                $request->getDestPostcode(),
+                $request->getDestPostcode()
             )),
             0,
             $repayment
