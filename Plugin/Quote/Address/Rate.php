@@ -23,6 +23,10 @@ class Rate
             $result->setCountryCode(
                 $rate->getCountryCode()
             );
+
+            $result->setApiUsername(
+                $rate->getApiUsername()
+            );
         }
 
         return $result;
