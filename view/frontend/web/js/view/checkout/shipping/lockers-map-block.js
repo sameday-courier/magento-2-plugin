@@ -61,6 +61,7 @@ define([
             clientId: 'b8cb2ee3-41b9-4c3d-aafe-1527b453d65e',
             countryCode: lockerMapElement.data('country_code').toUpperCase(),
             langCode: lockerMapElement.data('country_code'),
+            apiUsername: lockerMapElement.data('api_username'),
         }
 
         window.LockerPlugin.init(lockerPluginInit);
@@ -137,6 +138,15 @@ define([
                 let method = quote.shippingMethod();
                 if (null !== method && isset(() => method.extension_attributes.country_code)) {
                     return method.extension_attributes.country_code;
+                }
+
+                return null;
+            }, this);
+
+            this.getApiUsername = ko.computed(() => {
+                let method = quote.shippingMethod();
+                if (null !== method && isset(() => method.extension_attributes.api_username)) {
+                    return method.extension_attributes.api_username;
                 }
 
                 return null;

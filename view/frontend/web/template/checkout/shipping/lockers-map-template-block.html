@@ -1,6 +1,8 @@
 <div id="locker-map-wrapper" data-bind="visible: showLockersAs() === 'map'">
     <div class="primary">
-        <button type="button" class="button action primary checkout" id="showLockerMap" data-bind="attr: {'data-country_code': getCountryCode()}">
+        <button type="button" class="button action primary checkout" id="showLockerMap"
+                data-bind="attr: {'data-country_code': getCountryCode(), 'data-api_username': getApiUsername()}"
+        >
             <span data-bind="i18n: 'Show lockers map'"></span>
         </button>
     </div>

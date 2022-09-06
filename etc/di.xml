@@ -38,6 +38,14 @@
         <plugin name="add_countryCode_to_method_rate" type="SamedayCourier\Shipping\Plugin\Quote\Address\Rate" disabled="false" sortOrder="3"/>
     </type>
 
+    <type name="Magento\Quote\Model\Cart\ShippingMethodConverter">
+        <plugin name="add_apiUsername_to_method" type="SamedayCourier\Shipping\Plugin\Carrier\ApiUsername" disabled="false" sortOrder="30"/>
+    </type>
+
+    <type name="Magento\Quote\Model\Quote\Address\Rate">
+        <plugin name="add_apiUsername_to_method_rate" type="SamedayCourier\Shipping\Plugin\Quote\Address\Rate" disabled="false" sortOrder="3"/>
+    </type>
+
     <preference for="SamedayCourier\Shipping\Api\Data\PickupPointInterface" type="SamedayCourier\Shipping\Model\Data\PickupPoint" />
     <preference for="SamedayCourier\Shipping\Api\PickupPointRepositoryInterface" type="SamedayCourier\Shipping\Model\ResourceModel\PickupPointRepository" />
     <preference for="SamedayCourier\Shipping\Api\Data\PickupPointSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
