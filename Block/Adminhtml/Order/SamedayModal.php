@@ -64,16 +64,24 @@ class SamedayModal extends Template
         /** @var Order $order */
         $order = $this->getOrder();
 
-        $samedaycourierLocker = $order->getData('samedaycourier_locker');
+        $samedaycourierLocker = trim($order->getData('samedaycourier_locker'));
         $samedaycourierLockerDetails = null;
-        if (null !== $samedaycourierLocker) {
+        $lockerId = null;
+        if ('' !== $samedaycourierLocker) {
             $samedaycourierLocker = $this->json->unserialize($samedaycourierLocker);
 
-            $locker = $this->storedDataHelper->getLocker((int) $samedaycourierLocker);
-            if (null !== $locker) {
-                $samedaycourierLockerDetails = sprintf('%s %s', $locker->getName(), $locker->getAddress());
+            if (is_string($samedaycourierLocker)) {
+                $locker = $this->storedDataHelper->getLocker((int) $samedaycourierLocker);
+                if (null !== $locker) {
+                    $lockerId = $locker->getLockerId();
+                    $samedaycourierLockerDetails = sprintf('%s %s', $locker->getName(), $locker->getAddress());
+                }
             }
 
+            if (is_array($samedaycourierLocker)) {
+                $lockerId = $samedaycourierLocker['lockerId'];
+                $samedaycourierLockerDetails = sprintf('%s %s', $samedaycourierLocker['name'], $samedaycourierLocker['address']);
+            }
         }
 
         $repayment = 0;
@@ -96,6 +104,7 @@ class SamedayModal extends Template
             'weight' => $order->getWeight(),
             'repayment' => $repayment,
             'serviceId' => explode('_', $order->getShippingMethod(), 2)[1],
+            'samedaycourier_locker_id' => $lockerId,
             'samedaycourier_locker' => $samedaycourierLockerDetails
         ];
     }

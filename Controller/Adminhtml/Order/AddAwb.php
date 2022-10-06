@@ -80,6 +80,8 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
 
         $packageWeight = $values['package_weight'] >= 1 ? $values['package_weight'] : 1;
 
+        $lockerId = $values['lockerId'] ?? null;
+
         $objectManager = ObjectManager::getInstance();
         $region = $objectManager->create(Region::class);
         $regionName = $region->loadByCode($order->getBillingAddress()->getRegionCode(), $order->getBillingAddress()->getCountryId())->getName();
@@ -109,8 +111,9 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             null,
             null,
             $values['observation'],
-            $order->getData('samedaycourier_locker')
+            $lockerId
         );
+
         /** @var SamedayPostAwbResponse|false $response */
         $response = $this->apiHelper->doRequest($apiRequest, 'postAwb');
         if ($response) {

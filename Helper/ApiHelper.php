@@ -2,6 +2,7 @@
 
 namespace SamedayCourier\Shipping\Helper;
 
+use Exception;
 use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
@@ -9,6 +10,7 @@ use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Psr\Log\LoggerInterface;
+use Sameday\Exceptions\SamedayBadRequestException;
 use Sameday\Exceptions\SamedaySDKException;
 use Sameday\Requests\SamedayRequestInterface;
 use Sameday\Responses\SamedayResponseInterface;
@@ -143,10 +145,26 @@ class ApiHelper extends AbstractHelper
     {
         try {
             return (new Sameday($this->initClient()))->{$type}($request);
-        } catch(\Exception $e) {
-            if ($showFlashMessage) {
-                $this->messageManager->addErrorMessage(__("SamedayCourier communication error occurred. Please try again later"));
+        } catch (SamedayBadRequestException $e) {
+            $errors = $e->getErrors();
+
+            $allErrors = array();
+            foreach ($errors as $error) {
+                foreach ($error['errors'] as $message) {
+                    $allErrors[] = implode('.', $error['key']) . ': ' . $message;
+                }
             }
+
+            $message = implode(' ', $allErrors);
+
+            if ($showFlashMessage) {
+                $this->messageManager->addErrorMessage(__($message));
+            }
+        } catch(Exception $e) {
+            if ($showFlashMessage) {
+                $this->messageManager->addErrorMessage(__($e->getMessage()));
+            }
+
             $this->logger->error('Sameday communication error', ['error' => $e->getCode() . ' : ' . $e->getMessage()]);
         }
 
@@ -188,7 +206,7 @@ class ApiHelper extends AbstractHelper
 
                         break;
                     }
-                } catch (\Exception $exception) {
+                } catch (Exception $exception) {
                     continue;
                 }
             }

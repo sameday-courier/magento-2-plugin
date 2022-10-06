@@ -134,6 +134,7 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                         <?= __('Locker details') ?>
                     </div>
                     <div class="col-75">
+                        <input type="hidden" name="lockerId" id="lockerId" value="<?php print $block->getOrderDetails()['samedaycourier_locker_id']; ?>">
                         <textarea disabled="disabled" style="height:50px"><?php print $block->getOrderDetails()['samedaycourier_locker']; ?></textarea>
                     </div>
                 </div>
