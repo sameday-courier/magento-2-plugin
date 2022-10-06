@@ -55,7 +55,7 @@
             <column name="id"/>
         </constraint>
     </table>
-    <table name="sales_order" resource="default" engine="innodb" comment="Samedaycourier Pickuppoint list">
-        <column xsi:type="int" name="samedaycourier_locker" padding="11" unsigned="false" comment="Sameday Locker ID"/>
+    <table name="sales_order" resource="default" engine="innodb" comment="Samedaycourier Locker">
+        <column xsi:type="text" name="samedaycourier_locker" comment="Sameday Locker Object String"/>
     </table>
 </schema>

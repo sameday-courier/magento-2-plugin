@@ -76,13 +76,28 @@ class LockerRepository implements LockerRepositoryInterface
     /**
      * @inheritdoc
      */
-    public function getByLockerId($id)
+    public function getLockerBySamedayId($id): LockerInterface
     {
         $lockerModel = $this->lockerFactory->create();
         $this->lockerResourceModel->load($lockerModel, $id, LockerInterface::LOCKER_ID);
 
         if (!$lockerModel->getId()) {
             throw NoSuchEntityException::singleField(LockerInterface::LOCKER_ID, $id);
+        }
+
+        return $lockerModel->getDataModel();
+    }
+
+    /**
+     * @throws NoSuchEntityException
+     */
+    public function getLockerById($id): LockerInterface
+    {
+        $lockerModel = $this->lockerFactory->create();
+        $this->lockerResourceModel->load($lockerModel, $id, LockerInterface::ID);
+
+        if (!$lockerModel->getId()) {
+            throw NoSuchEntityException::singleField(LockerInterface::ID, $id);
         }
 
         return $lockerModel->getDataModel();

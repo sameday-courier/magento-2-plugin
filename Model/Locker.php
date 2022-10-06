@@ -49,6 +49,8 @@ class Locker extends AbstractExtensibleModel
     {
         $lockerDataObject = $this->lockerDataFactory->create()
             ->setId($this->getData('id'))
+            ->setName($this->getData('name'))
+            ->setAddress($this->getData('address'))
             ;
 
         return $lockerDataObject;

@@ -78,7 +78,7 @@ class Refresh extends Action
         foreach ($lockers->getLockers() as $lockerObject) {
             $locker = null;
             try {
-                $locker = $this->lockerRepository->getByLockerId($lockerObject->getId());
+                $locker = $this->lockerRepository->getLockerBySamedayId($lockerObject->getId());
             } catch (NoSuchEntityException $exception) {
                 $locker = $this->lockerFactory->create();
             }

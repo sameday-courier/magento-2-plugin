@@ -1,7 +1,10 @@
 <?php
 /**
- * @var $block \SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal
+ * @var $block SamedayModal
  */
+
+use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
+
 ?>
 <section class="admin__page-section">
     <div class="admin__page-section-title">
@@ -124,6 +127,18 @@
                     </select>
                 </div>
             </div>
+
+            <?php if (null !== $block->getOrderDetails()['samedaycourier_locker']) { ?>
+                <div class="row">
+                    <div class="col-25">
+                        <?= __('Locker details') ?>
+                    </div>
+                    <div class="col-75">
+                        <textarea disabled="disabled" style="height:50px"><?php print $block->getOrderDetails()['samedaycourier_locker']; ?></textarea>
+                    </div>
+                </div>
+            <?php } ?>
+
             <div class="row">
                 <div class="col-25">
                     <label for="subject">

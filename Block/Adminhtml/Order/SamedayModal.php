@@ -2,31 +2,39 @@
 
 namespace SamedayCourier\Shipping\Block\Adminhtml\Order;
 
+use Exception;
+use Laminas\Diactoros\Response\JsonResponse;
 use \Magento\Backend\Block\Template\Context;
 use \Magento\Backend\Block\Template;
-use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Sales\Model\Order\Interceptor as Order;
 use Magento\Sales\Model\Order\Payment\Interceptor as Payment;
 use SamedayCourier\Shipping\Exception\NotAnOrderMatchedException;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
+use SamedayCourier\Shipping\Model\ResourceModel\LockerRepository;
 
 class SamedayModal extends Template
 {
     private $storedDataHelper;
 
+    private $json;
+
     /**
      * @param Context $context
      * @param StoredDataHelper $storedDataHelper
+     * @param Json $json
      * @param array $data
      */
     public function __construct(
         Context $context,
         StoredDataHelper $storedDataHelper,
+        Json $json,
         array $data = []
     ) {
         parent::__construct($context, $data);
 
         $this->storedDataHelper = $storedDataHelper;
+        $this->json = $json;
     }
 
     public function getHostCountry()
@@ -45,22 +53,38 @@ class SamedayModal extends Template
     }
 
     /**
-     * @throws NotAnOrderMatchedException
-     * @throws LocalizedException
+     * @return array|null
      */
-    public function getOrderDetails(): array
+    public function getOrderDetails(): ?array
     {
         if (!$this->hasData('order')) {
-            throw new NotAnOrderMatchedException();
+            return null;
         }
 
         /** @var Order $order */
         $order = $this->getOrder();
 
+        $samedaycourierLocker = $order->getData('samedaycourier_locker');
+        $samedaycourierLockerDetails = null;
+        if (null !== $samedaycourierLocker) {
+            $samedaycourierLocker = $this->json->unserialize($samedaycourierLocker);
+
+            $locker = $this->storedDataHelper->getLocker((int) $samedaycourierLocker);
+            if (null !== $locker) {
+                $samedaycourierLockerDetails = sprintf('%s %s', $locker->getName(), $locker->getAddress());
+            }
+
+        }
+
         $repayment = 0;
         $payment = $order->getPayment();
         if ($payment instanceof Payment) {
-            $paymentCode = $payment->getMethodInstance()->getCode();
+            $paymentCode = null;
+            try {
+                if (null !== $payment->getMethodInstance()) {
+                    $paymentCode = $payment->getMethodInstance()->getCode();
+                }
+            } catch (Exception $exception) { return null;}
 
             if (null === $paymentCode || $this->storedDataHelper::CASH_ON_DELIVERY_CODE === $paymentCode) {
                 $repayment = $order->getGrandTotal();
@@ -72,6 +96,7 @@ class SamedayModal extends Template
             'weight' => $order->getWeight(),
             'repayment' => $repayment,
             'serviceId' => explode('_', $order->getShippingMethod(), 2)[1],
+            'samedaycourier_locker' => $samedaycourierLockerDetails
         ];
     }
 
