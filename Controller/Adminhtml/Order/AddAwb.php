@@ -8,12 +8,14 @@ use Magento\Backend\App\Action;
 use Magento\Directory\Model\Region;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\ObjectManager;
+use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderManagementInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Controller\Adminhtml\Order as AdminOrder;
 use Psr\Log\LoggerInterface;
 use Sameday\Objects\ParcelDimensionsObject;
 use Sameday\Objects\PostAwb\Request\AwbRecipientEntityObject;
+use Sameday\Objects\PostAwb\Request\CompanyEntityObject;
 use Sameday\Objects\Types\AwbPaymentType;
 use Sameday\Objects\Types\PackageType;
 use Sameday\Requests\SamedayPostAwbRequest;
@@ -68,23 +70,50 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
 
     /**
      * @inheritDoc
+     * @throws NotAnOrderMatchedException
      */
     public function execute()
     {
-        /** @var \Magento\Sales\Api\Data\OrderInterface $order */
+        /** @var OrderInterface $order */
         $order = $this->_initOrder();
-        $values = $this->getRequest()->getParams();
         if (!$order) {
             throw new NotAnOrderMatchedException();
         }
 
-        $packageWeight = $values['package_weight'] >= 1 ? $values['package_weight'] : 1;
+        if (null === $this->getRequest()) {
+            throw new NotAnOrderMatchedException();
+        }
+
+        $values = $this->getRequest()->getParams();
+
+
+        $packageWeight = max($values['package_weight'], 1);
 
         $lockerId = $values['lockerId'] ?? null;
 
         $objectManager = ObjectManager::getInstance();
         $region = $objectManager->create(Region::class);
-        $regionName = $region->loadByCode($order->getBillingAddress()->getRegionCode(), $order->getBillingAddress()->getCountryId())->getName();
+        $billingAddress = $order->getBillingAddress();
+        $regionName = null;
+        $city = null;
+        $address = null;
+        $contactPerson = null;
+        $phone = null;
+        $postalCode = null;
+        $company = null;
+        if (null !== $billingAddress) {
+            $regionName = $region->loadByCode($billingAddress->getRegionCode(), $billingAddress->getCountryId())->getName();
+            $city = $billingAddress->getCity();
+            $address = $billingAddress->getStreet()[0];
+            $contactPerson = sprintf('%s %s', $billingAddress->getFirstname(), $billingAddress->getLastname());
+            $phone = $billingAddress->getTelephone();
+            $postalCode = $billingAddress->getPostcode();
+            if ((null !== $billingAddress->getCompany()) || ('' !== trim($billingAddress->getCompany()))) {
+                $company = new CompanyEntityObject(
+                    $billingAddress->getCompany(),
+                );
+            }
+        }
 
         $apiRequest = new SamedayPostAwbRequest(
             $values['pickup_point'],
@@ -94,12 +123,14 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             $values['service'],
             (new AwbPaymentType(AwbPaymentType::CLIENT)),
             (new AwbRecipientEntityObject(
-                $order->getBillingAddress()->getCity(),
+                $city,
                 $regionName,
-                $order->getBillingAddress()->getStreet()[0],
-                $order->getBillingAddress()->getFirstname() . ' ' . $order->getBillingAddress()->getLastname(),
-                $order->getBillingAddress()->getTelephone(),
-                $order->getCustomerEmail()
+                $address,
+                $contactPerson,
+                $phone,
+                $order->getCustomerEmail(),
+                $company,
+                $postalCode
             )),
             $values['insured_value'],
             $values['repayment'],
@@ -116,27 +147,23 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
 
         /** @var SamedayPostAwbResponse|false $response */
         $response = $this->apiHelper->doRequest($apiRequest, 'postAwb');
-        if ($response) {
-            if(!empty($response->getParcels()[0])) {
-                $parcelsResponse = $response->getParcels();
-                $parcelsArr = [];
-                foreach($parcelsResponse as $index => $parcelResponse){
-                    $parcelsArr[$index]['position'] = $parcelResponse->getPosition();
-                    $parcelsArr[$index]['awbNumber'] = $parcelResponse->getAwbNumber();
-                }
-
-                $parcels = $this->serializer->serialize($parcelsArr);
-                $awb = $this->awbFactory->create()
-                    ->setOrderId($values['order_id'])
-                    ->setAwbNumber($response->getAwbNumber())
-                    ->setAwbCost($values['repayment'])
-                    ->setParcels($parcels);
-
-                $this->awbRepository->save($awb);
-                $this->manager->addSuccessMessage("Sameday awb successfully created!");
-            }else{
-                $this->manager->addErrorMessage(__("SamedayCourier communication error occured. Please try again later"));
+        if ($response && !empty($response->getParcels()[0])) {
+            $parcelsResponse = $response->getParcels();
+            $parcelsArr = [];
+            foreach($parcelsResponse as $index => $parcelResponse){
+                $parcelsArr[$index]['position'] = $parcelResponse->getPosition();
+                $parcelsArr[$index]['awbNumber'] = $parcelResponse->getAwbNumber();
             }
+
+            $parcels = $this->serializer->serialize($parcelsArr);
+            $awb = $this->awbFactory->create()
+                ->setOrderId($values['order_id'])
+                ->setAwbNumber($response->getAwbNumber())
+                ->setAwbCost($values['repayment'])
+                ->setParcels($parcels);
+
+            $this->awbRepository->save($awb);
+            $this->manager->addSuccessMessage("Sameday awb successfully created!");
         }
 
         $resultRedirect = $this->resultRedirectFactory->create();
