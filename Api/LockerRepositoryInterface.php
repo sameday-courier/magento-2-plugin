@@ -2,6 +2,7 @@
 
 namespace SamedayCourier\Shipping\Api;
 
+use Magento\Framework\Exception\NoSuchEntityException;
 use SamedayCourier\Shipping\Api\Data\LockerInterface;
 
 /**
@@ -16,9 +17,15 @@ interface LockerRepositoryInterface
      *
      * @return LockerInterface
      *
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws NoSuchEntityException
      */
-    public function getByLockerId($id);
+    public function getLockerBySamedayId(int $id): LockerInterface;
+
+    /**
+     * @param int $id
+     * @return LockerInterface
+     */
+    public function getLockerById(int $id): LockerInterface;
 
     /**
      * @param LockerInterface $locker

@@ -45,13 +45,13 @@ class Locker extends AbstractExtensibleModel
     /**
      * @return LockerInterface
      */
-    public function getDataModel()
+    public function getDataModel(): LockerInterface
     {
-        $lockerDataObject = $this->lockerDataFactory->create()
+        return $this->lockerDataFactory->create()
             ->setId($this->getData('id'))
-            ;
-
-        return $lockerDataObject;
+            ->setLockerId($this->getData('locker_id'))
+            ->setName($this->getData('name'))
+            ->setAddress($this->getData('address'));
     }
 
     /**

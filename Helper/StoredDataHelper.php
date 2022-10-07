@@ -2,17 +2,24 @@
 
 namespace SamedayCourier\Shipping\Helper;
 
+use Exception;
+use SamedayCourier\Shipping\Api\Data\LockerInterface;
 use SamedayCourier\Shipping\Api\PickupPointRepositoryInterface;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
+use SamedayCourier\Shipping\Model\ResourceModel\Locker;
+use SamedayCourier\Shipping\Model\ResourceModel\LockerRepository;
 
 class StoredDataHelper extends AbstractHelper
 {
     public const CASH_ON_DELIVERY_CODE = 'cashondelivery';
 
     private $pickupPointRepository;
+
     private $serviceRepository;
+
+    private $lockerRepository;
 
     /**
      * @var ApiHelper
@@ -22,6 +29,7 @@ class StoredDataHelper extends AbstractHelper
     public function __construct(Context $context,
             PickupPointRepositoryInterface $pickupPointRepository,
             ServiceRepositoryInterface $serviceRepository,
+            LockerRepository $lockerRepository,
             ApiHelper $apiHelper
         )
     {
@@ -29,6 +37,7 @@ class StoredDataHelper extends AbstractHelper
 
         $this->pickupPointRepository = $pickupPointRepository;
         $this->serviceRepository = $serviceRepository;
+        $this->lockerRepository = $lockerRepository;
         $this->apiHelper = $apiHelper;
     }
 
@@ -50,5 +59,14 @@ class StoredDataHelper extends AbstractHelper
     public function getServices()
     {
         return $this->serviceRepository->getAllActiveByTesting($this->isTesting());
+    }
+
+    public function getLocker($samedayId): ?LockerInterface
+    {
+        try {
+            $locker = $this->lockerRepository->getLockerById($samedayId);
+        } catch (Exception $exception) {return null;}
+
+        return $locker;
     }
 }

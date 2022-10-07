@@ -93,12 +93,14 @@ define([
         return lockers;
     }
 
-    // if already exists an locker selected get details about it from cookie:
+    // if already exists a locker selected get details about it from cookie:
     const showLockerDetails = () => {
         if ('' !== getCookie(samedayCourierLocker)) {
             let locker = JSON.parse(getCookie(samedayCourierLocker));
 
-            return `${locker.name}  ${locker.address} ${locker.city} (${locker.county})`;
+            if (undefined !== locker.name) {
+                return `${locker.name} ${locker.address} ${locker.city} (${locker.county})`;
+            }
         }
 
         return null;
@@ -165,7 +167,5 @@ define([
 
             return this;
         },
-
-
     });
 });
