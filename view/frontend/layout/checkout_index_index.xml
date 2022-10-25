@@ -24,6 +24,19 @@
                                                         </item>
                                                     </item>
                                                 </item>
+                                                <item name="payment" xsi:type="array">
+                                                    <item name="children" xsi:type="array">
+                                                        <item name="additional-payment-validators" xsi:type="array">
+                                                            <item name="children" xsi:type="array">
+                                                                <!-- Declare your validation. START -->
+                                                                <item name="lockerId_validator" xsi:type="array">
+                                                                    <item name="component" xsi:type="string">SamedayCourier_Shipping/js/view/lockerId_validator</item>
+                                                                </item>
+                                                                <!-- Declare your validation. END -->
+                                                            </item>
+                                                        </item>
+                                                    </item>
+                                                </item>
                                             </item>
                                         </item>
                                     </item>

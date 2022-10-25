@@ -86,7 +86,6 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
 
         $values = $this->getRequest()->getParams();
 
-
         $packageWeight = max($values['package_weight'], 1);
 
         $lockerId = $values['lockerId'] ?? null;

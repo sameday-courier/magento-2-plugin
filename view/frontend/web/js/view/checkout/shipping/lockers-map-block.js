@@ -9,7 +9,7 @@ define([
 ], function ($, ko, Component, quote, rateReg, url) {
     'use strict';
 
-    const easyBoxService = 'samedaycourier_15';
+    const easyBoxService = 'samedaycourier_LN';
 
     const samedayCourierLocker = 'samedaycourier_locker';
 
@@ -39,6 +39,19 @@ define([
         return cookie;
     }
 
+    // Get default LockerId to set in dropdown field
+    const getDefaultLockerId = (key) => {
+        let cookie = getCookie(key);
+        if ('' !== cookie) {
+            let locker = JSON.parse(cookie);
+            if (undefined !== locker.lockerId) {
+                return locker.lockerId;
+            }
+
+            return locker;
+        }
+    }
+
     // Store lockerId into cookie.
     const setCookie = (key, value) => {
         document.cookie = `${key}=` + value + "; Path=/; Expires=Tue, 19 Jan 2038 03:14:07 UTC;";
@@ -64,8 +77,8 @@ define([
             apiUsername: lockerMapElement.data('api_username'),
         }
 
-        window.LockerPlugin.init(lockerPluginInit);
-        let plugin = window.LockerPlugin.getInstance();
+        window['LockerPlugin'].init(lockerPluginInit);
+        let plugin = window['LockerPlugin'].getInstance();
         plugin.open();
 
         plugin.subscribe((locker) => {
@@ -109,7 +122,7 @@ define([
     let viewModel = {}
 
     viewModel.lockersList = ko.observableArray(getLockerList());
-    viewModel.selectedLocker = ko.observable(getCookie(samedayCourierLocker)); // Put default value here
+    viewModel.selectedLocker = ko.observable(getDefaultLockerId(samedayCourierLocker)); // Put default value here
     viewModel.lockerDetails = ko.observable(showLockerDetails());
 
     return Component.extend({
