@@ -103,7 +103,7 @@ class SamedayModal extends Template
             'client_reference' => $order->getId(),
             'weight' => $order->getWeight(),
             'repayment' => $repayment,
-            'serviceId' => explode('_', $order->getShippingMethod(), 2)[1],
+            'serviceCode' => explode('_', $order->getShippingMethod(), 2)[1],
             'samedaycourier_locker_id' => $lockerId,
             'samedaycourier_locker' => $samedaycourierLockerDetails
         ];
