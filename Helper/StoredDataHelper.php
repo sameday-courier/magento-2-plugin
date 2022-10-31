@@ -8,7 +8,6 @@ use SamedayCourier\Shipping\Api\PickupPointRepositoryInterface;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
-use SamedayCourier\Shipping\Model\ResourceModel\Locker;
 use SamedayCourier\Shipping\Model\ResourceModel\LockerRepository;
 
 class StoredDataHelper extends AbstractHelper
@@ -49,6 +48,11 @@ class StoredDataHelper extends AbstractHelper
     public function getHostCountry()
     {
         return $this->apiHelper->getHostCountry();
+    }
+
+    public function getApiUsername()
+    {
+        return (string) $this->scopeConfig->getValue('carriers/samedaycourier/username');
     }
 
     public function getPickupPoints()
