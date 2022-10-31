@@ -39,19 +39,6 @@ define([
         return cookie;
     }
 
-    // Get default LockerId to set in dropdown field
-    const getDefaultLockerId = (key) => {
-        let cookie = getCookie(key);
-        if ('' !== cookie) {
-            let locker = JSON.parse(cookie);
-            if (undefined !== locker.lockerId) {
-                return locker.lockerId;
-            }
-
-            return locker;
-        }
-    }
-
     // Store lockerId into cookie.
     const setCookie = (key, value) => {
         document.cookie = `${key}=` + value + "; Path=/; Expires=Tue, 19 Jan 2038 03:14:07 UTC;";
@@ -122,7 +109,7 @@ define([
     let viewModel = {}
 
     viewModel.lockersList = ko.observableArray(getLockerList());
-    viewModel.selectedLocker = ko.observable(getDefaultLockerId(samedayCourierLocker)); // Put default value here
+    viewModel.selectedLocker = ko.observable(getCookie(samedayCourierLocker)); // Put default value here
     viewModel.lockerDetails = ko.observable(showLockerDetails());
 
     return Component.extend({
@@ -174,7 +161,7 @@ define([
             this.onLockerChange = (object, event) => {
                 if (event.originalEvent) {
 
-                    setCookie(samedayCourierLocker, JSON.stringify(object.selectedLocker._latestValue));
+                    setCookie(samedayCourierLocker, object.selectedLocker._latestValue);
                 }
             };
 

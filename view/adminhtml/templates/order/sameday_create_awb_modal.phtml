@@ -127,15 +127,30 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                     </select>
                 </div>
             </div>
-
             <?php if (null !== $block->getOrderDetails()['samedaycourier_locker']) { ?>
                 <div class="row">
                     <div class="col-25">
-                        <?= __('Locker details') ?>
+                        <strong> <?= __('Locker details') ?> </strong>
                     </div>
                     <div class="col-75">
                         <input type="hidden" name="lockerId" id="lockerId" value="<?php print $block->getOrderDetails()['samedaycourier_locker_id']; ?>">
-                        <textarea disabled="disabled" style="height:50px"><?php print $block->getOrderDetails()['samedaycourier_locker']; ?></textarea>
+                        <textarea disabled="disabled" id="lockerId_details" style="height:50px"><?php print $block->getOrderDetails()['samedaycourier_locker']; ?></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-25">
+                        <span></span>
+                    </div>
+                    <div class="col-75">
+                        <button type="button"
+                            id="changeLocker"
+                            name="changeLocker"
+                            data-country_code="<?php print $block->getOrderDetails()['country-code']; ?>"
+                            data-api_username="<?php print $block->getOrderDetails()['api-username']; ?>"
+                            class="action-default scalable primary"
+                        >
+                            <?= __('Change locker') ?>
+                        </button>
                     </div>
                 </div>
             <?php } ?>
@@ -168,11 +183,12 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
     require(
         [
             'jquery',
-            'Magento_Ui/js/modal/modal'
+            'Magento_Ui/js/modal/modal',
+            'lockersPluginSdk'
         ],
         function (
             $,
-            modal
+            modal,
         ) {
             var options = {
                 type: 'popup',
@@ -206,6 +222,42 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
             var popup = modal(options, $('#popup-add-awb'));
             $("#openmodal").click(function() {
                 $("#popup-add-awb").modal('openModal');
+            });
+
+            $("#changeLocker").on('click', (el) => {
+                const lockerPluginInit = {
+                    clientId: 'b8cb2ee3-41b9-4c3d-aafe-1527b453d65e',
+                    countryCode: el.target.getAttribute('data-country_code').toUpperCase(),
+                    langCode: el.target.getAttribute('data-country_code'),
+                    apiUsername: el.target.getAttribute('data-api_username'),
+                }
+
+                console.log(lockerPluginInit);
+
+                window['LockerPlugin'].init(lockerPluginInit);
+                let plugin = window['LockerPlugin'].getInstance();
+
+                plugin.open();
+
+                plugin.subscribe((locker) => {
+                    $.ajax({
+                        showLoader: true,
+                        url: "<?php print $block->escapeUrl($block->getOrderDetails()['changeLockerMethodUrl']); ?>",
+                        data: {
+                            'locker': locker,
+                        },
+                        type: "POST",
+                        dataType: 'json'
+                    }).done(function (data) {
+                        if (data.success) {
+                            $('#lockerId').val(locker.lockerId);
+                            $('#lockerId_details').val(`${locker.name} ${locker.address}`);
+                        }
+                    });
+
+                    plugin.close();
+                });
+
             });
         }
     );

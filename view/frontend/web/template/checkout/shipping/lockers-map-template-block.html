@@ -14,7 +14,7 @@
             <div class="form-group">
                 <select class="fieldValue" data-bind="foreach: lockersList, value: selectedLocker, event: {change: onLockerChange}">
                     <optgroup data-bind="attr: {label: label}, foreach: lockers">
-                        <option data-bind="text: label, value: id"></option>
+                        <option data-bind="text: label, value: data"></option>
                     </optgroup>
                 </select>
             </div>

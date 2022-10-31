@@ -3,7 +3,6 @@
 namespace SamedayCourier\Shipping\Block\Adminhtml\Order;
 
 use Exception;
-use Laminas\Diactoros\Response\JsonResponse;
 use \Magento\Backend\Block\Template\Context;
 use \Magento\Backend\Block\Template;
 use Magento\Framework\Serialize\Serializer\Json;
@@ -11,7 +10,6 @@ use Magento\Sales\Model\Order\Interceptor as Order;
 use Magento\Sales\Model\Order\Payment\Interceptor as Payment;
 use SamedayCourier\Shipping\Exception\NotAnOrderMatchedException;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
-use SamedayCourier\Shipping\Model\ResourceModel\LockerRepository;
 
 class SamedayModal extends Template
 {
@@ -92,7 +90,7 @@ class SamedayModal extends Template
                 if (null !== $payment->getMethodInstance()) {
                     $paymentCode = $payment->getMethodInstance()->getCode();
                 }
-            } catch (Exception $exception) { return null;}
+            } catch (Exception $exception) { return null; }
 
             if (null === $paymentCode || $this->storedDataHelper::CASH_ON_DELIVERY_CODE === $paymentCode) {
                 $repayment = $order->getGrandTotal();
@@ -105,7 +103,12 @@ class SamedayModal extends Template
             'repayment' => $repayment,
             'serviceCode' => explode('_', $order->getShippingMethod(), 2)[1],
             'samedaycourier_locker_id' => $lockerId,
-            'samedaycourier_locker' => $samedaycourierLockerDetails
+            'samedaycourier_locker' => $samedaycourierLockerDetails,
+            'country-code' => $this->storedDataHelper->getHostCountry(),
+            'api-username' => $this->storedDataHelper->getApiUsername(),
+            'changeLockerMethodUrl' => $this->getUrl('samedaycourier_shipping/order/changeLocker', [
+                'order_id' => $order->getId()
+            ])
         ];
     }
 

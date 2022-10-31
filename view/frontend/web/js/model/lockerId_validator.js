@@ -34,14 +34,9 @@ define(
                         let locker = getCookie(samedayCourierLocker);
                         if ('' !== locker) {
                             locker = JSON.parse(locker);
-                            if (
-                                true === method.extension_attributes.show_lockers_map
-                                && undefined === locker.name
-                            ) {
+                            if (undefined === locker.name) {
                                 isValid = false;
                             }
-                        } else {
-                            isValid = false;
                         }
                     }
                 } else {

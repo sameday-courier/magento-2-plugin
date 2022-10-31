@@ -10,6 +10,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Controller\ResultFactory;
 use SamedayCourier\Shipping\Api\LockerRepositoryInterface;
 use SamedayCourier\Shipping\Model\Data\Locker;
+use Magento\Framework\Serialize\Serializer\Json;
 
 class Lockers extends Action
 {
@@ -21,12 +22,19 @@ class Lockers extends Action
     /** @var ResultFactory $resultFactory */
     protected $resultFactory;
 
-    public function __construct(Context $context, LockerRepositoryInterface $lockerRepository, ScopeConfigInterface $config, ResultFactory $resultFactory)
+    public function __construct(
+        Context $context,
+        LockerRepositoryInterface $lockerRepository,
+        ScopeConfigInterface $config,
+        ResultFactory $resultFactory,
+        Json $json
+    )
     {
         parent::__construct($context);
 
         $this->lockerRepository = $lockerRepository;
         $this->config = $config;
+        $this->json = $json;
 
         $this->resultFactory = $resultFactory;
     }
@@ -52,6 +60,11 @@ class Lockers extends Action
             $dump[$locker['city']]['lockers'][] = [
                 'id' => $locker['id'],
                 'label' => $locker['name'] . ' - ' . $locker['address'],
+                'data' => $this->json->serialize([
+                    'lockerId' => $locker['locker_id'],
+                    'name' => $locker['name'],
+                    'address' => $locker['address']
+                ])
             ];
         }
         ksort($dump);
