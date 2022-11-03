@@ -190,7 +190,7 @@ class ApiHelper extends AbstractHelper
                 $sameday = $this->initClient(
                     $form_values['username'],
                     $form_values['password'],
-                    $apiUrl,
+                    $apiUrl
                 );
 
                 try {

@@ -107,9 +107,9 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             $contactPerson = sprintf('%s %s', $billingAddress->getFirstname(), $billingAddress->getLastname());
             $phone = $billingAddress->getTelephone();
             $postalCode = $billingAddress->getPostcode();
-            if ((null !== $billingAddress->getCompany()) || ('' !== trim($billingAddress->getCompany()))) {
+            if ((null !== $billingAddress->getCompany()) && ('' !== trim($billingAddress->getCompany()))) {
                 $company = new CompanyEntityObject(
-                    $billingAddress->getCompany(),
+                    $billingAddress->getCompany()
                 );
             }
         }
