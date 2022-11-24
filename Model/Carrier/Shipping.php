@@ -110,7 +110,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
         foreach ($services as $service) {
             $isLockerService = in_array($service->getCode(), ServiceInterface::SERVICES_WITH_LOCKERS);
             $lockerMaxItems = $service->getLockerMaxItems();
-            if (sizeof($request->getAllItems()) > $lockerMaxItems && $isLockerService) {
+            if ($isLockerService && sizeof($request->getAllItems()) > $lockerMaxItems) {
                 continue;
             }
 
