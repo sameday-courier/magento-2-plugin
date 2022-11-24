@@ -53,6 +53,7 @@ class ApiHelper extends AbstractHelper
     public const DEMO_CODE = 1;
     public const ROMANIA_CODE = "ro";
     public const HUNGARY_CODE = "hu";
+    public const BULGARIA_CODE = "bg";
 
     public const SAMEDAY_ENVS = [
         self::ROMANIA_CODE => [
@@ -62,6 +63,10 @@ class ApiHelper extends AbstractHelper
         self::HUNGARY_CODE => [
             self::PRODUCTION_CODE => 'https://api.sameday.hu',
             self::DEMO_CODE => 'https://sameday-api-hu.demo.zitec.com',
+        ],
+        self::BULGARIA_CODE => [
+            self::PRODUCTION_CODE => 'https://api.sameday.bg',
+            self::DEMO_CODE => 'https://sameday-api-bg.demo.zitec.com',
         ]
     ];
 
