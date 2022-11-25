@@ -122,12 +122,19 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                 <div class="col-75">
                     <select name="service" id="service">
                         <?php foreach ($block->getServices() as $service): ?>
-                            <option value="<?= $service->getSamedayId() ?>" <?= $service->getCode() === $block->getOrderDetails()['serviceCode'] ? 'selected' : '' ?>><?= $service->getSamedayName() ?></option>
+                            <option
+                                data-service_code="<?php echo $service->getCode();?>"
+                                data-service_locker_code="<?php echo $block->getOrderDetails()['serviceCodeLockerNextDay']; ?>"
+                                value="<?= $service->getSamedayId() ?>" <?= $service->getCode() === $block->getOrderDetails()['serviceCode'] ? 'selected' : '' ?>
+                            >
+                                <?= $service->getSamedayName() ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
             </div>
-            <?php if (null !== $block->getOrderDetails()['samedaycourier_locker']) { ?>
+
+            <div id="showLockerDetails" style="display: <?php echo $block->getOrderDetails()['displayLockerDetails']; ?>">
                 <div class="row">
                     <div class="col-25">
                         <strong> <?= __('Locker details') ?> </strong>
@@ -143,17 +150,17 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                     </div>
                     <div class="col-75">
                         <button type="button"
-                            id="changeLocker"
-                            name="changeLocker"
-                            data-country_code="<?php print $block->getOrderDetails()['country-code']; ?>"
-                            data-api_username="<?php print $block->getOrderDetails()['api-username']; ?>"
-                            class="action-default scalable primary"
+                                id="changeLocker"
+                                name="changeLocker"
+                                data-country_code="<?php print $block->getOrderDetails()['country-code']; ?>"
+                                data-api_username="<?php print $block->getOrderDetails()['api-username']; ?>"
+                                class="action-default scalable primary"
                         >
                             <?= __('Change locker') ?>
                         </button>
                     </div>
                 </div>
-            <?php } ?>
+            </div>
 
             <div class="row">
                 <div class="col-25">
@@ -232,8 +239,6 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                     apiUsername: el.target.getAttribute('data-api_username'),
                 }
 
-                console.log(lockerPluginInit);
-
                 window['LockerPlugin'].init(lockerPluginInit);
                 let plugin = window['LockerPlugin'].getInstance();
 
@@ -257,7 +262,21 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
 
                     plugin.close();
                 });
+            });
 
+            // Change service:
+            $(document).on('change', '#service', (element) => {
+                const _target = element.target;
+                const currentService = _target.options[_target.selectedIndex];
+                const showLockerDetails = document.getElementById('showLockerDetails');
+
+                let serviceCode = currentService.getAttribute('data-service_code');
+                let lockerNextDayCode = currentService.getAttribute('data-service_locker_code');
+
+                showLockerDetails.style.display = 'none';
+                if (serviceCode === lockerNextDayCode) {
+                    showLockerDetails.style.display = 'block';
+                }
             });
         }
     );

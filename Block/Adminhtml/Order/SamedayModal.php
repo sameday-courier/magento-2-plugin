@@ -9,6 +9,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Sales\Model\Order\Interceptor as Order;
 use Magento\Sales\Model\Order\Payment\Interceptor as Payment;
 use SamedayCourier\Shipping\Exception\NotAnOrderMatchedException;
+use SamedayCourier\Shipping\Helper\ApiHelper;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
 
 class SamedayModal extends Template
@@ -97,11 +98,19 @@ class SamedayModal extends Template
             }
         }
 
+        $displayLockerDetails = 'none';
+        $serviceCode = explode('_', $order->getShippingMethod(), 2)[1];
+        if ($serviceCode === ApiHelper::LOCKER_NEXT_DAY_SERVICE) {
+            $displayLockerDetails = 'block';
+        }
+
         return [
             'client_reference' => $order->getId(),
             'weight' => $order->getWeight(),
             'repayment' => $repayment,
-            'serviceCode' => explode('_', $order->getShippingMethod(), 2)[1],
+            'serviceCode' => $serviceCode,
+            'serviceCodeLockerNextDay' => ApiHelper::LOCKER_NEXT_DAY_SERVICE,
+            'displayLockerDetails' => $displayLockerDetails,
             'samedaycourier_locker_id' => $lockerId,
             'samedaycourier_locker' => $samedaycourierLockerDetails,
             'country-code' => $this->storedDataHelper->getHostCountry(),

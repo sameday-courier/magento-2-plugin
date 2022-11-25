@@ -49,6 +49,8 @@ class ApiHelper extends AbstractHelper
      */
     protected $persistenceDataHandler;
 
+    public const LOCKER_NEXT_DAY_SERVICE = 'LN';
+
     public const PRODUCTION_CODE = 0;
     public const DEMO_CODE = 1;
     public const ROMANIA_CODE = "ro";

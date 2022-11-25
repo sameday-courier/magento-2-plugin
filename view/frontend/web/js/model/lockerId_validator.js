@@ -27,12 +27,12 @@ define(
 
                 let method = quote.shippingMethod();
 
-                console.log(method);
-
                 if (null !== method) {
                     if (lockerServiceCode === method.method_code) {
                         let locker = getCookie(samedayCourierLocker);
-                        if ('' !== locker) {
+                        if ('' === locker) {
+                            isValid = false;
+                        } else {
                             locker = JSON.parse(locker);
                             if (undefined === locker.name) {
                                 isValid = false;
