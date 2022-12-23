@@ -49,6 +49,15 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
 
+                <field id="repayment_tax_label" translate="label" type="text" sortOrder="460" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Repayment tax label</label>
+                </field>
+
+                <field id="repayment_tax" translate="label" type="text" sortOrder="470" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Repayment tax</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+
                 <field id="sort_order" translate="label" type="text" sortOrder="500" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Sort Order</label>
                 </field>
