@@ -12,13 +12,13 @@ use SamedayCourier\Shipping\Model\ResourceModel\LockerRepository;
 
 class StoredDataHelper extends AbstractHelper
 {
+    public const REPAYMENT_TAX_LABEL = 'carriers/samedaycourier/repayment_tax_label';
+    public const REPAYMENT_TAX_VALUE = 'carriers/samedaycourier/repayment_tax';
     public const CASH_ON_DELIVERY_CODE = 'cashondelivery';
 
-    private $pickupPointRepository;
-
-    private $serviceRepository;
-
-    private $lockerRepository;
+    private PickupPointRepositoryInterface $pickupPointRepository;
+    private ServiceRepositoryInterface $serviceRepository;
+    private LockerRepository $lockerRepository;
 
     /**
      * @var ApiHelper
@@ -40,7 +40,7 @@ class StoredDataHelper extends AbstractHelper
         $this->apiHelper = $apiHelper;
     }
 
-    private function isTesting()
+    private function isTesting(): bool
     {
         return (bool) $this->scopeConfig->getValue('carriers/samedaycourier/testing');
     }
@@ -50,7 +50,7 @@ class StoredDataHelper extends AbstractHelper
         return $this->apiHelper->getHostCountry();
     }
 
-    public function getApiUsername()
+    public function getApiUsername(): string
     {
         return (string) $this->scopeConfig->getValue('carriers/samedaycourier/username');
     }

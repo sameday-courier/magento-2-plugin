@@ -9,13 +9,10 @@ use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address\Total;
 use Magento\Quote\Model\Quote\Address\Total\AbstractTotal;
 use Magento\Quote\Model\QuoteValidator;
+use SamedayCourier\Shipping\Helper\StoredDataHelper;
 
 class Fee extends AbstractTotal
 {
-    private const REPAYMENT_TAX_LABEL = 'carriers/samedaycourier/repayment_tax_label';
-    private const REPAYMENT_TAX_VALUE = 'carriers/samedaycourier/repayment_tax';
-    private const COD_PAYMENT_METHOD_CODE = 'cashondelivery';
-
     /**
      * Collect grand total address amount
      *
@@ -30,15 +27,19 @@ class Fee extends AbstractTotal
 
     private string $feeLabel;
 
+    private string $cashOnDeliveryCode;
+
     public function __construct(
         QuoteValidator $quoteValidator,
-        ScopeConfigInterface $scopeConfig
+        ScopeConfigInterface $scopeConfig,
+        StoredDataHelper $storedDataHelper
     )
     {
         $this->quoteValidator = $quoteValidator;
 
-        $this->fee = (int) $scopeConfig->getValue(self::REPAYMENT_TAX_VALUE);
-        $this->feeLabel = (string) $scopeConfig->getValue(self::REPAYMENT_TAX_LABEL);
+        $this->fee = (int) $scopeConfig->getValue($storedDataHelper::REPAYMENT_TAX_VALUE);
+        $this->feeLabel = (string) $scopeConfig->getValue($storedDataHelper::REPAYMENT_TAX_LABEL);
+        $this->cashOnDeliveryCode = $storedDataHelper::CASH_ON_DELIVERY_CODE;
     }
 
     public function collect(
@@ -54,7 +55,7 @@ class Fee extends AbstractTotal
         $fee = 0;
 
         if (null === $quote->getPayment()->getMethod() ||
-            self::COD_PAYMENT_METHOD_CODE === $quote->getPayment()->getMethod()
+            $this->cashOnDeliveryCode === $quote->getPayment()->getMethod()
         ) {
             $fee = $this->fee;
         }

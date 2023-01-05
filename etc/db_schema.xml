@@ -57,5 +57,6 @@
     </table>
     <table name="sales_order" resource="default" engine="innodb" comment="Samedaycourier Locker">
         <column xsi:type="text" name="samedaycourier_locker" comment="Sameday Locker Object String"/>
+        <column xsi:type="text" name="samedaycourier_fee" comment="Repayment fee"/>
     </table>
 </schema>
