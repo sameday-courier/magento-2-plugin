@@ -26,16 +26,18 @@ class Fee extends Template
         $parent = $this->getParentBlock();
         $order = $parent->getOrder();
 
-        $fee = new DataObject(
-            [
-                'code'=> 'fee',
-                'strong'=> false,
-                'value'=> $order->getSamedaycourierFee(),
-                'label'=> __($this->storedDataHelper->getRepaymentFeeLabel()),
-            ]
-        );
+        if (0 < $samedayCourierFee = $order->getSamedaycourierFee()) {
+            $fee = new DataObject(
+                [
+                    'code'=> 'fee',
+                    'strong'=> false,
+                    'value'=> $samedayCourierFee,
+                    'label'=> __($this->storedDataHelper->getRepaymentFeeLabel()),
+                ]
+            );
 
-        $parent->addTotal($fee, 'fee');
+            $parent->addTotal($fee, 'fee');
+        }
 
         return $this;
     }
