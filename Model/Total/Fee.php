@@ -2,7 +2,6 @@
 
 namespace SamedayCourier\Shipping\Model\Total;
 
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Phrase;
 use Magento\Quote\Api\Data\ShippingAssignmentInterface;
 use Magento\Quote\Model\Quote;
@@ -31,14 +30,13 @@ class Fee extends AbstractTotal
 
     public function __construct(
         QuoteValidator $quoteValidator,
-        ScopeConfigInterface $scopeConfig,
         StoredDataHelper $storedDataHelper
     )
     {
         $this->quoteValidator = $quoteValidator;
 
-        $this->fee = (int) $scopeConfig->getValue($storedDataHelper::REPAYMENT_TAX_VALUE);
-        $this->feeLabel = (string) $scopeConfig->getValue($storedDataHelper::REPAYMENT_TAX_LABEL);
+        $this->fee = $storedDataHelper->getRepaymentFeeValue();
+        $this->feeLabel = $storedDataHelper->getRepaymentFeeLabel();
         $this->cashOnDeliveryCode = $storedDataHelper::CASH_ON_DELIVERY_CODE;
     }
 
