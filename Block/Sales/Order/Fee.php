@@ -8,7 +8,7 @@ use SamedayCourier\Shipping\Helper\StoredDataHelper;
 
 class Fee extends Template
 {
-    private ?StoredDataHelper $storedDataHelper;
+    private $storedDataHelper;
 
     public function __construct(
         StoredDataHelper $storedDataHelper,

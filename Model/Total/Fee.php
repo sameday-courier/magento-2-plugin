@@ -20,13 +20,13 @@ class Fee extends AbstractTotal
      * @param Total $total
      * @return $this
      */
-    protected ?QuoteValidator $quoteValidator = null;
+    protected $quoteValidator = null;
 
-    private int $fee;
+    private $fee;
 
-    private string $feeLabel;
+    private $feeLabel;
 
-    private string $cashOnDeliveryCode;
+    private $cashOnDeliveryCode;
 
     public function __construct(
         QuoteValidator $quoteValidator,
