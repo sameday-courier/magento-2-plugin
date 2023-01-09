@@ -18,9 +18,9 @@ class StoredDataHelper extends AbstractHelper
     public const REPAYMENT_TAX_VALUE = 'carriers/samedaycourier/repayment_tax';
     public const CASH_ON_DELIVERY_CODE = 'cashondelivery';
 
-    private PickupPointRepositoryInterface $pickupPointRepository;
-    private ServiceRepositoryInterface $serviceRepository;
-    private LockerRepository $lockerRepository;
+    private $pickupPointRepository;
+    private $serviceRepository;
+    private $lockerRepository;
 
     /**
      * @var ApiHelper
