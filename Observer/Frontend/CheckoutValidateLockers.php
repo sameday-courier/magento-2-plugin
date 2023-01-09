@@ -13,7 +13,7 @@ class CheckoutValidateLockers implements ObserverInterface
     /**
      * @var RequestInterface $request
      */
-    protected RequestInterface $request;
+    protected $request;
 
     public function __construct(RequestInterface $request)
     {
