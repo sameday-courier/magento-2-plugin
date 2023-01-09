@@ -12,13 +12,15 @@ use SamedayCourier\Shipping\Model\ResourceModel\LockerRepository;
 
 class StoredDataHelper extends AbstractHelper
 {
+    public const SAMEDAYCOURIER_ENV_MODE = 'carriers/samedaycourier/testing';
+    public const SAMEDAYCOURIER_USERNAME = 'carriers/samedaycourier/username';
+    public const REPAYMENT_TAX_LABEL = 'carriers/samedaycourier/repayment_tax_label';
+    public const REPAYMENT_TAX_VALUE = 'carriers/samedaycourier/repayment_tax';
     public const CASH_ON_DELIVERY_CODE = 'cashondelivery';
 
-    private $pickupPointRepository;
-
-    private $serviceRepository;
-
-    private $lockerRepository;
+    private PickupPointRepositoryInterface $pickupPointRepository;
+    private ServiceRepositoryInterface $serviceRepository;
+    private LockerRepository $lockerRepository;
 
     /**
      * @var ApiHelper
@@ -40,9 +42,9 @@ class StoredDataHelper extends AbstractHelper
         $this->apiHelper = $apiHelper;
     }
 
-    private function isTesting()
+    private function isTesting(): bool
     {
-        return (bool) $this->scopeConfig->getValue('carriers/samedaycourier/testing');
+        return (bool) $this->scopeConfig->getValue(self::SAMEDAYCOURIER_ENV_MODE);
     }
 
     public function getHostCountry()
@@ -50,9 +52,19 @@ class StoredDataHelper extends AbstractHelper
         return $this->apiHelper->getHostCountry();
     }
 
-    public function getApiUsername()
+    public function getApiUsername(): string
     {
-        return (string) $this->scopeConfig->getValue('carriers/samedaycourier/username');
+        return (string) $this->scopeConfig->getValue(self::SAMEDAYCOURIER_USERNAME);
+    }
+
+    public function getRepaymentFeeValue(): int
+    {
+        return (int) $this->scopeConfig->getValue(self::REPAYMENT_TAX_VALUE);
+    }
+
+    public function getRepaymentFeeLabel(): string
+    {
+        return (string) $this->scopeConfig->getValue(self::REPAYMENT_TAX_LABEL);
     }
 
     public function getPickupPoints()
