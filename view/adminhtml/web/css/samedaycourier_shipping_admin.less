@@ -56,6 +56,30 @@
         clear: both;
     }
 
+    /* Locker Dimensions Tooltip */
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black;
+    }
+
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: auto;
+        color: #fff;
+        text-align: center;
+        border-radius: 5px;
+        padding: 5px;
+
+        /* Position the tooltip */
+        position: absolute;
+        z-index: 1000;
+    }
+
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+    }
+
     /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
     @media screen and (max-width: 600px) {
         .col-25, .col-75, input[type=submit] {

@@ -72,7 +72,9 @@ class Service extends AbstractExtensibleModel
             ->setIsPriceFree($this->getData('is_price_free'))
             ->setPriceFree($this->getData('price_free'))
             ->setStatus($this->getData('status'))
-            ->setUseEstimatedCost($this->getData('use_estimated_cost'));
+            ->setUseEstimatedCost($this->getData('use_estimated_cost'))
+            ->setServiceOptionalTaxes($this->getData('service_optional_taxes'))
+        ;
 
         return $serviceDataObject;
     }

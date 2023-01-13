@@ -12,23 +12,23 @@ interface ServiceInterface extends ExtensibleDataInterface
     /**#@+
      * Constants for keys of data array. Identical to the getters in snake case
      */
-    const ID = 'id';
-    const SAMEDAY_ID = 'sameday_id';
-    const SAMEDAY_NAME = 'sameday_name';
-    const IS_TESTING = 'is_testing';
-    const NAME = 'name';
-    const CODE = 'code';
-    const PRICE = 'price';
-    const IS_PRICE_FREE = 'is_price_free';
-    const PRICE_FREE = 'price_free';
-    const STATUS = 'status';
-    const USE_ESTIMATED_COST = 'use_estimated_cost';
-    const LOCKER_MAX_ITEMS = 'locker_max_items';
+    public const ID = 'id';
+    public const SAMEDAY_ID = 'sameday_id';
+    public const SAMEDAY_NAME = 'sameday_name';
+    public const IS_TESTING = 'is_testing';
+    public const NAME = 'name';
+    public const CODE = 'code';
+    public const PRICE = 'price';
+    public const IS_PRICE_FREE = 'is_price_free';
+    public const PRICE_FREE = 'price_free';
+    public const STATUS = 'status';
+    public const USE_ESTIMATED_COST = 'use_estimated_cost';
+    public const LOCKER_MAX_ITEMS = 'locker_max_items';
+    public const SERVICE_OPTIONAL_TAXES = 'service_optional_taxes';
     /**#@-*/
 
     const STATUS_DISABLED = 0;
     const STATUS_ENABLED = 1;
-    const STATUS_INTERVAL = 2;
 
     const SERVICES_WITH_LOCKERS = ['LN'];
 
@@ -177,6 +177,18 @@ interface ServiceInterface extends ExtensibleDataInterface
      * @return $this
      */
     public function setLockerMaxItems(int $lockerMaxItems);
+
+    /**
+     * @return string
+     */
+    public function getServiceOptionalTaxes();
+
+    /**
+     * @param string $serializedOptionalTaxes
+     *
+     * @return $this
+     */
+    public function setServiceOptionalTaxes($serializedOptionalTaxes);
 
     /**
      * Retrieve existing extension attributes object or create a new one.

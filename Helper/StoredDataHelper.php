@@ -3,10 +3,12 @@
 namespace SamedayCourier\Shipping\Helper;
 
 use Exception;
-use SamedayCourier\Shipping\Api\Data\LockerInterface;
-use SamedayCourier\Shipping\Api\PickupPointRepositoryInterface;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
+use Magento\Framework\Serialize\Serializer\Json;
+use Sameday\Objects\Service\OptionalTaxObject;
+use SamedayCourier\Shipping\Api\Data\LockerInterface;
+use SamedayCourier\Shipping\Api\PickupPointRepositoryInterface;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
 use SamedayCourier\Shipping\Model\ResourceModel\LockerRepository;
 
@@ -17,6 +19,11 @@ class StoredDataHelper extends AbstractHelper
     public const REPAYMENT_TAX_LABEL = 'carriers/samedaycourier/repayment_tax_label';
     public const REPAYMENT_TAX_VALUE = 'carriers/samedaycourier/repayment_tax';
     public const CASH_ON_DELIVERY_CODE = 'cashondelivery';
+    public const SERVICE_OPTIONAL_TAX_PDO = 'PDO';
+    public const DISPLAY_HTML_ELEM = [
+        'show' => 'block',
+        'hide' => 'none',
+    ];
 
     private $pickupPointRepository;
     private $serviceRepository;
@@ -27,11 +34,17 @@ class StoredDataHelper extends AbstractHelper
      */
     private $apiHelper;
 
+    /**
+     * @var Json
+     */
+    private $json;
+
     public function __construct(Context $context,
             PickupPointRepositoryInterface $pickupPointRepository,
             ServiceRepositoryInterface $serviceRepository,
             LockerRepository $lockerRepository,
-            ApiHelper $apiHelper
+            ApiHelper $apiHelper,
+            Json $json
         )
     {
         parent::__construct($context);
@@ -40,6 +53,7 @@ class StoredDataHelper extends AbstractHelper
         $this->serviceRepository = $serviceRepository;
         $this->lockerRepository = $lockerRepository;
         $this->apiHelper = $apiHelper;
+        $this->json = $json;
     }
 
     private function isTesting(): bool
@@ -84,5 +98,33 @@ class StoredDataHelper extends AbstractHelper
         } catch (Exception $exception) {return null;}
 
         return $locker;
+    }
+
+    /**
+     * @param $samedayServiceOptionalTaxes
+     * @return string
+     */
+    public function serializeServiceOptionalTaxes($samedayServiceOptionalTaxes): string
+    {
+        $data = [];
+
+        /** @var OptionalTaxObject[] $samedayServiceOptionalTaxes */
+        foreach ($samedayServiceOptionalTaxes as $tax) {
+            $data[] = [
+                'id' => $tax->getId(),
+                'name' => $tax->getName(),
+                'code' => $tax->getCode(),
+                'tax' => $tax->getTax(),
+                'costType' => $tax->getCostType()->getType(),
+                'packageType' => $tax->getPackageType()->getType(),
+            ];
+        }
+
+        return $this->json->serialize($data);
+    }
+
+    public function deserializeServiceOptionalTaxes($samedayServiceOptionalTaxes)
+    {
+        return $this->json->unserialize($samedayServiceOptionalTaxes);
     }
 }
