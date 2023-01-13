@@ -118,7 +118,6 @@ class SamedayModal extends Template
         $serviceCode = explode('_', $order->getShippingMethod(), 2)[1];
 
         $displayLockerFirstMile = $this->storedDataHelper::DISPLAY_HTML_ELEM['hide'];
-
         if ($this->isServiceEligibleToLockerFirstMile($serviceCode)) {
             $displayLockerFirstMile = $this->storedDataHelper::DISPLAY_HTML_ELEM['show'];
         }
