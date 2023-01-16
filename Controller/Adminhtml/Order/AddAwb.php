@@ -59,7 +59,19 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         SerializerInterface $serializer
     )
     {
-        parent::__construct($context, $coreRegistry, $fileFactory, $translateInline, $resultPageFactory, $resultJsonFactory, $resultLayoutFactory, $resultRawFactory, $orderManagement, $orderRepository, $logger);
+        parent::__construct(
+            $context,
+            $coreRegistry,
+            $fileFactory,
+            $translateInline,
+            $resultPageFactory,
+            $resultJsonFactory,
+            $resultLayoutFactory,
+            $resultRawFactory,
+            $orderManagement,
+            $orderRepository,
+            $logger
+        );
 
         $this->awbRepository = $awbRepository;
         $this->awbFactory = $awbFactory;
@@ -88,7 +100,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
 
         $packageWeight = max($values['package_weight'], 1);
 
-        $lockerId = $values['lockerId'] ?? null;
+        $lockerLastMile = $values['locker_last_mile'] ?? null;
 
         $objectManager = ObjectManager::getInstance();
         $region = $objectManager->create(Region::class);
@@ -114,6 +126,11 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             }
         }
 
+        $serviceTaxIds = [];
+        if (isset($values['locker_first_mile'])) {
+            $serviceTaxIds[] = $values['locker_first_mile'];
+        }
+
         $apiRequest = new SamedayPostAwbRequest(
             $values['pickup_point'],
             null,
@@ -135,13 +152,14 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             $values['repayment'],
             null,
             null,
-            [],
+            $serviceTaxIds,
             null,
             null,
             null,
             null,
             $values['observation'],
-            $lockerId
+            null,
+            $lockerLastMile
         );
 
         /** @var SamedayPostAwbResponse|false $response */

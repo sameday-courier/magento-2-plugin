@@ -11,6 +11,7 @@ use Magento\Sales\Model\Order\Payment\Interceptor as Payment;
 use SamedayCourier\Shipping\Exception\NotAnOrderMatchedException;
 use SamedayCourier\Shipping\Helper\ApiHelper;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
+use SamedayCourier\Shipping\Model\Data\Service;
 
 class SamedayModal extends Template
 {
@@ -49,6 +50,22 @@ class SamedayModal extends Template
     public function getServices()
     {
         return $this->storedDataHelper->getServices()->getItems();
+    }
+
+    private function filterServiceByCode($code)
+    {
+        $filteredService = null;
+        foreach ($this->getServices() as $service) {
+            if ($service->getCode() === $code) {
+                $filteredService = $service;
+            }
+
+            if (null !== $filteredService) {
+                break;
+            }
+        }
+
+        return $filteredService;
     }
 
     /**
@@ -98,10 +115,16 @@ class SamedayModal extends Template
             }
         }
 
-        $displayLockerDetails = 'none';
         $serviceCode = explode('_', $order->getShippingMethod(), 2)[1];
+
+        $displayLockerFirstMile = $this->storedDataHelper::DISPLAY_HTML_ELEM['hide'];
+        if ($this->isServiceEligibleToLockerFirstMile($serviceCode)) {
+            $displayLockerFirstMile = $this->storedDataHelper::DISPLAY_HTML_ELEM['show'];
+        }
+
+        $displayLockerDetails = $this->storedDataHelper::DISPLAY_HTML_ELEM['hide'];
         if ($serviceCode === ApiHelper::LOCKER_NEXT_DAY_SERVICE) {
-            $displayLockerDetails = 'block';
+            $displayLockerDetails = $this->storedDataHelper::DISPLAY_HTML_ELEM['show'];
         }
 
         return [
@@ -109,8 +132,10 @@ class SamedayModal extends Template
             'weight' => $order->getWeight(),
             'repayment' => $repayment,
             'serviceCode' => $serviceCode,
+            'serviceTaxCodePDO' => $this->storedDataHelper::SERVICE_OPTIONAL_TAX_PDO,
             'serviceCodeLockerNextDay' => ApiHelper::LOCKER_NEXT_DAY_SERVICE,
             'displayLockerDetails' => $displayLockerDetails,
+            'displayLockerFirstMile' => $displayLockerFirstMile,
             'samedaycourier_locker_id' => $lockerId,
             'samedaycourier_locker' => $samedaycourierLockerDetails,
             'country-code' => $this->storedDataHelper->getHostCountry(),
@@ -119,6 +144,32 @@ class SamedayModal extends Template
                 'order_id' => $order->getId()
             ])
         ];
+    }
+
+    public function toggleHtmlElement($toShow)
+    {
+        return $toShow === true
+            ? $this->storedDataHelper::DISPLAY_HTML_ELEM['show']
+            : $this->storedDataHelper::DISPLAY_HTML_ELEM['hide']
+        ;
+    }
+
+    public function isServiceEligibleToLockerFirstMile($serviceCode): bool
+    {
+        /** @var Service $defaultService */
+        $defaultService = $this->filterServiceByCode($serviceCode);
+        if (null !== $defaultService) {
+            $defaultServiceTaxes = $this->storedDataHelper->deserializeServiceOptionalTaxes($defaultService->getServiceOptionalTaxes());
+            if (null !== $defaultServiceTaxes) {
+                foreach ($defaultServiceTaxes as $tax) {
+                    if ($tax['code'] === $this->storedDataHelper::SERVICE_OPTIONAL_TAX_PDO) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     public function getRouteAddAwb()

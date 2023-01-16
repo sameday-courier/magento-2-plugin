@@ -40,9 +40,7 @@ define(
                         }
                     }
                 } else {
-                    messageList.addErrorMessage({ message: $t('Please select a delivery option!') });
-
-                    return false;
+                    return isValid;
                 }
 
                 if (!isValid) {

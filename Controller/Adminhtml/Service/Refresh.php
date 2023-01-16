@@ -12,6 +12,7 @@ use SamedayCourier\Shipping\Api\Data\ServiceInterfaceFactory;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
 use SamedayCourier\Shipping\Helper\ApiHelper;
 use Sameday\Exceptions\SamedaySDKException;
+use SamedayCourier\Shipping\Helper\StoredDataHelper;
 
 class Refresh extends Action
 {
@@ -36,8 +37,11 @@ class Refresh extends Action
     private $serviceRepository;
 
     /**
-     * Refresh constructor.
-     *
+     * @var StoredDataHelper
+     */
+    private $storeDataHelper;
+
+    /**
      * @param ApiHelper $apiHelper
      * @param ScopeConfigInterface $config
      * @param ServiceInterfaceFactory $serviceFactory
@@ -49,7 +53,8 @@ class Refresh extends Action
         ScopeConfigInterface $config,
         ServiceInterfaceFactory $serviceFactory,
         ServiceRepositoryInterface $serviceRepository,
-        Action\Context $context
+        Action\Context $context,
+        StoredDataHelper $storedDataHelper
     ) {
         parent::__construct($context);
 
@@ -57,6 +62,7 @@ class Refresh extends Action
         $this->config = $config;
         $this->serviceFactory = $serviceFactory;
         $this->serviceRepository = $serviceRepository;
+        $this->storeDataHelper = $storedDataHelper;
     }
 
     /**
@@ -95,13 +101,21 @@ class Refresh extends Action
                         ->setPrice(0)
                         ->setIsPriceFree(false)
                         ->setUseEstimatedCost(false)
-                        ->setStatus(ServiceInterface::STATUS_DISABLED);
+                        ->setStatus(ServiceInterface::STATUS_DISABLED)
+                        ->setServiceOptionalTaxes(
+                            $this->storeDataHelper->serializeServiceOptionalTaxes($serviceObject->getOptionalTaxes())
+                        )
+                    ;
                 }
 
                 $service
                     ->setSamedayId($serviceObject->getId())
                     ->setSamedayName($serviceObject->getName())
-                    ->setIsTesting($isTesting);
+                    ->setIsTesting($isTesting)
+                    ->setServiceOptionalTaxes(
+                        $this->storeDataHelper->serializeServiceOptionalTaxes($serviceObject->getOptionalTaxes())
+                    )
+                ;
 
                 $this->serviceRepository->save($service);
 
@@ -113,7 +127,7 @@ class Refresh extends Action
 
         // Build array of local services.
         $localServices = array_map(
-            function (ServiceInterface $service) {
+            static function (ServiceInterface $service) {
                 return array(
                     'id' => $service->getId(),
                     'sameday_id' => $service->getSamedayId()

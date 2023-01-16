@@ -183,6 +183,16 @@ class Service extends AbstractExtensibleObject implements ServiceInterface
         return $this->setData(self::LOCKER_MAX_ITEMS, $lockerMaxItems);
     }
 
+    public function getServiceOptionalTaxes()
+    {
+        return $this->_get(self::SERVICE_OPTIONAL_TAXES);
+    }
+
+    public function setServiceOptionalTaxes($serializedOptionalTaxes)
+    {
+        return $this->setData(self::SERVICE_OPTIONAL_TAXES, $serializedOptionalTaxes);
+    }
+
     /**
      * @inheritdoc
      */
