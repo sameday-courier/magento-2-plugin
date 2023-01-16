@@ -125,6 +125,10 @@ class StoredDataHelper extends AbstractHelper
 
     public function deserializeServiceOptionalTaxes($samedayServiceOptionalTaxes)
     {
+        if (null === $samedayServiceOptionalTaxes) {
+            return null;
+        }
+
         return $this->json->unserialize($samedayServiceOptionalTaxes);
     }
 }

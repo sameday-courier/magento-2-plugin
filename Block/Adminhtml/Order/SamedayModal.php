@@ -160,9 +160,11 @@ class SamedayModal extends Template
         $defaultService = $this->filterServiceByCode($serviceCode);
         if (null !== $defaultService) {
             $defaultServiceTaxes = $this->storedDataHelper->deserializeServiceOptionalTaxes($defaultService->getServiceOptionalTaxes());
-            foreach ($defaultServiceTaxes as $tax) {
-                if ($tax['code'] === $this->storedDataHelper::SERVICE_OPTIONAL_TAX_PDO) {
-                    return true;
+            if (null !== $defaultServiceTaxes) {
+                foreach ($defaultServiceTaxes as $tax) {
+                    if ($tax['code'] === $this->storedDataHelper::SERVICE_OPTIONAL_TAX_PDO) {
+                        return true;
+                    }
                 }
             }
         }
