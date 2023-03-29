@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SamedayCourier\Shipping\Controller\Adminhtml\Order;
 
 use Magento\Backend\App\Action;
+use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderManagementInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Controller\Adminhtml\Order as AdminOrder;
@@ -30,11 +31,15 @@ class ShowPdf extends AdminOrder
 
     public function execute()
     {
-        /** @var \Magento\Sales\Api\Data\OrderInterface $order */
+        /** @var OrderInterface $order */
         $order = $this->_initOrder();
 
         $awb = $this->awbRepository->getByOrderId($order->getEntityId());
-        $apiRequest = new SamedayGetAwbPdfRequest($awb->getAwbNumber(), (new AwbPdfType(AwbPdfType::A4)));
+
+        $apiRequest = new SamedayGetAwbPdfRequest(
+            $awb->getAwbNumber(),
+            (new AwbPdfType($this->apiHelper->getAwbLabelFormat()))
+        );
 
         /** @var SamedayGetAwbPdfResponse $response */
         $response = $this->apiHelper->doRequest($apiRequest, 'getAwbPdf');

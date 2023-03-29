@@ -80,7 +80,7 @@ class SamedayModal extends Template
         /** @var Order $order */
         $order = $this->getOrder();
 
-        $samedaycourierLocker = trim($order->getData('samedaycourier_locker'));
+        $samedaycourierLocker = trim((string) $order->getData('samedaycourier_locker'));
         $samedaycourierLockerDetails = null;
         $lockerId = null;
         if ('' !== $samedaycourierLocker) {
