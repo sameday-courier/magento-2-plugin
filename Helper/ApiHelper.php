@@ -12,6 +12,7 @@ use Magento\Framework\Message\ManagerInterface;
 use Psr\Log\LoggerInterface;
 use Sameday\Exceptions\SamedayBadRequestException;
 use Sameday\Exceptions\SamedaySDKException;
+use Sameday\Objects\Types\AwbPdfType;
 use Sameday\Requests\SamedayRequestInterface;
 use Sameday\Responses\SamedayResponseInterface;
 use Sameday\Sameday;
@@ -241,5 +242,10 @@ class ApiHelper extends AbstractHelper
         ];
 
         return $this->loginClient($form_values);
+    }
+
+    public function getAwbLabelFormat(): string
+    {
+        return $this->scopeConfig->getValue('carriers/samedaycourier/awb_label_format') ?? AwbPdfType::A4;
     }
 }

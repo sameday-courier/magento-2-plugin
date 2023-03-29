@@ -35,18 +35,19 @@
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
 
-                <field id="specificerrmsg" translate="label" type="textarea" sortOrder="300" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Displayed Error Message</label>
-                </field>
-
                 <field id="showmethod" translate="label" type="select" sortOrder="400" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Show Method if Not Applicable</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
 
-                <field id="show_lockers_map" translate="label" type="select" sortOrder="500" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="show_lockers_map" translate="label" type="select" sortOrder="410" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Show Sameday easyBox map on checkout page</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="awb_label_format" translate="label" type="select" sortOrder="420" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Awb Label format</label>
+                    <source_model>SamedayCourier\Shipping\Model\Config\Source\AwbLabelFormat</source_model>
                 </field>
 
                 <field id="repayment_tax_label" translate="label" type="text" sortOrder="460" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -56,6 +57,10 @@
                 <field id="repayment_tax" translate="label" type="text" sortOrder="470" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Repayment tax</label>
                     <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+
+                <field id="specificerrmsg" translate="label" type="textarea" sortOrder="480" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Displayed Error Message</label>
                 </field>
 
                 <field id="sort_order" translate="label" type="text" sortOrder="500" showInDefault="1" showInWebsite="1" showInStore="0">
@@ -72,7 +77,7 @@
                     <frontend_model>SamedayCourier\Shipping\Block\Adminhtml\System\Config\Form\Field\ServicesButton</frontend_model>
                 </field>
 
-                <field id="lockers" translate="label" type="button" sortOrder="700" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="lockers" translate="label" type="button" sortOrder="710" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Lockers</label>
                     <frontend_model>SamedayCourier\Shipping\Block\Adminhtml\System\Config\Form\Field\LockersButton</frontend_model>
                 </field>
