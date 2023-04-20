@@ -13,6 +13,12 @@
                 <item name="class" xsi:type="string">primary</item>
                 <item name="url" xsi:type="string">*/*/refresh</item>
             </item>
+            <item name="back" xsi:type="array">
+                <item name="name" xsi:type="string">back</item>
+                <item name="label" xsi:type="string" translate="true">Back</item>
+                <item name="class" xsi:type="string">action-scalable back</item>
+                <item name="url" xsi:type="string">adminhtml/system_config/edit/section/carriers</item>
+            </item>
         </item>
     </argument>
     <dataSource name="samedaycourier_shipping_pickuppoint_index_data_source">
