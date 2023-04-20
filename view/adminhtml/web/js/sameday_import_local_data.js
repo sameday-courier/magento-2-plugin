@@ -1,7 +1,7 @@
 require([
         'jquery',
     ],
-    ($, messageList) => {
+    ($) => {
         const _actions = ['importServices', 'importPickupPoints', 'importLockers'];
         const importDataButton = document.getElementById('carriers_samedaycourier_samedayImportLocalData');
 
