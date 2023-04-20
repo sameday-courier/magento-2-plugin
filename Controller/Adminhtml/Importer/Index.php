@@ -29,21 +29,18 @@ class Index extends Action
     /**
      * @param Context $context
      * @param ResultFactory $resultFactory
-     * @param Json $json
      * @param LocalDataImporter $localDataImporter
      * @param Validator|null $formKeyValidator
      */
     public function __construct(
         Context $context,
         ResultFactory $resultFactory,
-        Json $json,
         LocalDataImporter $localDataImporter,
         Validator $formKeyValidator = null
     ) {
         parent::__construct($context);
 
         $this->resultJsonFactory = $resultFactory;
-        $this->json = $json;
         $this->formKeyValidator = $formKeyValidator ?: ObjectManager::getInstance()->get(Validator::class);
         $this->localDataImporter = $localDataImporter;
     }
