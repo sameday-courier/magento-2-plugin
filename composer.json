@@ -3,10 +3,10 @@
   "description": "Magento 2 plugin for Sameday Courier shipping",
   "require": {
     "sameday-courier/php-sdk": "^2.0.1",
-    "php": "~7.0.2||~7.1.0||~7.2.0||~7.3.0||~7.4.0||~8.1.0"
+    "php": "~7.0.2||~7.1.0||~7.2.0||~7.3.0||~7.4.0||~8.2.0"
   },
   "type": "magento2-module",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "autoload": {
     "files": [ "registration.php" ],
     "psr-4": {
