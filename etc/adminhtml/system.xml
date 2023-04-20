@@ -67,6 +67,11 @@
                     <label>Sort Order</label>
                 </field>
 
+                <field id="samedayImportLocalData" translate="label" type="button" sortOrder="550" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Import Data</label>
+                    <frontend_model>SamedayCourier\Shipping\Block\Adminhtml\System\Config\Form\Field\ImportData</frontend_model>
+                </field>
+
                 <field id="pickuppoints" translate="label" type="button" sortOrder="600" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Pickup points</label>
                     <frontend_model>SamedayCourier\Shipping\Block\Adminhtml\System\Config\Form\Field\PickupPointsButton</frontend_model>
