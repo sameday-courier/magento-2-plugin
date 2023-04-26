@@ -2,10 +2,11 @@
 
 namespace SamedayCourier\Shipping\Model\ResourceModel;
 
+use Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface;
 use Magento\Framework\Api\Search\FilterGroup;
-use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SortOrder;
+use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use SamedayCourier\Shipping\Api\Data\ServiceInterface;
 use SamedayCourier\Shipping\Api\Data\ServiceSearchResultsInterface;
@@ -41,7 +42,7 @@ class ServiceRepository implements ServiceRepositoryInterface
     private $serviceSearchResultsFactory;
 
     /**
-     * @var \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface
+     * @var JoinProcessorInterface
      */
     private $extensionAttributesJoinProcessor;
 
@@ -51,13 +52,11 @@ class ServiceRepository implements ServiceRepositoryInterface
     private $searchCriteriaBuilder;
 
     /**
-     * ServiceRepository constructor.
-     *
      * @param ServiceFactory $serviceFactory
      * @param Service $serviceResourceModel
      * @param CollectionFactory $serviceCollectionFactory
      * @param ServiceSearchResultsInterfaceFactory $serviceSearchResultsFactory
-     * @param \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $extensionAttributesJoinProcessor
+     * @param JoinProcessorInterface $extensionAttributesJoinProcessor
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      */
     public function __construct(
@@ -65,7 +64,7 @@ class ServiceRepository implements ServiceRepositoryInterface
         Service $serviceResourceModel,
         CollectionFactory $serviceCollectionFactory,
         ServiceSearchResultsInterfaceFactory $serviceSearchResultsFactory,
-        \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $extensionAttributesJoinProcessor,
+        JoinProcessorInterface $extensionAttributesJoinProcessor,
         SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
         $this->serviceFactory = $serviceFactory;
@@ -79,20 +78,16 @@ class ServiceRepository implements ServiceRepositoryInterface
     /**
      * @inheritdoc
      *
-     * @throws \Magento\Framework\Exception\AlreadyExistsException
+     * @throws AlreadyExistsException
      */
     public function save(ServiceInterface $service)
     {
-        $serviceModel = null;
+        $serviceModel = $this->serviceFactory->create();
         if ($service->getId()) {
-            $serviceModel = $this->serviceFactory->create();
             $this->serviceResourceModel->load($serviceModel, $service->getId());
-        } else {
-            $serviceModel = $this->serviceFactory->create();
         }
 
         $serviceModel->updateData($service);
-
         $this->serviceResourceModel->save($serviceModel);
     }
 

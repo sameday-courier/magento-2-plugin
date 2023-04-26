@@ -111,7 +111,7 @@ class LocalDataImporter extends AbstractHelper
     public function importServices(): LocalDataImporterResponse
     {
         $sameday = new Sameday($this->apiHelper->initClient());
-        $isTesting = (bool) $this->config->getValue('carriers/samedaycourier/testing');
+        $isTesting = $this->storeDataHelper->isTesting();
 
         $remoteServices = [];
         $page = 1;
@@ -196,7 +196,7 @@ class LocalDataImporter extends AbstractHelper
     public function importPickupPoints(): LocalDataImporterResponse
     {
         $sameday = new Sameday($this->apiHelper->initClient());
-        $isTesting = (bool) $this->config->getValue('carriers/samedaycourier/testing');
+        $isTesting = $this->storeDataHelper->isTesting();
 
         $remotePickupPoints = [];
         $page = 1;
@@ -272,7 +272,7 @@ class LocalDataImporter extends AbstractHelper
     public function importLockers(): LocalDataImporterResponse
     {
         $sameday = new Sameday($this->apiHelper->initClient());
-        $isTesting = (bool) $this->config->getValue('carriers/samedaycourier/testing');
+        $isTesting = $this->storeDataHelper->isTesting();
 
         $request = new SamedayGetLockersRequest();
         try {
