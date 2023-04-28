@@ -35,6 +35,7 @@ use Sameday\Responses\SamedayPostAwbResponse;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Sales\Api\OrderAddressRepositoryInterface;
+use SamedayCourier\Shipping\Helper\ShippingService;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
 
 class AddAwb extends AdminOrder implements HttpPostActionInterface
@@ -47,6 +48,11 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
     private $manager;
     private $serializer;
     private $serviceRepository;
+
+    /**
+     * @var ShippingService $shippingService
+     */
+    private $shippingService;
 
     /**
      * @var OrderAddressRepositoryInterface $orderAddressRepository
@@ -72,7 +78,8 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         SerializerInterface $serializer,
         ServiceRepositoryInterface $serviceRepository,
         StoredDataHelper $storedDataHelper,
-        OrderAddressRepositoryInterface $orderAddressRepository
+        OrderAddressRepositoryInterface $orderAddressRepository,
+        ShippingService $shippingService
     )
     {
         parent::__construct(
@@ -95,7 +102,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         $this->manager = $manager;
         $this->serializer = $serializer;
         $this->serviceRepository = $serviceRepository;
-        $this->orderAddressRepository = $orderAddressRepository;
+        $this->shippingService = $shippingService;
     }
 
     /**
@@ -130,15 +137,17 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         $lockerLastMile = null;
         if ($serviceCode === ApiHelper::LOCKER_NEXT_DAY_SERVICE) {
             $locker = $this->serializer->unserialize($order->getSamedaycourierLocker());
-            $shippingAddress->setCity($locker['city']);
-            $shippingAddress->setRegion($locker['county']);
-            $shippingAddress->setStreet(sprintf(
-                '%s (%s)',
-                $locker['address'],
-                $locker['name']
-            ));
 
-            $this->orderAddressRepository->save($shippingAddress);
+            $this->shippingService->persistAddress(
+                $shippingAddress,
+                $locker['city'],
+                $locker['county'],
+                sprintf(
+                    '%s (%s)',
+                    $locker['address'],
+                    $locker['name']
+                )
+            );
 
             $lockerLastMile = $locker['lockerId'];
         }
@@ -149,11 +158,13 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             $lockerLastMile = null;
 
             $hdAddress = $this->serializer->unserialize($order->getSamedaycourierDestinationAddressHd());
-            $shippingAddress->setCity($hdAddress['city']);
-            $shippingAddress->setRegion($hdAddress['region']);
-            $shippingAddress->setStreet(implode(' ', $hdAddress['street']));
 
-            $this->orderAddressRepository->save($shippingAddress);
+            $this->shippingService->persistAddress(
+                $shippingAddress,
+                $hdAddress['city'],
+                $hdAddress['region'],
+                implode(' ', $hdAddress['street'])
+            );
         }
 
         $regionName = $shippingAddress->getRegion();
