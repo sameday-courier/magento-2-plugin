@@ -3,7 +3,6 @@
 namespace SamedayCourier\Shipping\Helper;
 
 use Exception;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -27,11 +26,6 @@ class LocalDataImporter extends AbstractHelper
      * @var ApiHelper
      */
     private $apiHelper;
-
-    /**
-     * @var ScopeConfigInterface
-     */
-    private $config;
 
     /**
      * @var ServiceInterfaceFactory
@@ -71,7 +65,6 @@ class LocalDataImporter extends AbstractHelper
     /**
      * @param Context $context
      * @param ApiHelper $apiHelper
-     * @param ScopeConfigInterface $config
      * @param ServiceInterfaceFactory $serviceFactory
      * @param ServiceRepositoryInterface $serviceRepository
      * @param StoredDataHelper $storedDataHelper
@@ -83,7 +76,6 @@ class LocalDataImporter extends AbstractHelper
     public function __construct(
         Context $context,
         ApiHelper $apiHelper,
-        ScopeConfigInterface $config,
         ServiceInterfaceFactory $serviceFactory,
         ServiceRepositoryInterface $serviceRepository,
         StoredDataHelper $storedDataHelper,
@@ -95,7 +87,6 @@ class LocalDataImporter extends AbstractHelper
         parent::__construct($context);
 
         $this->apiHelper = $apiHelper;
-        $this->config = $config;
         $this->serviceFactory = $serviceFactory;
         $this->serviceRepository = $serviceRepository;
         $this->storeDataHelper = $storedDataHelper;
@@ -111,7 +102,7 @@ class LocalDataImporter extends AbstractHelper
     public function importServices(): LocalDataImporterResponse
     {
         $sameday = new Sameday($this->apiHelper->initClient());
-        $isTesting = $this->storeDataHelper->isTesting();
+        $isTesting = $this->apiHelper->getEnvMode();
 
         $remoteServices = [];
         $page = 1;
@@ -196,7 +187,7 @@ class LocalDataImporter extends AbstractHelper
     public function importPickupPoints(): LocalDataImporterResponse
     {
         $sameday = new Sameday($this->apiHelper->initClient());
-        $isTesting = $this->storeDataHelper->isTesting();
+        $isTesting = $this->apiHelper->getEnvMode();
 
         $remotePickupPoints = [];
         $page = 1;
@@ -272,7 +263,7 @@ class LocalDataImporter extends AbstractHelper
     public function importLockers(): LocalDataImporterResponse
     {
         $sameday = new Sameday($this->apiHelper->initClient());
-        $isTesting = $this->storeDataHelper->isTesting();
+        $isTesting = $this->apiHelper->getEnvMode();
 
         $request = new SamedayGetLockersRequest();
         try {

@@ -13,6 +13,7 @@ use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Sales\Api\OrderAddressRepositoryInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
 use RuntimeException;
@@ -28,12 +29,18 @@ class ChangeLocker extends Action
      */
     private $orderRepository;
 
+    /**
+     * @var OrderAddressRepositoryInterface
+     */
+    private $orderAddressRepository;
+
     public function __construct(
         Context $context,
         ResourceConnection $resourceConnection,
         ResultFactory $resultFactory,
         Json $json,
         OrderRepositoryInterface $orderRepository,
+        OrderAddressRepositoryInterface $orderAddressRepository,
         Validator $formKeyValidator = null
     ) {
         parent::__construct($context);
@@ -42,6 +49,7 @@ class ChangeLocker extends Action
         $this->json = $json;
         $this->orderRepository = $orderRepository;
         $this->formKeyValidator = $formKeyValidator ?: ObjectManager::getInstance()->get(Validator::class);
+        $this->orderAddressRepository = $orderAddressRepository;
     }
 
     /**
@@ -78,7 +86,7 @@ class ChangeLocker extends Action
             ));
             $shippingAddress->setRegion($locker['county']);
 
-            $shippingAddress->save();
+            $this->orderAddressRepository->save($shippingAddress);
         }
 
         $order->setSamedaycourierLocker($this->json->serialize($locker));

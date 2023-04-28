@@ -34,6 +34,7 @@ use SamedayCourier\Shipping\Helper\ApiHelper;
 use Sameday\Responses\SamedayPostAwbResponse;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Sales\Api\OrderAddressRepositoryInterface;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
 
 class AddAwb extends AdminOrder implements HttpPostActionInterface
@@ -46,7 +47,11 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
     private $manager;
     private $serializer;
     private $serviceRepository;
-    private $storedDataHelper;
+
+    /**
+     * @var OrderAddressRepositoryInterface $orderAddressRepository
+     */
+    private $orderAddressRepository;
 
     public function __construct(
         Action\Context $context,
@@ -66,7 +71,8 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         ManagerInterface $manager,
         SerializerInterface $serializer,
         ServiceRepositoryInterface $serviceRepository,
-        StoredDataHelper $storedDataHelper
+        StoredDataHelper $storedDataHelper,
+        OrderAddressRepositoryInterface $orderAddressRepository
     )
     {
         parent::__construct(
@@ -89,6 +95,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         $this->manager = $manager;
         $this->serializer = $serializer;
         $this->serviceRepository = $serviceRepository;
+        $this->orderAddressRepository = $orderAddressRepository;
     }
 
     /**
@@ -117,25 +124,28 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         /** @var OrderAddressInterface $shippingAddress */
         $shippingAddress = $order->getShippingAddress();
 
-        $regionName = $shippingAddress->getRegion();
-        $city = $shippingAddress->getCity();
-        $address = implode(' ', $shippingAddress->getStreet());
-        $phone = $shippingAddress->getTelephone();
-
         $serviceCode = $this->serviceRepository->getBySamedayId(
             $values['service'],
             $this->apiHelper->getEnvMode()
         )->getCode();
+
         if (($serviceCode !== ApiHelper::LOCKER_NEXT_DAY_SERVICE)
             && null !== $order->getSamedaycourierDestinationAddressHd()
         ) {
+            $lockerLastMile = null;
+
             $hdAddress = $this->serializer->unserialize($order->getSamedaycourierDestinationAddressHd());
-            $regionName = $hdAddress['region'] ?? null;
-            $city = $hdAddress['city'] ?? null;
-            if (isset($hdAddress['street'])) {
-                $address = implode(' ', $hdAddress['street']);
-            }
+            $shippingAddress->setCity($hdAddress['city']);
+            $shippingAddress->setRegion($hdAddress['region']);
+            $shippingAddress->setStreet(implode(' ', $hdAddress['street']));
+
+            $this->orderAddressRepository->save($shippingAddress);
         }
+
+        $regionName = $shippingAddress->getRegion();
+        $city = $shippingAddress->getCity();
+        $address = implode(' ', $shippingAddress->getStreet());
+        $phone = $shippingAddress->getTelephone();
 
         $contactPerson = sprintf('%s %s',
             $shippingAddress->getFirstname(),
@@ -181,7 +191,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             null,
             $values['observation'],
             null,
-            (int) $lockerLastMile
+            $lockerLastMile
         );
 
         /** @var SamedayPostAwbResponse|false $response */
