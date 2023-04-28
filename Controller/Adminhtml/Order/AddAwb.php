@@ -119,8 +119,6 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
 
         $packageWeight = max($values['package_weight'], 1);
 
-        $lockerLastMile = $values['locker_last_mile'] ?? null;
-
         /** @var OrderAddressInterface $shippingAddress */
         $shippingAddress = $order->getShippingAddress();
 
@@ -128,6 +126,22 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             $values['service'],
             $this->apiHelper->getEnvMode()
         )->getCode();
+
+        $lockerLastMile = null;
+        if ($serviceCode === ApiHelper::LOCKER_NEXT_DAY_SERVICE) {
+            $locker = $this->serializer->unserialize($order->getSamedaycourierLocker());
+            $shippingAddress->setCity($locker['city']);
+            $shippingAddress->setRegion($locker['county']);
+            $shippingAddress->setStreet(sprintf(
+                '%s (%s)',
+                $locker['address'],
+                $locker['name']
+            ));
+
+            $this->orderAddressRepository->save($shippingAddress);
+
+            $lockerLastMile = $locker['lockerId'];
+        }
 
         if (($serviceCode !== ApiHelper::LOCKER_NEXT_DAY_SERVICE)
             && null !== $order->getSamedaycourierDestinationAddressHd()
