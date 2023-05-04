@@ -137,6 +137,11 @@ class ApiHelper extends AbstractHelper
         );
     }
 
+    public function getEnvMode()
+    {
+        return $this->scopeConfig->getValue('carriers/samedaycourier/testing');
+    }
+
     public function getHostCountry()
     {
         return $this->scopeConfig->getValue('carriers/samedaycourier/country') ?? self::ROMANIA_CODE;

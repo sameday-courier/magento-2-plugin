@@ -5,10 +5,13 @@ namespace SamedayCourier\Shipping\Model\ResourceModel\PickupPoint\Grid;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Data\Collection\Db\FetchStrategyInterface as FetchStrategy;
 use Magento\Framework\Data\Collection\EntityFactoryInterface as EntityFactory;
+use Magento\Framework\DB\Select;
 use Magento\Framework\Event\ManagerInterface as EventManager;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult;
 use Psr\Log\LoggerInterface as Logger;
 
-class Collection extends \Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult
+class Collection extends SearchResult
 {
     /**
      * @var ScopeConfigInterface
@@ -28,9 +31,19 @@ class Collection extends \Magento\Framework\View\Element\UiComponent\DataProvide
      * @param null $identifierName
      * @param null $connectionName
      *
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      */
-    public function __construct(ScopeConfigInterface $config, EntityFactory $entityFactory, Logger $logger, FetchStrategy $fetchStrategy, EventManager $eventManager, $mainTable = null, $resourceModel = null, $identifierName = null, $connectionName = null)
+    public function __construct(
+        ScopeConfigInterface $config,
+        EntityFactory $entityFactory,
+        Logger $logger,
+        FetchStrategy $fetchStrategy,
+        EventManager $eventManager,
+        $mainTable = null,
+        $resourceModel = null,
+        $identifierName = null,
+        $connectionName = null
+    )
     {
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, 'samedaycourier_shipping_pickuppoint', \SamedayCourier\Shipping\Model\ResourceModel\PickupPoint::class, $identifierName, $connectionName);
 
@@ -38,7 +51,7 @@ class Collection extends \Magento\Framework\View\Element\UiComponent\DataProvide
     }
 
     /**
-     * @return \Magento\Framework\DB\Select
+     * @return Select
      */
     public function getSelect()
     {

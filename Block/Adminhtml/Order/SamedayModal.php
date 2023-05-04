@@ -127,6 +127,11 @@ class SamedayModal extends Template
             $displayLockerDetails = $this->storedDataHelper::DISPLAY_HTML_ELEM['show'];
         }
 
+        $city = null;
+        if (null !== $shippingAddress = $order->getShippingAddress()) {
+            $city = $shippingAddress->getCity();
+        }
+
         return [
             'client_reference' => $order->getId(),
             'weight' => $order->getWeight(),
@@ -136,10 +141,10 @@ class SamedayModal extends Template
             'serviceCodeLockerNextDay' => ApiHelper::LOCKER_NEXT_DAY_SERVICE,
             'displayLockerDetails' => $displayLockerDetails,
             'displayLockerFirstMile' => $displayLockerFirstMile,
-            'samedaycourier_locker_id' => $lockerId,
             'samedaycourier_locker' => $samedaycourierLockerDetails,
             'country-code' => $this->storedDataHelper->getHostCountry(),
             'api-username' => $this->storedDataHelper->getApiUsername(),
+            'city' => $city,
             'changeLockerMethodUrl' => $this->getUrl('samedaycourier_shipping/order/changeLocker', [
                 'order_id' => $order->getId()
             ])

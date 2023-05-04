@@ -66,7 +66,9 @@
     },
     "sales_order": {
         "column": {
-            "samedaycourier_locker": true
+            "samedaycourier_locker": true,
+            "samedaycourier_fee": true,
+            "samedaycourier_destination_address_hd": true
         }
     }
 }

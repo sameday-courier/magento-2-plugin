@@ -19,15 +19,16 @@ use Sameday\Objects\PostAwb\Request\AwbRecipientEntityObject;
 use Sameday\Objects\Types\AwbPaymentType;
 use Sameday\Objects\Types\PackageType;
 use Sameday\Requests\SamedayPostAwbEstimationRequest;
-use SamedayCourier\Shipping\Api\Data\ServiceInterface;
 use SamedayCourier\Shipping\Api\PickupPointRepositoryInterface;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
+use SamedayCourier\Shipping\Helper\ApiHelper;
 use SamedayCourier\Shipping\Helper\ApiHelper as SamedayApiHelper;
+use SamedayCourier\Shipping\Helper\ShippingService;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
 
 class Shipping extends AbstractCarrier implements CarrierInterface
 {
-    protected $_code = 'samedaycourier';
+    protected $_code = ShippingService::SHIPPING_METHOD_CODE;
     protected $_isFixed = true;
     protected $_rateResultFactory;
     protected $_rateMethodFactory;
@@ -108,7 +109,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
 
         $services = $this->serviceRepository->getAllActive($isTesting)->getItems();
         foreach ($services as $service) {
-            $isLockerService = in_array($service->getCode(), ServiceInterface::SERVICES_WITH_LOCKERS);
+            $isLockerService = $service->getCode() === ApiHelper::LOCKER_NEXT_DAY_SERVICE;
             $lockerMaxItems = $service->getLockerMaxItems();
             if ($isLockerService && sizeof($request->getAllItems()) > $lockerMaxItems) {
                 continue;

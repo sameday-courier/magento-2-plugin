@@ -124,7 +124,6 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                         <strong> <?= __('Locker details (Last Mile)') ?> </strong>
                     </div>
                     <div class="col-75">
-                        <input type="hidden" name="locker_last_mile" id="lockerId" value="<?php print $block->getOrderDetails()['samedaycourier_locker_id']; ?>">
                         <textarea disabled="disabled" id="lockerId_details" style="height:50px"><?php print $block->getOrderDetails()['samedaycourier_locker']; ?></textarea>
                     </div>
                 </div>
@@ -138,6 +137,7 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                                 name="changeLocker"
                                 data-country_code="<?php print $block->getOrderDetails()['country-code']; ?>"
                                 data-api_username="<?php print $block->getOrderDetails()['api-username']; ?>"
+                                data-city="<?php print $block->getOrderDetails()['city']; ?>"
                                 class="action-default scalable primary"
                         >
                             <?= __('Change locker') ?>
@@ -260,6 +260,7 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                     countryCode: el.target.getAttribute('data-country_code').toUpperCase(),
                     langCode: el.target.getAttribute('data-country_code'),
                     apiUsername: el.target.getAttribute('data-api_username'),
+                    city: el.target.getAttribute('data-city'),
                 }
 
                 window['LockerPlugin'].init(lockerPluginInit);
@@ -278,7 +279,6 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                         dataType: 'json'
                     }).done(function (data) {
                         if (data.success) {
-                            $('#lockerId').val(locker.lockerId);
                             $('#lockerId_details').val(`${locker.name} ${locker.address}`);
                         }
                     });

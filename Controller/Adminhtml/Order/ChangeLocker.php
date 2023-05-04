@@ -13,30 +13,34 @@ use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Sales\Model\Order;
 use RuntimeException;
 
 class ChangeLocker extends Action
 {
-    private const SAMEDAY_COURIER_LOCKER = 'samedaycourier_locker';
-    private const ORDERS_TABLE_NAME = 'sales_order';
-
-    private $resourceConnection;
     private $resultJsonFactory;
     private $json;
     private $formKeyValidator;
+
+    /**
+     * @var OrderRepositoryInterface
+     */
+    private $orderRepository;
 
     public function __construct(
         Context $context,
         ResourceConnection $resourceConnection,
         ResultFactory $resultFactory,
         Json $json,
+        OrderRepositoryInterface $orderRepository,
         Validator $formKeyValidator = null
     ) {
         parent::__construct($context);
 
-        $this->resourceConnection = $resourceConnection;
         $this->resultJsonFactory = $resultFactory;
         $this->json = $json;
+        $this->orderRepository = $orderRepository;
         $this->formKeyValidator = $formKeyValidator ?: ObjectManager::getInstance()->get(Validator::class);
     }
 
@@ -60,16 +64,13 @@ class ChangeLocker extends Action
             throw new RuntimeException('Invalid Locker data');
         }
 
-        $locker = $this->json->serialize($locker);
-
-        $connection = $this->resourceConnection->getConnection();
-        $ordersTableName = $connection->getTableName(self::ORDERS_TABLE_NAME);
-        $samedayCourierColumnName = self::SAMEDAY_COURIER_LOCKER;
         $orderId = (int) $params['order_id'];
 
-        // Store new locker in DB:
-        $queryString = "UPDATE $ordersTableName SET `$samedayCourierColumnName` = '$locker' WHERE `entity_id` = '$orderId'";
-        $connection->query($queryString);
+        /** @var Order $order */
+        $order = $this->orderRepository->get($orderId);
+
+        $order->setSamedaycourierLocker($this->json->serialize($locker));
+        $this->orderRepository->save($order);
 
         return $this->resultJsonFactory->create(ResultFactory::TYPE_JSON)->setData(['success' => true]);
     }

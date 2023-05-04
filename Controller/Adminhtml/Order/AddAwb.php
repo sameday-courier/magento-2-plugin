@@ -5,9 +5,16 @@ declare(strict_types=1);
 namespace SamedayCourier\Shipping\Controller\Adminhtml\Order;
 
 use Magento\Backend\App\Action;
-use Magento\Directory\Model\Region;
 use Magento\Framework\App\Action\HttpPostActionInterface;
-use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\Response\Http\FileFactory;
+use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Controller\Result\RawFactory;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Registry;
+use Magento\Framework\Translate\InlineInterface;
+use Magento\Framework\View\Result\LayoutFactory;
+use Magento\Framework\View\Result\PageFactory;
+use Magento\Sales\Api\Data\OrderAddressInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderManagementInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
@@ -21,34 +28,46 @@ use Sameday\Objects\Types\PackageType;
 use Sameday\Requests\SamedayPostAwbRequest;
 use SamedayCourier\Shipping\Api\AwbRepositoryInterface;
 use SamedayCourier\Shipping\Api\Data\AwbInterfaceFactory;
+use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
 use SamedayCourier\Shipping\Exception\NotAnOrderMatchedException;
 use SamedayCourier\Shipping\Helper\ApiHelper;
 use Sameday\Responses\SamedayPostAwbResponse;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Sales\Api\OrderAddressRepositoryInterface;
+use SamedayCourier\Shipping\Helper\ShippingService;
+use SamedayCourier\Shipping\Helper\StoredDataHelper;
 
 class AddAwb extends AdminOrder implements HttpPostActionInterface
 {
-    /**
-     * Changes ACL Resource Id
-     */
-    const ADMIN_RESOURCE = 'Magento_Sales::hold';
+    public const ADMIN_RESOURCE = 'Magento_Sales::hold';
 
     private $awbRepository;
     private $awbFactory;
     private $apiHelper;
     private $manager;
     private $serializer;
+    private $serviceRepository;
+
+    /**
+     * @var ShippingService $shippingService
+     */
+    private $shippingService;
+
+    /**
+     * @var OrderAddressRepositoryInterface $orderAddressRepository
+     */
+    private $orderAddressRepository;
 
     public function __construct(
         Action\Context $context,
-        \Magento\Framework\Registry $coreRegistry,
-        \Magento\Framework\App\Response\Http\FileFactory $fileFactory,
-        \Magento\Framework\Translate\InlineInterface $translateInline,
-        \Magento\Framework\View\Result\PageFactory $resultPageFactory,
-        \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
-        \Magento\Framework\View\Result\LayoutFactory $resultLayoutFactory,
-        \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
+        Registry $coreRegistry,
+        FileFactory $fileFactory,
+        InlineInterface $translateInline,
+        PageFactory $resultPageFactory,
+        JsonFactory $resultJsonFactory,
+        LayoutFactory $resultLayoutFactory,
+        RawFactory $resultRawFactory,
         OrderManagementInterface $orderManagement,
         OrderRepositoryInterface $orderRepository,
         LoggerInterface $logger,
@@ -56,7 +75,11 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         AwbInterfaceFactory $awbFactory,
         ApiHelper $apiHelper,
         ManagerInterface $manager,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        ServiceRepositoryInterface $serviceRepository,
+        StoredDataHelper $storedDataHelper,
+        OrderAddressRepositoryInterface $orderAddressRepository,
+        ShippingService $shippingService
     )
     {
         parent::__construct(
@@ -78,11 +101,14 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         $this->apiHelper = $apiHelper;
         $this->manager = $manager;
         $this->serializer = $serializer;
+        $this->serviceRepository = $serviceRepository;
+        $this->shippingService = $shippingService;
     }
 
     /**
      * @inheritDoc
      * @throws NotAnOrderMatchedException
+     * @throws NoSuchEntityException
      */
     public function execute()
     {
@@ -98,32 +124,65 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
 
         $values = $this->getRequest()->getParams();
 
+        $serviceId =  $values['service'];
+        $orderShippingMethod = $order->getShippingMethod();
         $packageWeight = max($values['package_weight'], 1);
 
-        $lockerLastMile = $values['locker_last_mile'] ?? null;
+        /** @var OrderAddressInterface $shippingAddress */
+        $shippingAddress = $order->getShippingAddress();
 
-        $objectManager = ObjectManager::getInstance();
-        $region = $objectManager->create(Region::class);
-        $billingAddress = $order->getBillingAddress();
-        $regionName = null;
-        $city = null;
-        $address = null;
-        $contactPerson = null;
-        $phone = null;
-        $postalCode = null;
-        $company = null;
-        if (null !== $billingAddress) {
-            $regionName = $region->loadByCode($billingAddress->getRegionCode(), $billingAddress->getCountryId())->getName();
-            $city = $billingAddress->getCity();
-            $address = $billingAddress->getStreet()[0];
-            $contactPerson = sprintf('%s %s', $billingAddress->getFirstname(), $billingAddress->getLastname());
-            $phone = $billingAddress->getTelephone();
-            $postalCode = $billingAddress->getPostcode();
-            if ((null !== $billingAddress->getCompany()) && ('' !== trim($billingAddress->getCompany()))) {
-                $company = new CompanyEntityObject(
-                    $billingAddress->getCompany()
-                );
-            }
+        $service = $this->serviceRepository->getBySamedayId(
+            $serviceId,
+            $this->apiHelper->getEnvMode()
+        );
+
+        $lockerLastMile = null;
+        if ($service->getCode() === ApiHelper::LOCKER_NEXT_DAY_SERVICE) {
+            $locker = $this->serializer->unserialize($order->getSamedaycourierLocker());
+
+            $this->shippingService->updateShippingAddress(
+                $shippingAddress,
+                $locker['city'],
+                $locker['county'],
+                sprintf(
+                    '%s (%s)',
+                    $locker['address'],
+                    $locker['name']
+                )
+            );
+
+            $lockerLastMile = $locker['lockerId'];
+        }
+
+        if (($service->getCode() !== ApiHelper::LOCKER_NEXT_DAY_SERVICE)
+            && null !== $order->getSamedaycourierDestinationAddressHd()
+        ) {
+            $lockerLastMile = null;
+
+            $hdAddress = $this->serializer->unserialize($order->getSamedaycourierDestinationAddressHd());
+
+            $this->shippingService->updateShippingAddress(
+                $shippingAddress,
+                $hdAddress['city'],
+                $hdAddress['region'],
+                implode(' ', $hdAddress['street'])
+            );
+        }
+
+        $regionName = $shippingAddress->getRegion();
+        $city = $shippingAddress->getCity();
+        $address = implode(' ', $shippingAddress->getStreet());
+        $phone = $shippingAddress->getTelephone();
+
+        $contactPerson = sprintf('%s %s',
+            $shippingAddress->getFirstname(),
+            $shippingAddress->getLastname()
+        );
+        $postalCode = $shippingAddress->getPostcode();
+        if ((null !== $company = $shippingAddress->getCompany()) && ('' !== trim($shippingAddress->getCompany()))) {
+            $company = new CompanyEntityObject(
+                $shippingAddress->getCompany()
+            );
         }
 
         $serviceTaxIds = [];
@@ -136,7 +195,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             null,
             (new PackageType(PackageType::PARCEL)),
             [(new ParcelDimensionsObject($packageWeight))],
-            $values['service'],
+            $serviceId,
             (new AwbPaymentType(AwbPaymentType::CLIENT)),
             (new AwbRecipientEntityObject(
                 $city,
@@ -165,6 +224,13 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         /** @var SamedayPostAwbResponse|false $response */
         $response = $this->apiHelper->doRequest($apiRequest, 'postAwb');
         if ($response && !empty($response->getParcels()[0])) {
+            // Update Shipping Service
+            $this->shippingService->updateShippingMethod(
+                $order,
+                $service->getName(),
+                $service->getCode()
+            );
+
             $parcelsResponse = $response->getParcels();
             $parcelsArr = [];
             foreach($parcelsResponse as $index => $parcelResponse){
