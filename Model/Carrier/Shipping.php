@@ -19,16 +19,16 @@ use Sameday\Objects\PostAwb\Request\AwbRecipientEntityObject;
 use Sameday\Objects\Types\AwbPaymentType;
 use Sameday\Objects\Types\PackageType;
 use Sameday\Requests\SamedayPostAwbEstimationRequest;
-use SamedayCourier\Shipping\Api\Data\ServiceInterface;
 use SamedayCourier\Shipping\Api\PickupPointRepositoryInterface;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
 use SamedayCourier\Shipping\Helper\ApiHelper;
 use SamedayCourier\Shipping\Helper\ApiHelper as SamedayApiHelper;
+use SamedayCourier\Shipping\Helper\ShippingService;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
 
 class Shipping extends AbstractCarrier implements CarrierInterface
 {
-    protected $_code = 'samedaycourier';
+    protected $_code = ShippingService::SHIPPING_METHOD_CODE;
     protected $_isFixed = true;
     protected $_rateResultFactory;
     protected $_rateMethodFactory;

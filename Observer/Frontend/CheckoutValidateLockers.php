@@ -75,7 +75,7 @@ class CheckoutValidateLockers implements ObserverInterface
             // Modify Shipping Address with locker address
             $samedaycourier_locker = $this->json->unserialize($samedaycourier_locker);
 
-            $this->shippingService->persistAddress(
+            $this->shippingService->updateShippingAddress(
                 $shippingAddress,
                 $samedaycourier_locker['city'],
                 $samedaycourier_locker['county'],

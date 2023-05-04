@@ -124,21 +124,23 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
 
         $values = $this->getRequest()->getParams();
 
+        $serviceId =  $values['service'];
+        $orderShippingMethod = $order->getShippingMethod();
         $packageWeight = max($values['package_weight'], 1);
 
         /** @var OrderAddressInterface $shippingAddress */
         $shippingAddress = $order->getShippingAddress();
 
-        $serviceCode = $this->serviceRepository->getBySamedayId(
-            $values['service'],
+        $service = $this->serviceRepository->getBySamedayId(
+            $serviceId,
             $this->apiHelper->getEnvMode()
-        )->getCode();
+        );
 
         $lockerLastMile = null;
-        if ($serviceCode === ApiHelper::LOCKER_NEXT_DAY_SERVICE) {
+        if ($service->getCode() === ApiHelper::LOCKER_NEXT_DAY_SERVICE) {
             $locker = $this->serializer->unserialize($order->getSamedaycourierLocker());
 
-            $this->shippingService->persistAddress(
+            $this->shippingService->updateShippingAddress(
                 $shippingAddress,
                 $locker['city'],
                 $locker['county'],
@@ -152,14 +154,14 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             $lockerLastMile = $locker['lockerId'];
         }
 
-        if (($serviceCode !== ApiHelper::LOCKER_NEXT_DAY_SERVICE)
+        if (($service->getCode() !== ApiHelper::LOCKER_NEXT_DAY_SERVICE)
             && null !== $order->getSamedaycourierDestinationAddressHd()
         ) {
             $lockerLastMile = null;
 
             $hdAddress = $this->serializer->unserialize($order->getSamedaycourierDestinationAddressHd());
 
-            $this->shippingService->persistAddress(
+            $this->shippingService->updateShippingAddress(
                 $shippingAddress,
                 $hdAddress['city'],
                 $hdAddress['region'],
@@ -193,7 +195,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             null,
             (new PackageType(PackageType::PARCEL)),
             [(new ParcelDimensionsObject($packageWeight))],
-            $values['service'],
+            $serviceId,
             (new AwbPaymentType(AwbPaymentType::CLIENT)),
             (new AwbRecipientEntityObject(
                 $city,
@@ -222,6 +224,13 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         /** @var SamedayPostAwbResponse|false $response */
         $response = $this->apiHelper->doRequest($apiRequest, 'postAwb');
         if ($response && !empty($response->getParcels()[0])) {
+            // Update Shipping Service
+            $this->shippingService->updateShippingMethod(
+                $order,
+                $service->getName(),
+                $service->getCode()
+            );
+
             $parcelsResponse = $response->getParcels();
             $parcelsArr = [];
             foreach($parcelsResponse as $index => $parcelResponse){
