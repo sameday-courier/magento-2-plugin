@@ -82,20 +82,17 @@ class SamedayModal extends Template
 
         $samedaycourierLocker = trim((string) $order->getData('samedaycourier_locker'));
         $samedaycourierLockerDetails = null;
-        $lockerId = null;
         if ('' !== $samedaycourierLocker) {
             $samedaycourierLocker = $this->json->unserialize($samedaycourierLocker);
 
             if (is_string($samedaycourierLocker)) {
                 $locker = $this->storedDataHelper->getLocker((int) $samedaycourierLocker);
                 if (null !== $locker) {
-                    $lockerId = $locker->getLockerId();
                     $samedaycourierLockerDetails = sprintf('%s %s', $locker->getName(), $locker->getAddress());
                 }
             }
 
             if (is_array($samedaycourierLocker)) {
-                $lockerId = $samedaycourierLocker['lockerId'];
                 $samedaycourierLockerDetails = sprintf('%s %s', $samedaycourierLocker['name'], $samedaycourierLocker['address']);
             }
         }
@@ -115,7 +112,7 @@ class SamedayModal extends Template
             }
         }
 
-        $serviceCode = explode('_', $order->getShippingMethod(), 2)[1];
+        $serviceCode = explode('_', $order->getShippingMethod(), 2)[1] ?? null;
 
         $displayLockerFirstMile = $this->storedDataHelper::DISPLAY_HTML_ELEM['hide'];
         if ($this->isServiceEligibleToLockerFirstMile($serviceCode)) {
@@ -134,7 +131,7 @@ class SamedayModal extends Template
 
         return [
             'client_reference' => $order->getId(),
-            'weight' => $order->getWeight(),
+            'weight' => $order->getWeight() > 0 ? $order->getWeight() : 1.0,
             'repayment' => $repayment,
             'serviceCode' => $serviceCode,
             'serviceTaxCodePDO' => $this->storedDataHelper::SERVICE_OPTIONAL_TAX_PDO,
