@@ -2,9 +2,17 @@
 
 namespace SamedayCourier\Shipping\Model\Config\Backend;
 
+use Magento\Framework\App\Cache\TypeListInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Config\Value;
+use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\Encryption\EncryptorInterface;
+use Magento\Framework\Model\Context;
+use Magento\Framework\Model\ResourceModel\AbstractResource;
+use Magento\Framework\Registry;
+use Sameday\Exceptions\SamedaySDKException;
 use SamedayCourier\Shipping\Helper\ApiHelper;
+use SamedayCourier\Shipping\Validators\SamedayValidator;
 
 class Active extends Value
 {
@@ -17,8 +25,17 @@ class Active extends Value
      */
     private $apiHelper;
 
-    public function __construct(ApiHelper $apiHelper, \Magento\Framework\Model\Context $context, \Magento\Framework\Registry $registry, \Magento\Framework\App\Config\ScopeConfigInterface $config, EncryptorInterface $encryptor, \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList, \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null, \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null, array $data = [])
-    {
+    public function __construct(
+        ApiHelper $apiHelper,
+        Context $context,
+        Registry $registry,
+        ScopeConfigInterface $config,
+        EncryptorInterface $encryptor,
+        TypeListInterface $cacheTypeList,
+        AbstractResource $resource = null,
+        AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
         $this->apiHelper = $apiHelper;
         $this->encryptor = $encryptor;
 
@@ -26,48 +43,40 @@ class Active extends Value
     }
 
     /**
-     * @inheritdoc
+     * @return SamedayValidator
      *
-     * @throws \Zend_Validate_Exception
+     * @throws SamedaySDKException
      */
-    protected function _getValidationRulesBeforeSave()
+    protected function _getValidationRulesBeforeSave(): SamedayValidator
     {
-        $authenticationValidator = new \Zend_Validate_Callback([$this, 'authenticationValidator']);
-        $authenticationValidator->setMessage(__('Sameday Courier API authentication failed. Please check your credentials.'));
+        $authenticationValidator = new SamedayValidator();
 
-        $validatorChain = new \Zend_Validate();
-        $validatorChain->addValidator($authenticationValidator, true);
+        $authenticationValidator->setValidation($this->authenticationValidator($this));
+        $authenticationValidator->setMessage(
+            __('Sameday Courier API authentication failed. Please check your credentials!')
+        );
 
-        return $validatorChain;
+        return $authenticationValidator;
     }
 
     /**
      * @param Value $field
-     *
      * @return bool
-     *
-     * @throws \Sameday\Exceptions\SamedayAuthenticationException
-     * @throws \Sameday\Exceptions\SamedaySDKException
-     * @throws \Sameday\Exceptions\SamedayServerException
+     * @throws SamedaySDKException
      */
-    public function authenticationValidator(Value $field)
+    public function authenticationValidator(Value $field): bool
     {
-        if (!$field->getValue()) {
-            return true;
-        }
-
         $username = $field->getFieldsetDataValue('username');
         $password = $this->_config->getValue('carriers/samedaycourier/password');
         if ($field->getFieldsetDataValue('password') !== '******') {
             // Password updated.
             $password = $field->getFieldsetDataValue('password');
-        }else{
+        } else {
             $password = $this->encryptor->decrypt($password);
         }
 
-
         // Check if login is valid.
-        if(!$this->apiHelper->connectionLogin($username, $password)){
+        if (!$this->apiHelper->connectionLogin($username, $password)) {
             return false;
         }
 
