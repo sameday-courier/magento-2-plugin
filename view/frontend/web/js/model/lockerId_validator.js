@@ -8,8 +8,10 @@ define(
         'use strict';
         return {
             validate: function () {
-                const lockerServiceCode = 'LN';
                 const samedayCourierLocker = 'samedaycourier_locker';
+                const eligibleToLockerServices = (code) => {
+                    return ['LN', 'XL'].includes(code);
+                }
 
                 let isValid = true;
 
@@ -28,7 +30,7 @@ define(
                 let method = quote.shippingMethod();
 
                 if (null !== method) {
-                    if (lockerServiceCode === method.method_code) {
+                    if (eligibleToLockerServices(method.method_code)) {
                         let locker = getCookie(samedayCourierLocker);
                         if ('' === locker) {
                             isValid = false;

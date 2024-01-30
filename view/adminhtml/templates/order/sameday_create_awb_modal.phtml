@@ -88,7 +88,7 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                         <?php foreach ($block->getServices() as $service): ?>
                             <option
                                 data-service_code="<?php echo $service->getCode();?>"
-                                data-service_locker_code="<?php echo $service->getCode() === $block->getOrderDetails()['serviceCodeLockerNextDay'] ? $block->toggleHtmlElement(true) : $block->toggleHtmlElement(false); ?>"
+                                data-service_locker_to_show="<?php echo $service->getCode() === $block->getOrderDetails()['serviceLockerToShow']; ?>"
                                 data-service_eligible_locker_first_mile="<?php echo $block->isServiceEligibleToLockerFirstMile($service->getCode()) ? $block->toggleHtmlElement(true) : $block->toggleHtmlElement(false); ?>"
                                 value="<?= $service->getSamedayId() ?>" <?= $service->getCode() === $block->getOrderDetails()['serviceCode'] ? 'selected' : '' ?>
                             >
@@ -153,7 +153,7 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                 <div class="col-75">
                     <select name="pickup_point" id="pickup_point">
                         <?php foreach ($block->getPickupPoints() as $pickupPoint): ?>
-                            <option value="<?= $pickupPoint->getSamedayId() ?>" <?= $pickupPoint->getIsDefault() == 1 ? 'selected' : '' ?>>
+                            <option value="<?= $pickupPoint->getSamedayId() ?>" <?= ((bool) $pickupPoint->getIsDefault()) === true ? 'selected' : '' ?>>
                                 <?= $pickupPoint->getSamedayAlias() ?>
                             </option>
                         <?php endforeach; ?>
@@ -299,7 +299,7 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                 lockerFirstMileElem.checked = false;
 
                 /* Toggle Element */
-                showLockerDetails.style.display = currentService.getAttribute('data-service_locker_code');
+                showLockerDetails.style.display = currentService.getAttribute('data-service_locker_to_show');
                 showLockerFirstMile.style.display = currentService.getAttribute('data-service_eligible_locker_first_mile');
             });
         }

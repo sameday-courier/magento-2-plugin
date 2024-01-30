@@ -24,6 +24,10 @@ class Rate
                 $rate->getCountryCode()
             );
 
+            $result->setDestCity(
+                $rate->getDestCity()
+            );
+
             $result->setApiUsername(
                 $rate->getApiUsername()
             );

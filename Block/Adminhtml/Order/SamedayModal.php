@@ -120,7 +120,7 @@ class SamedayModal extends Template
         }
 
         $displayLockerDetails = $this->storedDataHelper::DISPLAY_HTML_ELEM['hide'];
-        if ($serviceCode === ApiHelper::LOCKER_NEXT_DAY_SERVICE) {
+        if ($this->storedDataHelper->isEligibleToLocker($serviceCode)) {
             $displayLockerDetails = $this->storedDataHelper::DISPLAY_HTML_ELEM['show'];
         }
 
@@ -135,7 +135,7 @@ class SamedayModal extends Template
             'repayment' => $repayment,
             'serviceCode' => $serviceCode,
             'serviceTaxCodePDO' => $this->storedDataHelper::SERVICE_OPTIONAL_TAX_PDO,
-            'serviceCodeLockerNextDay' => ApiHelper::LOCKER_NEXT_DAY_SERVICE,
+            'serviceLockerToShow' => $this->toggleHtmlElement($this->storedDataHelper->isEligibleToLocker($serviceCode)),
             'displayLockerDetails' => $displayLockerDetails,
             'displayLockerFirstMile' => $displayLockerFirstMile,
             'samedaycourier_locker' => $samedaycourierLockerDetails,

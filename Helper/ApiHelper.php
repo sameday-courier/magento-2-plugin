@@ -50,7 +50,17 @@ class ApiHelper extends AbstractHelper
      */
     protected $persistenceDataHandler;
 
-    public const LOCKER_NEXT_DAY_SERVICE = 'LN';
+    public const ELIGIBLE_SAMEDAY_SERVICES = ['6H', '24', 'LN'];
+
+    public const ELIGIBLE_SAMEDAY_SERVICES_CROSSBORDER = ['XB', 'XL'];
+
+    public const ELIGIBLE_TO_LOCKER = ['LN', 'XL'];
+
+    public const AVAILABLE_SHIP_COUNTRIES = [
+        self::ROMANIA_CODE,
+        self::HUNGARY_CODE,
+        self::BULGARIA_CODE,
+    ];
 
     public const PRODUCTION_CODE = 0;
     public const DEMO_CODE = 1;
@@ -145,6 +155,16 @@ class ApiHelper extends AbstractHelper
     public function getHostCountry()
     {
         return $this->scopeConfig->getValue('carriers/samedaycourier/country') ?? self::ROMANIA_CODE;
+    }
+
+    /**
+     * @param string $serviceCode
+     *
+     * @return bool
+     */
+    public function isEligibleToLocker(string $serviceCode): bool
+    {
+        return in_array($serviceCode, self::ELIGIBLE_TO_LOCKER, true);
     }
 
     /**

@@ -137,7 +137,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         );
 
         $lockerLastMile = null;
-        if ($service->getCode() === ApiHelper::LOCKER_NEXT_DAY_SERVICE) {
+        if ($this->apiHelper->isEligibleToLocker($service->getCode())) {
             $locker = $this->serializer->unserialize($order->getSamedaycourierLocker());
 
             $this->shippingService->updateShippingAddress(
@@ -154,8 +154,8 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             $lockerLastMile = $locker['lockerId'];
         }
 
-        if (($service->getCode() !== ApiHelper::LOCKER_NEXT_DAY_SERVICE)
-            && null !== $order->getSamedaycourierDestinationAddressHd()
+        if (null !== $order->getSamedaycourierDestinationAddressHd()
+            && ($this->apiHelper->isEligibleToLocker($service->getCode()))
         ) {
             $lockerLastMile = null;
 

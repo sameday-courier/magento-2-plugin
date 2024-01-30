@@ -131,4 +131,14 @@ class StoredDataHelper extends AbstractHelper
 
         return $this->json->unserialize($samedayServiceOptionalTaxes);
     }
+
+    /**
+     * @param string $serviceCode
+     *
+     * @return bool
+     */
+    public function isEligibleToLocker(string $serviceCode): bool
+    {
+        return $this->apiHelper->isEligibleToLocker($serviceCode);
+    }
 }
