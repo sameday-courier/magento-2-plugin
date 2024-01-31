@@ -132,7 +132,9 @@ class SamedayModal extends Template
         $destCurrency = $this->storedDataHelper->buildDestCurrency($shippingAddress->getCountryId());
 
         $currencyWarningMessage = null;
-        if ($destCurrency !== $orderCurrency) {
+        if ($destCurrency !== $orderCurrency
+            && $repayment > 0
+        ) {
             $currencyWarningMessage = sprintf(
                 "Be aware that the intended currency is %s but the Repayment value is expressed in %s.
                 Please consider a conversion !!",
