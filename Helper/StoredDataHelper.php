@@ -5,6 +5,7 @@ namespace SamedayCourier\Shipping\Helper;
 use Exception;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
+use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Sameday\Objects\Service\OptionalTaxObject;
 use SamedayCourier\Shipping\Api\Data\LockerInterface;
@@ -45,12 +46,18 @@ class StoredDataHelper extends AbstractHelper
      */
     private $json;
 
+    /**
+     * @var PriceCurrencyInterface $currencyInterface
+     */
+    private $currencyInterface;
+
     public function __construct(Context $context,
             PickupPointRepositoryInterface $pickupPointRepository,
             ServiceRepositoryInterface $serviceRepository,
             LockerRepository $lockerRepository,
             ApiHelper $apiHelper,
-            Json $json
+            Json $json,
+            PriceCurrencyInterface $currencyInterface
         )
     {
         parent::__construct($context);
@@ -60,6 +67,7 @@ class StoredDataHelper extends AbstractHelper
         $this->lockerRepository = $lockerRepository;
         $this->apiHelper = $apiHelper;
         $this->json = $json;
+        $this->currencyInterface = $currencyInterface;
     }
 
     private function isTesting(): bool
@@ -79,7 +87,7 @@ class StoredDataHelper extends AbstractHelper
 
     public function getRepaymentFeeValue(): int
     {
-        return (int) $this->scopeConfig->getValue(self::REPAYMENT_TAX_VALUE);
+        return (int) $this->currencyInterface->convert($this->scopeConfig->getValue(self::REPAYMENT_TAX_VALUE));
     }
 
     public function getRepaymentFeeLabel(): string
