@@ -11,6 +11,7 @@ use Magento\Framework\Event\Observer as EventObserver;
 use Magento\Sales\Model\Order;
 use Magento\Framework\Serialize\Serializer\Json;
 use SamedayCourier\Shipping\Helper\ShippingService;
+use SamedayCourier\Shipping\Helper\StoredDataHelper;
 
 class CheckoutValidateLockers implements ObserverInterface
 {
@@ -29,22 +30,28 @@ class CheckoutValidateLockers implements ObserverInterface
      */
     private $shippingService;
 
-    private const SAMEDAY_EASYBOX_SERVICE = 'samedaycourier_LN';
+    /**
+     * @var StoredDataHelper $storedDataHelper
+     */
+    private $storedDataHelper;
 
     /**
      * @param RequestInterface $request
      * @param Json $json
      * @param ShippingService $shippingService
+     * @param StoredDataHelper $storedDataHelper
      */
     public function __construct(
         RequestInterface $request,
         Json $json,
-        ShippingService $shippingService
+        ShippingService $shippingService,
+        StoredDataHelper $storedDataHelper
     )
     {
         $this->request = $request;
         $this->json = $json;
         $this->shippingService = $shippingService;
+        $this->storedDataHelper = $storedDataHelper;
     }
 
     /**
@@ -69,7 +76,9 @@ class CheckoutValidateLockers implements ObserverInterface
 
         $samedaycourier_locker = $this->request->getCookie('samedaycourier_locker');
 
-        if (null !== $samedaycourier_locker && self::SAMEDAY_EASYBOX_SERVICE === $order->getShippingMethod()) {
+        if (null !== $samedaycourier_locker
+            && $this->storedDataHelper->isEligibleToLocker($order->getShippingMethod())
+        ) {
             $order->setData('samedaycourier_locker', $samedaycourier_locker);
 
             // Modify Shipping Address with locker address

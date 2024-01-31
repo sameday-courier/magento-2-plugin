@@ -25,6 +25,12 @@ class StoredDataHelper extends AbstractHelper
         'hide' => 'none',
     ];
 
+    public const SAMEDAY_ELIGIBLE_CURRENCIES = [
+        ApiHelper::ROMANIA_CODE => 'RON',
+        ApiHelper::BULGARIA_CODE => 'BGN',
+        ApiHelper::HUNGARY_CODE => 'HUF',
+    ];
+
     private $pickupPointRepository;
     private $serviceRepository;
     private $lockerRepository;
@@ -130,6 +136,19 @@ class StoredDataHelper extends AbstractHelper
         }
 
         return $this->json->unserialize($samedayServiceOptionalTaxes);
+    }
+
+
+    /**
+     * @param string $forCountryCode
+     *
+     * @return string
+     */
+    public function buildDestCurrency(string $forCountryCode): string
+    {
+        $forCountryCode = strtolower($forCountryCode);
+
+        return self::SAMEDAY_ELIGIBLE_CURRENCIES[$forCountryCode];
     }
 
     /**

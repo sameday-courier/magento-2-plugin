@@ -23,10 +23,16 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                 <div class="col-25">
                     <label for="repayment">
                         <?= __('Repayment') ?>
+                        <span style="font-weight: bolder"> (<?php echo $block->getOrderDetails()['currency']; ?>) </span>
                     </label>
                 </div>
                 <div class="col-75">
                     <input name="repayment" id="repayment" type="number" step="any" min="0" value="<?= $block->getOrderDetails()['repayment'] ?>">
+                    <?php if (isset($block->getOrderDetails()['currencyWarningMessage'])) { ?>
+                        <span style="font-weight: bolder; color: #9f0101">
+                            <?php echo $block->getOrderDetails()['currencyWarningMessage']; ?>
+                        </span>
+                    <?php } ?>
                 </div>
             </div>
             <div class="row">
@@ -88,8 +94,8 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                         <?php foreach ($block->getServices() as $service): ?>
                             <option
                                 data-service_code="<?php echo $service->getCode();?>"
-                                data-service_locker_to_show="<?php echo $service->getCode() === $block->getOrderDetails()['serviceLockerToShow']; ?>"
-                                data-service_eligible_locker_first_mile="<?php echo $block->isServiceEligibleToLockerFirstMile($service->getCode()) ? $block->toggleHtmlElement(true) : $block->toggleHtmlElement(false); ?>"
+                                data-service_locker_to_show="<?php echo $block->toggleHtmlElement($block->isEligibleToLocker($service->getCode())); ?>"
+                                data-service_eligible_locker_first_mile="<?php echo $block->toggleHtmlElement($block->isServiceEligibleToLockerFirstMile($service->getCode())); ?>"
                                 value="<?= $service->getSamedayId() ?>" <?= $service->getCode() === $block->getOrderDetails()['serviceCode'] ? 'selected' : '' ?>
                             >
                                 <?= $service->getSamedayName() ?>

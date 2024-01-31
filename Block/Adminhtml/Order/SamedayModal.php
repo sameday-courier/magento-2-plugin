@@ -9,7 +9,6 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Sales\Model\Order\Interceptor as Order;
 use Magento\Sales\Model\Order\Payment\Interceptor as Payment;
 use SamedayCourier\Shipping\Exception\NotAnOrderMatchedException;
-use SamedayCourier\Shipping\Helper\ApiHelper;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
 use SamedayCourier\Shipping\Model\Data\Service;
 
@@ -129,17 +128,31 @@ class SamedayModal extends Template
             $city = $shippingAddress->getCity();
         }
 
+        $orderCurrency = $order->getOrderCurrencyCode();
+        $destCurrency = $this->storedDataHelper->buildDestCurrency($shippingAddress->getCountryId());
+
+        $currencyWarningMessage = null;
+        if ($destCurrency !== $orderCurrency) {
+            $currencyWarningMessage = sprintf(
+                "Be aware that the intended currency is %s but the Repayment value is expressed in %s.
+                Please consider a conversion !!",
+                $destCurrency,
+                $orderCurrency
+            );
+        }
+
         return [
             'client_reference' => $order->getId(),
             'weight' => $order->getWeight() > 0 ? $order->getWeight() : 1.0,
             'repayment' => $repayment,
+            'currency' => $orderCurrency,
+            'currencyWarningMessage' => $currencyWarningMessage,
             'serviceCode' => $serviceCode,
             'serviceTaxCodePDO' => $this->storedDataHelper::SERVICE_OPTIONAL_TAX_PDO,
-            'serviceLockerToShow' => $this->toggleHtmlElement($this->storedDataHelper->isEligibleToLocker($serviceCode)),
             'displayLockerDetails' => $displayLockerDetails,
             'displayLockerFirstMile' => $displayLockerFirstMile,
             'samedaycourier_locker' => $samedaycourierLockerDetails,
-            'country-code' => $this->storedDataHelper->getHostCountry(),
+            'country-code' => $shippingAddress->getCountryId(),
             'api-username' => $this->storedDataHelper->getApiUsername(),
             'city' => $city,
             'changeLockerMethodUrl' => $this->getUrl('samedaycourier_shipping/order/changeLocker', [
@@ -148,12 +161,17 @@ class SamedayModal extends Template
         ];
     }
 
-    public function toggleHtmlElement($toShow)
+    public function toggleHtmlElement($toShow): string
     {
         return $toShow === true
             ? $this->storedDataHelper::DISPLAY_HTML_ELEM['show']
             : $this->storedDataHelper::DISPLAY_HTML_ELEM['hide']
         ;
+    }
+
+    public function isEligibleToLocker(string $serviceCode): bool
+    {
+        return $this->storedDataHelper->isEligibleToLocker($serviceCode);
     }
 
     public function isServiceEligibleToLockerFirstMile($serviceCode): bool
