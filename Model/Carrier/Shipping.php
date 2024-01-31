@@ -211,7 +211,10 @@ class Shipping extends AbstractCarrier implements CarrierInterface
                 $request->getDestPostcode()
             )),
             0,
-            $repayment
+            $repayment,
+            null,
+            [],
+            $this->storedDataHelper->buildDestCurrency($request->getData('dest_country_id'))
         );
 
         return $this->samedayApiHelper->doRequest($apiRequest, 'postAwbEstimation', false);
