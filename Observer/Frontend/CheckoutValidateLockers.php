@@ -75,9 +75,10 @@ class CheckoutValidateLockers implements ObserverInterface
         );
 
         $samedaycourier_locker = $this->request->getCookie('samedaycourier_locker');
+        $shippingCode = explode('_', $order->getShippingMethod())[1] ?? null;
 
         if (null !== $samedaycourier_locker
-            && $this->storedDataHelper->isEligibleToLocker($order->getShippingMethod())
+            && $this->storedDataHelper->isEligibleToLocker($shippingCode)
         ) {
             $order->setData('samedaycourier_locker', $samedaycourier_locker);
 
