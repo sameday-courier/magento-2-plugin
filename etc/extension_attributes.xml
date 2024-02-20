@@ -7,6 +7,9 @@
         <attribute code="countryCode" type="string"/>
     </extension_attributes>
     <extension_attributes for="Magento\Quote\Api\Data\ShippingMethodInterface">
+        <attribute code="destCity" type="string"/>
+    </extension_attributes>
+    <extension_attributes for="Magento\Quote\Api\Data\ShippingMethodInterface">
         <attribute code="apiUsername" type="string"/>
     </extension_attributes>
 </config>

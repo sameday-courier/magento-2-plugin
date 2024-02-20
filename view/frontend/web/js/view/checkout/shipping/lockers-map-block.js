@@ -9,7 +9,9 @@ define([
 ], function ($, ko, Component, quote, rateReg, url) {
     'use strict';
 
-    const easyBoxService = 'samedaycourier_LN';
+    const isEasyBoxService = (code) => {
+        return ['LN', 'XL'].includes(code);
+    };
 
     const samedayCourierLocker = 'samedaycourier_locker';
 
@@ -54,25 +56,44 @@ define([
         quote.shippingAddress(address);
     });
 
-    $(document).on('click', '#showLockerMap', () => {
+    $(document).on('click', '#showLockerMap', (element) => {
+        const LockerPlugin = window['LockerPlugin'];
 
-        const lockerMapElement = $('#showLockerMap');
+        const lockerMapElement = element.target.dataset;
+
+        let countryCode = lockerMapElement.country_code;
+        let destCountry = countryCode.toUpperCase();
+        let destCity = lockerMapElement.dest_city;
+        let apiUsername = lockerMapElement.api_username;
+
         const lockerPluginInit = {
-            clientId: 'b8cb2ee3-41b9-4c3d-aafe-1527b453d65e',
-            countryCode: lockerMapElement.data('country_code').toUpperCase(),
-            langCode: lockerMapElement.data('country_code'),
-            apiUsername: lockerMapElement.data('api_username'),
+            'clientId': 'b8cb2ee3-41b9-4c3d-aafe-1527b453d65e',
+            'countryCode': destCountry,
+            'city': destCity,
+            'langCode': countryCode,
+            'apiUsername': apiUsername,
         }
 
-        window['LockerPlugin'].init(lockerPluginInit);
-        let plugin = window['LockerPlugin'].getInstance();
-        plugin.open();
+        LockerPlugin.init(lockerPluginInit);
 
-        plugin.subscribe((locker) => {
+        if (
+            LockerPlugin.options.countryCode !== destCountry
+            || LockerPlugin.options.city !== destCity
+        ) {
+            lockerPluginInit.countryCode = destCountry;
+            lockerPluginInit.city = destCity;
+
+            LockerPlugin.reinitializePlugin(lockerPluginInit);
+        }
+
+        const pluginInstance = LockerPlugin.getInstance();
+        pluginInstance.open();
+
+        pluginInstance.subscribe((locker) => {
             setCookie(samedayCourierLocker, JSON.stringify(locker));
             $('#lockerDetails').html(showLockerDetails());
 
-            plugin.close();
+            pluginInstance.close();
         });
     });
 
@@ -122,14 +143,12 @@ define([
                 let method = quote.shippingMethod();
 
                 if (null !== method) {
-                    let methodName = method.carrier_code + '_' + method.method_code;
-
-                    if (methodName === easyBoxService && method.extension_attributes.show_lockers_map === true) {
-
-                        return showLockersMode.as_map;
-                    } else if (methodName === easyBoxService && method.extension_attributes.show_lockers_map === false) {
-
-                        return showLockersMode.as_drop_down;
+                    if (isEasyBoxService(method.method_code)) {
+                        if (method.extension_attributes.show_lockers_map === true) {
+                            return showLockersMode.as_map;
+                        } else {
+                            return showLockersMode.as_drop_down;
+                        }
                     }
                 }
 
@@ -140,6 +159,15 @@ define([
                 let method = quote.shippingMethod();
                 if (null !== method && isset(() => method.extension_attributes.country_code)) {
                     return method.extension_attributes.country_code;
+                }
+
+                return null;
+            }, this);
+
+            this.getCity = ko.computed(() => {
+                let method = quote.shippingMethod();
+                if (null !== method && isset(() => method.extension_attributes.dest_city)) {
+                    return method.extension_attributes.dest_city;
                 }
 
                 return null;

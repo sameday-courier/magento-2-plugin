@@ -39,7 +39,15 @@
     </type>
 
     <type name="Magento\Quote\Model\Cart\ShippingMethodConverter">
-        <plugin name="add_apiUsername_to_method" type="SamedayCourier\Shipping\Plugin\Carrier\ApiUsername" disabled="false" sortOrder="30"/>
+        <plugin name="add_destCity_to_method" type="SamedayCourier\Shipping\Plugin\Carrier\DestCity" disabled="false" sortOrder="40"/>
+    </type>
+
+    <type name="Magento\Quote\Model\Quote\Address\Rate">
+        <plugin name="add_destCity_to_method_rate" type="SamedayCourier\Shipping\Plugin\Quote\Address\Rate" disabled="false" sortOrder="3"/>
+    </type>
+
+    <type name="Magento\Quote\Model\Cart\ShippingMethodConverter">
+        <plugin name="add_apiUsername_to_method" type="SamedayCourier\Shipping\Plugin\Carrier\ApiUsername" disabled="false" sortOrder="50"/>
     </type>
 
     <type name="Magento\Quote\Model\Quote\Address\Rate">

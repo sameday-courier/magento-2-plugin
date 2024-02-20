@@ -21,10 +21,10 @@ use Sameday\Objects\Types\PackageType;
 use Sameday\Requests\SamedayPostAwbEstimationRequest;
 use SamedayCourier\Shipping\Api\PickupPointRepositoryInterface;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
-use SamedayCourier\Shipping\Helper\ApiHelper;
 use SamedayCourier\Shipping\Helper\ApiHelper as SamedayApiHelper;
 use SamedayCourier\Shipping\Helper\ShippingService;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
+use SamedayCourier\Shipping\Model\Data\Service;
 
 class Shipping extends AbstractCarrier implements CarrierInterface
 {
@@ -69,8 +69,9 @@ class Shipping extends AbstractCarrier implements CarrierInterface
      */
     public function checkAvailableShipCountries(DataObject $request)
     {
-        if (strtolower($request->getData('dest_country_id')) === $this->samedayApiHelper->getHostCountry()) {
-            // Ship only to Sameday API host country.
+        $destCountry = strtolower($request->getData('dest_country_id'));
+        if (in_array($destCountry, $this->samedayApiHelper::AVAILABLE_SHIP_COUNTRIES, true)) {
+            // Ship only to Available Countries.
             return $this;
         }
 
@@ -80,7 +81,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
     /**
      * @inheritdoc
      */
-    public function isStateProvinceRequired()
+    public function isStateProvinceRequired(): bool
     {
         return true;
     }
@@ -88,12 +89,12 @@ class Shipping extends AbstractCarrier implements CarrierInterface
     /**
      * @inheritdoc
      */
-    public function isCityRequired()
+    public function isCityRequired(): bool
     {
         return true;
     }
 
-    public function getAllowedMethods()
+    public function getAllowedMethods(): array
     {
         return [$this->getCarrierCode() => __($this->getConfigData('name'))];
     }
@@ -107,11 +108,25 @@ class Shipping extends AbstractCarrier implements CarrierInterface
         $result = $this->_rateResultFactory->create();
         $isTesting = (bool) $this->scopeConfig->getValue('carriers/samedaycourier/testing');
 
-        $services = $this->serviceRepository->getAllActive($isTesting)->getItems();
+        $hostCountry = $this->samedayApiHelper->getHostCountry();
+        $destCountry = strtolower($request->getData('dest_country_id'));
+        $destCity = $request->getData('dest_city');
+        $eligibleServices = $hostCountry === $destCountry
+            ? $this->samedayApiHelper::ELIGIBLE_SAMEDAY_SERVICES
+            : $this->samedayApiHelper::ELIGIBLE_SAMEDAY_SERVICES_CROSSBORDER
+        ;
+
+        $services = array_filter(
+            $this->serviceRepository->getAllActive($isTesting)->getItems(),
+            static function(Service $service) use ($eligibleServices) {
+                return in_array($service->getCode(), $eligibleServices, true);
+            }
+        );
+
         foreach ($services as $service) {
-            $isLockerService = $service->getCode() === ApiHelper::LOCKER_NEXT_DAY_SERVICE;
-            $lockerMaxItems = $service->getLockerMaxItems();
-            if ($isLockerService && sizeof($request->getAllItems()) > $lockerMaxItems) {
+            if ($this->samedayApiHelper->isEligibleToLocker($service->getCode())
+                && (sizeof($request->getAllItems()) > $service->getLockerMaxItems()))
+            {
                 continue;
             }
 
@@ -123,7 +138,8 @@ class Shipping extends AbstractCarrier implements CarrierInterface
             $method->setMethod($service->getCode());
             $method->setMethodTitle($service->getName());
 
-            $method->setCountryCode($this->samedayApiHelper->getHostCountry());
+            $method->setCountryCode($destCountry);
+            $method->setDestCity($destCity);
             $method->setShowLockersMap((bool) $this->scopeConfig->getValue('carriers/samedaycourier/show_lockers_map'));
 
             $method->setApiUsername($this->getConfigData('username'));
@@ -195,7 +211,10 @@ class Shipping extends AbstractCarrier implements CarrierInterface
                 $request->getDestPostcode()
             )),
             0,
-            $repayment
+            $repayment,
+            null,
+            [],
+            $this->storedDataHelper->buildDestCurrency($request->getData('dest_country_id'))
         );
 
         return $this->samedayApiHelper->doRequest($apiRequest, 'postAwbEstimation', false);

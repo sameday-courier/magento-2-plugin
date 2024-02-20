@@ -34,7 +34,6 @@ use SamedayCourier\Shipping\Helper\ApiHelper;
 use Sameday\Responses\SamedayPostAwbResponse;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Serialize\SerializerInterface;
-use Magento\Sales\Api\OrderAddressRepositoryInterface;
 use SamedayCourier\Shipping\Helper\ShippingService;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
 
@@ -55,9 +54,9 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
     private $shippingService;
 
     /**
-     * @var OrderAddressRepositoryInterface $orderAddressRepository
+     * @var StoredDataHelper $storedDataHelper
      */
-    private $orderAddressRepository;
+    private $storedDataHelper;
 
     public function __construct(
         Action\Context $context,
@@ -78,7 +77,6 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         SerializerInterface $serializer,
         ServiceRepositoryInterface $serviceRepository,
         StoredDataHelper $storedDataHelper,
-        OrderAddressRepositoryInterface $orderAddressRepository,
         ShippingService $shippingService
     )
     {
@@ -103,6 +101,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         $this->serializer = $serializer;
         $this->serviceRepository = $serviceRepository;
         $this->shippingService = $shippingService;
+        $this->storedDataHelper = $storedDataHelper;
     }
 
     /**
@@ -125,7 +124,6 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         $values = $this->getRequest()->getParams();
 
         $serviceId =  $values['service'];
-        $orderShippingMethod = $order->getShippingMethod();
         $packageWeight = max($values['package_weight'], 1);
 
         /** @var OrderAddressInterface $shippingAddress */
@@ -137,7 +135,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         );
 
         $lockerLastMile = null;
-        if ($service->getCode() === ApiHelper::LOCKER_NEXT_DAY_SERVICE) {
+        if ($this->apiHelper->isEligibleToLocker($service->getCode())) {
             $locker = $this->serializer->unserialize($order->getSamedaycourierLocker());
 
             $this->shippingService->updateShippingAddress(
@@ -154,8 +152,8 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             $lockerLastMile = $locker['lockerId'];
         }
 
-        if (($service->getCode() !== ApiHelper::LOCKER_NEXT_DAY_SERVICE)
-            && null !== $order->getSamedaycourierDestinationAddressHd()
+        if (null !== $order->getSamedaycourierDestinationAddressHd()
+            && ($this->apiHelper->isEligibleToLocker($service->getCode()))
         ) {
             $lockerLastMile = null;
 
@@ -218,7 +216,8 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             null,
             $values['observation'],
             null,
-            $lockerLastMile
+            $lockerLastMile,
+            $this->storedDataHelper->buildDestCurrency($shippingAddress->getCountryId())
         );
 
         /** @var SamedayPostAwbResponse|false $response */
