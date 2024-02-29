@@ -46,7 +46,7 @@ require([
         $(document).ready(() => {
             if (_is_set(() => importDataButton)) {
                 importDataButton.addEventListener('click', (event) => {
-                    importData(_getAttrValues(event.target, '0'), _actions);
+                    importData(_getAttrValues(event.target, 'data-action'), _actions);
                 });
             }
         });
