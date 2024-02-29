@@ -26,6 +26,6 @@ class ImportData extends Field
      */
     public function getActionUrl(): string
     {
-        return $this->getUrl('samedaycourier_shipping/importer/index');
+        return $this->_urlBuilder->getUrl('samedaycourier_shipping/importer/index');
     }
 }

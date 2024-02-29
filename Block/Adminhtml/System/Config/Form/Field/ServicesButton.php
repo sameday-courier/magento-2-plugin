@@ -15,7 +15,7 @@ class ServicesButton extends Field
      *
      * @return string
      */
-    protected function _getElementHtml(AbstractElement $element)
+    protected function _getElementHtml(AbstractElement $element): string
     {
         $element->setData('value', __("View list"));
         $element->setData('class', "action-default");
@@ -27,7 +27,7 @@ class ServicesButton extends Field
     /**
      * @return string
      */
-    public function getActionUrl()
+    public function getActionUrl(): string
     {
         return $this->_urlBuilder->getUrl('samedaycourier_shipping/service/index');
     }
