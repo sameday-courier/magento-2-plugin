@@ -64,11 +64,16 @@
             "PRIMARY": true
         }
     },
-    "sales_order": {
+    "samedaycourier_order_info": {
         "column": {
+            "id": true,
+            "order_id": true,
             "samedaycourier_locker": true,
-            "samedaycourier_fee": true,
-            "samedaycourier_destination_address_hd": true
+            "samedaycourier_destination_address_hd": true,
+            "samedaycourier_fee": true
+        },
+        "constraint": {
+            "PRIMARY": true
         }
     }
 }

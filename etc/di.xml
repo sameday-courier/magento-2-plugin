@@ -69,4 +69,7 @@
     <preference for="SamedayCourier\Shipping\Api\Data\AwbInterface" type="SamedayCourier\Shipping\Model\Data\Awb" />
     <preference for="SamedayCourier\Shipping\Api\AwbRepositoryInterface" type="SamedayCourier\Shipping\Model\ResourceModel\AwbRepository" />
     <preference for="SamedayCourier\Shipping\Api\Data\AwbSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
+
+    <preference for="SamedayCourier\Shipping\Api\Data\OrderInfoInterface" type="SamedayCourier\Shipping\Model\Data\OrderInfo" />
+    <preference for="SamedayCourier\Shipping\Api\OrderInfoRepositoryInterface" type="SamedayCourier\Shipping\Model\ResourceModel\OrderInfoRepository" />
 </config>

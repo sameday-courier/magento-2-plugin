@@ -1,20 +1,17 @@
 <?php
 
-namespace SamedayCourier\Shipping\Model\ResourceModel\Locker\Grid;
+namespace SamedayCourier\Shipping\Model\ResourceModel\Awb\Grid;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Data\Collection\Db\FetchStrategyInterface as FetchStrategy;
 use Magento\Framework\Data\Collection\EntityFactoryInterface as EntityFactory;
+use Magento\Framework\DB\Select;
 use Magento\Framework\Event\ManagerInterface as EventManager;
+use Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult;
 use Psr\Log\LoggerInterface as Logger;
 
-class Collection extends \Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult
+class Collection extends SearchResult
 {
-    /**
-     * @var ScopeConfigInterface
-     */
-    private $config;
-
     /**
      * Collection constructor.
      *
@@ -38,12 +35,10 @@ class Collection extends \Magento\Framework\View\Element\UiComponent\DataProvide
     }
 
     /**
-     * @return \Magento\Framework\DB\Select
+     * @return Select
      */
     public function getSelect()
     {
-        $select = parent::getSelect();
-
-        return $select;
+        return parent::getSelect();
     }
 }

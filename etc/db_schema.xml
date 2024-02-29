@@ -56,9 +56,14 @@
             <column name="id"/>
         </constraint>
     </table>
-    <table name="sales_order" resource="default" engine="innodb" comment="Samedaycourier Locker">
-        <column xsi:type="text" name="samedaycourier_locker" comment="Sameday Locker Object String"/>
-        <column xsi:type="text" name="samedaycourier_fee" comment="Repayment fee"/>
-        <column xsi:type="text" name="samedaycourier_destination_address_hd" comment="Sameday destination address for Home Delivery"/>
+    <table name="samedaycourier_order_info" resource="default" engine="innodb" comment="Add additional fields on Order">
+        <column xsi:type="int" identity="true" name="id" padding="11" unsigned="false" nullable="false" comment="#ID"/>
+        <column xsi:type="int" name="order_id" padding="11" unsigned="false" nullable="false" comment="Magento order"/>
+        <column xsi:type="text" name="samedaycourier_locker" comment="Locker"/>
+        <column xsi:type="text" name="samedaycourier_destination_address_hd" comment="Samedaycourier Destination address for home delivery"/>
+        <column xsi:type="decimal" name="samedaycourier_fee" scale="2" comment="Extra-Fee for COD service"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
     </table>
 </schema>

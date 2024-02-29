@@ -21,6 +21,7 @@ use Sameday\Objects\Types\PackageType;
 use Sameday\Requests\SamedayPostAwbEstimationRequest;
 use SamedayCourier\Shipping\Api\PickupPointRepositoryInterface;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
+use SamedayCourier\Shipping\Helper\ApiHelper;
 use SamedayCourier\Shipping\Helper\ApiHelper as SamedayApiHelper;
 use SamedayCourier\Shipping\Helper\ShippingService;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
@@ -69,7 +70,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
      */
     public function checkAvailableShipCountries(DataObject $request)
     {
-        $destCountry = strtolower($request->getData('dest_country_id'));
+        $destCountry = strtolower($request->getData('dest_country_id')) ?? ApiHelper::ROMANIA_CODE;
         if (in_array($destCountry, $this->samedayApiHelper::AVAILABLE_SHIP_COUNTRIES, true)) {
             // Ship only to Available Countries.
             return $this;

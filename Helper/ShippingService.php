@@ -62,15 +62,14 @@ class ShippingService
 
     public function updateShippingMethod(
         OrderInterface $order,
-        string $shippingMethodDescription,
-        string $shippingMethodCode
+        string $shippingMethodDescription
     ): void
     {
         $order->setShippingDescription(
             sprintf(
                 '%s - %s',
                 self::SHIPPING_METHOD_PREFIX,
-                $shippingMethodDescription,
+                $shippingMethodDescription
             )
         );
 

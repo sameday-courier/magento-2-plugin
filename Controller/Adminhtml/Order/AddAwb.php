@@ -226,8 +226,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             // Update Shipping Service
             $this->shippingService->updateShippingMethod(
                 $order,
-                $service->getName(),
-                $service->getCode()
+                $service->getName()
             );
 
             $parcelsResponse = $response->getParcels();
