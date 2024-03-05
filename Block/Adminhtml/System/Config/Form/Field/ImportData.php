@@ -16,7 +16,7 @@ class ImportData extends Field
     {
         $element->setData('value', __("Import data"));
         $element->setData('class', "action-default");
-        $element->addData([$this->getActionUrl()]);
+        $element->setData('data-action', $this->getActionUrl());
 
         return parent::_getElementHtml($element);
     }
@@ -26,6 +26,6 @@ class ImportData extends Field
      */
     public function getActionUrl(): string
     {
-        return $this->getUrl('samedaycourier_shipping/importer/index');
+        return $this->_urlBuilder->getUrl('samedaycourier_shipping/importer/index');
     }
 }
