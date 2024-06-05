@@ -23,9 +23,14 @@ use Sameday\Exceptions\SamedaySDKException;
 class LocalDataImporter extends AbstractHelper
 {
     /**
-     * @var ApiHelper
+     * @var ApiHelper $apiHelper
      */
     private $apiHelper;
+
+    /**
+     * @var GeneralHelper $generalHelper
+     */
+    private $generalHelper;
 
     /**
      * @var ServiceInterfaceFactory
@@ -65,6 +70,7 @@ class LocalDataImporter extends AbstractHelper
     /**
      * @param Context $context
      * @param ApiHelper $apiHelper
+     * @param GeneralHelper $generalHelper
      * @param ServiceInterfaceFactory $serviceFactory
      * @param ServiceRepositoryInterface $serviceRepository
      * @param StoredDataHelper $storedDataHelper
@@ -76,6 +82,7 @@ class LocalDataImporter extends AbstractHelper
     public function __construct(
         Context $context,
         ApiHelper $apiHelper,
+        GeneralHelper $generalHelper,
         ServiceInterfaceFactory $serviceFactory,
         ServiceRepositoryInterface $serviceRepository,
         StoredDataHelper $storedDataHelper,
@@ -87,6 +94,7 @@ class LocalDataImporter extends AbstractHelper
         parent::__construct($context);
 
         $this->apiHelper = $apiHelper;
+        $this->generalHelper = $generalHelper;
         $this->serviceFactory = $serviceFactory;
         $this->serviceRepository = $serviceRepository;
         $this->storeDataHelper = $storedDataHelper;
@@ -148,6 +156,10 @@ class LocalDataImporter extends AbstractHelper
                         $this->storeDataHelper->serializeServiceOptionalTaxes($serviceObject->getOptionalTaxes())
                     )
                 ;
+
+                if (false !== $this->generalHelper->isOoHService($serviceObject->getCode())) {
+                    $service->setName($this->generalHelper::OOH_LABEL[$this->apiHelper->getHostCountry()]);
+                }
 
                 $this->serviceRepository->save($service);
 

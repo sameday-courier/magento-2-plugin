@@ -50,7 +50,11 @@ class ApiHelper extends AbstractHelper
      */
     protected $persistenceDataHandler;
 
-    public const ELIGIBLE_SAMEDAY_SERVICES = ['6H', '24', 'LN'];
+    public const ELIGIBLE_SAMEDAY_SERVICES = [
+        '6H',
+        '24',
+        'LN',
+    ];
 
     public const ELIGIBLE_SAMEDAY_SERVICES_CROSSBORDER = ['XB', 'XL'];
 

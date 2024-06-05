@@ -121,6 +121,10 @@ class SamedayModal extends Template
         $displayLockerDetails = $this->storedDataHelper::DISPLAY_HTML_ELEM['hide'];
         if ($this->storedDataHelper->isEligibleToLocker($serviceCode)) {
             $displayLockerDetails = $this->storedDataHelper::DISPLAY_HTML_ELEM['show'];
+
+            if (isset($samedaycourierLocker['service'])) {
+                $serviceCode = $samedaycourierLocker['service'];
+            }
         }
 
         $city = null;
