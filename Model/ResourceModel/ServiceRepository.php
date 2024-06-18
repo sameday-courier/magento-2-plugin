@@ -92,9 +92,12 @@ class ServiceRepository implements ServiceRepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * @param $id
+     * @return ServiceInterface
+     *
+     * @throws NoSuchEntityException
      */
-    public function get($id)
+    public function get($id): ServiceInterface
     {
         $serviceModel = $this->serviceFactory->create();
         $this->serviceResourceModel->load($serviceModel, $id);
