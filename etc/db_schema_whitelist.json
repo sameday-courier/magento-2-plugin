@@ -56,7 +56,6 @@
             "is_price_free": true,
             "price_free": true,
             "use_estimated_cost": true,
-            "locker_max_items": true,
             "status": true,
             "service_optional_taxes": true
         },

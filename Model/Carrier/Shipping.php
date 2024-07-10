@@ -106,7 +106,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
         }
 
         $result = $this->_rateResultFactory->create();
-        $isTesting = (bool) $this->scopeConfig->getValue('carriers/samedaycourier/testing');
+        $isTesting = (bool) $this->scopeConfig->getValue(StoredDataHelper::SAMEDAYCOURIER_ENV_MODE);
 
         $hostCountry = $this->samedayApiHelper->getHostCountry();
         $destCountry = strtolower($request->getData('dest_country_id'));
@@ -124,24 +124,26 @@ class Shipping extends AbstractCarrier implements CarrierInterface
         );
 
         foreach ($services as $service) {
-            if ($this->samedayApiHelper->isEligibleToLocker($service->getCode())
-                && (sizeof($request->getAllItems()) > $service->getLockerMaxItems()))
-            {
-                continue;
+            if ($this->samedayApiHelper->isEligibleToLocker($service->getCode())) {
+                $lockerMaxItems = $this->scopeConfig->getValue(StoredDataHelper::SAMEDAYCOURIER_LOCKER_MAX_ITEMS);
+                if (null === $lockerMaxItems) {
+                    $lockerMaxItems = StoredDataHelper::DEFAULT_VALUE_LOCKER_MAX_ITEMS;
+                }
+
+                if (sizeof($request->getAllItems()) > $lockerMaxItems) {
+                    continue;
+                }
             }
 
             $method = $this->_rateMethodFactory->create();
 
             $method->setCarrier($this->getCarrierCode());
             $method->setCarrierTitle($this->getConfigData('title'));
-
             $method->setMethod($service->getCode());
             $method->setMethodTitle($service->getName());
-
             $method->setCountryCode($destCountry);
             $method->setDestCity($destCity);
             $method->setShowLockersMap((bool) $this->scopeConfig->getValue('carriers/samedaycourier/show_lockers_map'));
-
             $method->setApiUsername($this->getConfigData('username'));
 
             $shippingCost = $service->getPrice();
