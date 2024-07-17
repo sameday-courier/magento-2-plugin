@@ -2,7 +2,9 @@
 
 namespace SamedayCourier\Shipping\Model\Config\Source;
 
-class EasyboxMethods implements \Magento\Framework\Data\OptionSourceInterface
+use Magento\Framework\Data\OptionSourceInterface;
+
+class EasyboxMethods implements OptionSourceInterface
 {
     /**
      * @return array|void
