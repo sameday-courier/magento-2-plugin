@@ -47,7 +47,6 @@ class Edit extends \Magento\Backend\App\Action
             ->setName($data['service']['name'])
             ->setIsPriceFree((bool) $data['service']['is_price_free'])
             ->setUseEstimatedCost((bool) $data['service']['use_estimated_cost'])
-            ->setLockerMaxItems((int) $data['service']['locker_max_items'])
             ->setPriceFree($data['service']['price_free'])
             ->setPrice($data['service']['price'])
             ->setStatus($data['service']['status']);

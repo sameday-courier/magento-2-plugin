@@ -23,7 +23,6 @@ interface ServiceInterface extends ExtensibleDataInterface
     public const PRICE_FREE = 'price_free';
     public const STATUS = 'status';
     public const USE_ESTIMATED_COST = 'use_estimated_cost';
-    public const LOCKER_MAX_ITEMS = 'locker_max_items';
     public const SERVICE_OPTIONAL_TAXES = 'service_optional_taxes';
     /**#@-*/
 
@@ -163,18 +162,6 @@ interface ServiceInterface extends ExtensibleDataInterface
      * @return $this
      */
     public function setUseEstimatedCost($useEstimatedCost);
-
-    /**
-     * @return int
-     */
-    public function getLockerMaxItems();
-
-    /**
-     * @param int $lockerMaxItems
-     *
-     * @return $this
-     */
-    public function setLockerMaxItems(int $lockerMaxItems);
 
     /**
      * @return string

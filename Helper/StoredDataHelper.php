@@ -15,6 +15,9 @@ use SamedayCourier\Shipping\Model\ResourceModel\LockerRepository;
 
 class StoredDataHelper extends AbstractHelper
 {
+    public const DEFAULT_VALUE_LOCKER_MAX_ITEMS = 5;
+
+    public const SAMEDAYCOURIER_LOCKER_MAX_ITEMS = 'carriers/samedaycourier/locker_max_items';
     public const SAMEDAYCOURIER_ENV_MODE = 'carriers/samedaycourier/testing';
     public const SAMEDAYCOURIER_USERNAME = 'carriers/samedaycourier/username';
     public const REPAYMENT_TAX_LABEL = 'carriers/samedaycourier/repayment_tax_label';

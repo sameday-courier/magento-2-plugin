@@ -49,7 +49,6 @@
         <column xsi:type="tinyint" name="is_price_free" comment="Is price free"/>
         <column xsi:type="decimal" name="price_free" scale="2" comment="Price free"/>
         <column xsi:type="tinyint" name="use_estimated_cost" comment="Use estimated cost"/>
-        <column xsi:type="smallint" name="locker_max_items" padding="6" nullable="false" comment="Lockers max. items"/>
         <column xsi:type="text" name="service_optional_taxes" comment="Service Optional Taxes"/>
         <column xsi:type="smallint" name="status" padding="6" nullable="false" comment="Status"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
