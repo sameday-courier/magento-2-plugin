@@ -50,11 +50,22 @@ class ApiHelper extends AbstractHelper
      */
     protected $persistenceDataHandler;
 
-    public const ELIGIBLE_SAMEDAY_SERVICES = ['6H', '24', 'LN'];
+    public const ELIGIBLE_SAMEDAY_SERVICES = [
+        GeneralHelper::SAMEDAY_SERVICE_6H_CODE,
+        GeneralHelper::SAMEDAY_SERVICE_24H_CODE,
+        GeneralHelper::SAMEDAY_SERVICE_LOCKER_CODE,
+    ];
 
-    public const ELIGIBLE_SAMEDAY_SERVICES_CROSSBORDER = ['XB', 'XL'];
+    public const ELIGIBLE_SAMEDAY_SERVICES_CROSSBORDER = [
+        GeneralHelper::SAMEDAY_SERVICE_CROSSBORDER_24_CODE,
+        GeneralHelper::SAMEDAY_SERVICE_CROSSBORDER_LOCKER_CODE,
+    ];
 
-    public const ELIGIBLE_TO_LOCKER = ['LN', 'XL'];
+    public const ELIGIBLE_TO_LOCKER = [
+        GeneralHelper::SAMEDAY_SERVICE_LOCKER_CODE,
+        GeneralHelper::SAMEDAY_SERVICE_CROSSBORDER_LOCKER_CODE,
+        GeneralHelper::SAMEDAY_SERVICE_PUDO_CODE,
+    ];
 
     public const AVAILABLE_SHIP_COUNTRIES = [
         self::ROMANIA_CODE,

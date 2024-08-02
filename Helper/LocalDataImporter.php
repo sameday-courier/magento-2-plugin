@@ -23,9 +23,14 @@ use Sameday\Exceptions\SamedaySDKException;
 class LocalDataImporter extends AbstractHelper
 {
     /**
-     * @var ApiHelper
+     * @var ApiHelper $apiHelper
      */
     private $apiHelper;
+
+    /**
+     * @var GeneralHelper $generalHelper
+     */
+    private $generalHelper;
 
     /**
      * @var ServiceInterfaceFactory
@@ -65,6 +70,7 @@ class LocalDataImporter extends AbstractHelper
     /**
      * @param Context $context
      * @param ApiHelper $apiHelper
+     * @param GeneralHelper $generalHelper
      * @param ServiceInterfaceFactory $serviceFactory
      * @param ServiceRepositoryInterface $serviceRepository
      * @param StoredDataHelper $storedDataHelper
@@ -76,6 +82,7 @@ class LocalDataImporter extends AbstractHelper
     public function __construct(
         Context $context,
         ApiHelper $apiHelper,
+        GeneralHelper $generalHelper,
         ServiceInterfaceFactory $serviceFactory,
         ServiceRepositoryInterface $serviceRepository,
         StoredDataHelper $storedDataHelper,
@@ -87,6 +94,7 @@ class LocalDataImporter extends AbstractHelper
         parent::__construct($context);
 
         $this->apiHelper = $apiHelper;
+        $this->generalHelper = $generalHelper;
         $this->serviceFactory = $serviceFactory;
         $this->serviceRepository = $serviceRepository;
         $this->storeDataHelper = $storedDataHelper;
@@ -118,6 +126,7 @@ class LocalDataImporter extends AbstractHelper
                 );
             }
 
+            $lockerService = null;
             foreach ($services->getServices() as $serviceObject) {
                 try {
                     $service = $this->serviceRepository->getBySamedayId($serviceObject->getId(), $isTesting);
@@ -149,10 +158,19 @@ class LocalDataImporter extends AbstractHelper
                     )
                 ;
 
+                if (false !== $this->generalHelper->isOoHService($serviceObject->getCode())) {
+                    $service->setName($this->generalHelper::OOH_LABEL[$this->apiHelper->getHostCountry()]);
+                }
+
                 $this->serviceRepository->save($service);
 
                 // Save as current services.
                 $remoteServices[] = $serviceObject->getId();
+
+                // Keep LockerService
+                if ($service->getCode() === GeneralHelper::SAMEDAY_SERVICE_LOCKER_CODE) {
+                    $lockerService = $service;
+                }
             }
         } while ($page <= $services->getPages());
 
@@ -172,6 +190,23 @@ class LocalDataImporter extends AbstractHelper
         foreach ($localServices as $localService) {
             if (!in_array($localService['sameday_id'], $remoteServices, false)) {
                 $this->serviceRepository->deleteById($localService['id']);
+            }
+        }
+
+        // Update PUDO service status to be the same as LockerNextDay
+        if (null !== $lockerService) {
+            try{
+                $pudoService = $this->serviceRepository->getBySamedayCode(
+                    GeneralHelper::SAMEDAY_SERVICE_PUDO_CODE,
+                    $lockerService->getIsTesting()
+                );
+            } catch (NoSuchEntityException $e) {
+                $pudoService = null;
+            }
+
+            if (null !== $pudoService) {
+                $pudoService->setStatus($lockerService->getStatus());
+                $this->serviceRepository->save($pudoService);
             }
         }
 

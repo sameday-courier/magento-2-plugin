@@ -86,16 +86,7 @@
                 </item>
             </item>
         </argument>
-        <column name="sameday_id">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>
-                    <item name="dataType" xsi:type="string">text</item>
-                    <item name="label" xsi:type="string" translate="true">Sameday ID</item>
-                </item>
-            </argument>
-        </column>
-        <column name="sameday_name">
+        <column name="sameday_name" class="SamedayCourier\Shipping\Ui\Component\Listing\Column\ServiceNameColumn">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>
@@ -122,7 +113,7 @@
                 </item>
             </argument>
         </column>
-        <column name="price_free" class="SamedayCourier\Shipping\Ui\Component\Listing\Column\ServicePriceFree">
+        <column name="price_free" class="SamedayCourier\Shipping\Ui\Component\Listing\Column\ServicePriceFreeColumn">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>
@@ -131,7 +122,7 @@
                 </item>
             </argument>
         </column>
-        <column name="status" class="SamedayCourier\Shipping\Ui\Component\Listing\Column\ServiceStatus">
+        <column name="status" class="SamedayCourier\Shipping\Ui\Component\Listing\Column\ServiceStatusColumn">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>

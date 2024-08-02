@@ -5,22 +5,25 @@ namespace SamedayCourier\Shipping\Ui\Component\Listing\Column;
 use Magento\Framework\Data\OptionSourceInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
 
-class ServiceStatus extends Column implements OptionSourceInterface
+class ServiceStatusColumn extends Column implements OptionSourceInterface
 {
-    const DISABLED = 0;
-    const ENABLED = 1;
-    const INTERVAL = 2;
+    public const DISABLED = 0;
+    public const ENABLED = 1;
 
-    public function toOptionArray()
+    public function toOptionArray(): array
     {
         return [
             ['value' => self::DISABLED, 'label' => 'Disabled'],
             ['value' => self::ENABLED, 'label' => 'Enabled'],
-            ['value' => self::INTERVAL, 'label' => 'Interval'],
         ];
     }
 
-    public function prepareDataSource(array $dataSource)
+    /**
+     * @param array $dataSource
+     *
+     * @return array
+     */
+    public function prepareDataSource(array $dataSource): array
     {
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as &$items) {
@@ -34,7 +37,7 @@ class ServiceStatus extends Column implements OptionSourceInterface
     private function getStatus($status)
     {
         foreach ($this->toOptionArray() as $option) {
-            if ($option['value'] == $status) {
+            if ($option['value'] === (int) $status) {
                 return $option['label'];
             }
         }

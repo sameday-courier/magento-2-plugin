@@ -127,7 +127,7 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
             <div id="showLockerDetails" style="display: <?php echo $block->getOrderDetails()['displayLockerDetails']; ?>">
                 <div class="row">
                     <div class="col-25" title="<?php echo __('Delivery point for customer');?>">
-                        <strong> <?= __('Locker details (Last Mile)') ?> </strong>
+                        <strong> <?= __('Location details (Last Mile)') ?> </strong>
                     </div>
                     <div class="col-75">
                         <textarea disabled="disabled" id="lockerId_details" style="height:50px"><?php print $block->getOrderDetails()['samedaycourier_locker']; ?></textarea>
@@ -146,7 +146,7 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                                 data-city="<?php print $block->getOrderDetails()['city']; ?>"
                                 class="action-default scalable primary"
                         >
-                            <?= __('Change locker') ?>
+                            <?= __('Change location') ?>
                         </button>
                     </div>
                 </div>
