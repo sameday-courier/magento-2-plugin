@@ -9,7 +9,7 @@ class GeneralHelper
     public const SAMEDAY_SERVICE_LOCKER_CODE = 'LN';
     public const SAMEDAY_SERVICE_CROSSBORDER_24_CODE = 'XB';
     public const SAMEDAY_SERVICE_CROSSBORDER_LOCKER_CODE = 'XL';
-    public const SAMEDAY_SERVICE_PUDO_CODE = 'PD';
+    public const SAMEDAY_SERVICE_PUDO_CODE = 'PP';
     public const OOH_SERVICE_LABEL = 'Out of home delivery';
 
     public const OOH_LABEL = [
@@ -20,20 +20,20 @@ class GeneralHelper
 
     public const OOH_LABEL_INFO = 'Optiunea Ridicare Personala include ambele servicii LockerNextDay, respectiv Pudo !';
 
+    /**
+     * OOH - stands for Out of home Services
+     */
+    public const OOH_SERVICES = [
+        self::SAMEDAY_SERVICE_LOCKER_CODE,
+        self::SAMEDAY_SERVICE_PUDO_CODE,
+    ];
+
     private const SAMEDAY_IN_USE_SERVICES = [
         self::SAMEDAY_SERVICE_6H_CODE,
         self::SAMEDAY_SERVICE_24H_CODE,
         self::SAMEDAY_SERVICE_LOCKER_CODE,
         self::SAMEDAY_SERVICE_CROSSBORDER_24_CODE,
         self::SAMEDAY_SERVICE_CROSSBORDER_LOCKER_CODE,
-    ];
-
-    /**
-     * OOH - stands for Out of home Services
-     */
-    private const OOH_SERVICES = [
-        self::SAMEDAY_SERVICE_LOCKER_CODE,
-        self::SAMEDAY_SERVICE_PUDO_CODE,
     ];
 
     /**

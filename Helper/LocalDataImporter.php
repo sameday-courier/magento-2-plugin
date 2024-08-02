@@ -126,6 +126,7 @@ class LocalDataImporter extends AbstractHelper
                 );
             }
 
+            $lockerService = null;
             foreach ($services->getServices() as $serviceObject) {
                 try {
                     $service = $this->serviceRepository->getBySamedayId($serviceObject->getId(), $isTesting);
@@ -165,6 +166,11 @@ class LocalDataImporter extends AbstractHelper
 
                 // Save as current services.
                 $remoteServices[] = $serviceObject->getId();
+
+                // Keep LockerService
+                if ($service->getCode() === GeneralHelper::SAMEDAY_SERVICE_LOCKER_CODE) {
+                    $lockerService = $service;
+                }
             }
         } while ($page <= $services->getPages());
 
@@ -184,6 +190,23 @@ class LocalDataImporter extends AbstractHelper
         foreach ($localServices as $localService) {
             if (!in_array($localService['sameday_id'], $remoteServices, false)) {
                 $this->serviceRepository->deleteById($localService['id']);
+            }
+        }
+
+        // Update PUDO service status to be the same as LockerNextDay
+        if (null !== $lockerService) {
+            try{
+                $pudoService = $this->serviceRepository->getBySamedayCode(
+                    GeneralHelper::SAMEDAY_SERVICE_PUDO_CODE,
+                    $lockerService->getIsTesting()
+                );
+            } catch (NoSuchEntityException $e) {
+                $pudoService = null;
+            }
+
+            if (null !== $pudoService) {
+                $pudoService->setStatus($lockerService->getStatus());
+                $this->serviceRepository->save($pudoService);
             }
         }
 

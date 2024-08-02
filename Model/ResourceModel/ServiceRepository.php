@@ -129,6 +129,26 @@ class ServiceRepository implements ServiceRepositoryInterface
         return $items[0];
     }
 
+    public function getBySamedayCode(string $code, bool $isTesting): ServiceInterface
+    {
+        $searchCriteria = $this->searchCriteriaBuilder
+            ->addFilter(ServiceInterface::CODE, $code)
+            ->addFilter(ServiceInterface::IS_TESTING, $isTesting)
+            ->setPageSize(1)
+            ->create();
+
+        $items = $this->getList($searchCriteria)->getItems();
+
+        if (!$items) {
+            throw NoSuchEntityException::doubleField(
+                ServiceInterface::SAMEDAY_ID, CODE,
+                ServiceInterface::IS_TESTING, $isTesting
+            );
+        }
+
+        return $items[0];
+    }
+
     /**
      * @inheritdoc
      */
