@@ -64,6 +64,7 @@ class ApiHelper extends AbstractHelper
     public const ELIGIBLE_TO_LOCKER = [
         GeneralHelper::SAMEDAY_SERVICE_LOCKER_CODE,
         GeneralHelper::SAMEDAY_SERVICE_CROSSBORDER_LOCKER_CODE,
+        GeneralHelper::SAMEDAY_SERVICE_PUDO_CODE,
     ];
 
     public const AVAILABLE_SHIP_COUNTRIES = [
