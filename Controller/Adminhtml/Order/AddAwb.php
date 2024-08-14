@@ -34,6 +34,7 @@ use SamedayCourier\Shipping\Helper\ApiHelper;
 use Sameday\Responses\SamedayPostAwbResponse;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Serialize\SerializerInterface;
+use SamedayCourier\Shipping\Helper\GeneralHelper;
 use SamedayCourier\Shipping\Helper\ShippingService;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
 
@@ -135,6 +136,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         );
 
         $lockerLastMile = null;
+        $oohLastMile = null;
         if ($this->apiHelper->isEligibleToLocker($service->getCode())) {
             $locker = $this->serializer->unserialize($order->getSamedaycourierLocker());
 
@@ -149,7 +151,13 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
                 )
             );
 
-            $lockerLastMile = $locker['lockerId'];
+            if ($service->getCode() === GeneralHelper::SAMEDAY_SERVICE_LOCKER_CODE) {
+                $lockerLastMile = $locker['lockerId'];
+            }
+
+            if ($service->getCode() === GeneralHelper::SAMEDAY_SERVICE_PUDO_CODE) {
+                $oohLastMile = $locker['lockerId'];
+            }
         }
 
         if (null !== $order->getSamedaycourierDestinationAddressHd()
@@ -217,6 +225,8 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             $values['observation'],
             null,
             $lockerLastMile,
+            null,
+            $oohLastMile,
             $this->storedDataHelper->buildDestCurrency($shippingAddress->getCountryId())
         );
 
