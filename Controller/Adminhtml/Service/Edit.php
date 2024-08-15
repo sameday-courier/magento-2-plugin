@@ -3,9 +3,11 @@
 namespace SamedayCourier\Shipping\Controller\Adminhtml\Service;
 
 use Magento\Backend\App\Action;
+use Magento\Checkout\Exception;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Exception\NoSuchEntityException;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
+use SamedayCourier\Shipping\Helper\GeneralHelper;
 
 class Edit extends \Magento\Backend\App\Action
 {
@@ -52,6 +54,23 @@ class Edit extends \Magento\Backend\App\Action
             ->setStatus($data['service']['status']);
 
         $this->repository->save($service);
+
+        // Update PUDO service status to be the same as LockerNextDay
+        if ($service->getCode() === GeneralHelper::SAMEDAY_SERVICE_LOCKER_CODE) {
+            try{
+                $pudoService = $this->repository->getBySamedayCode(
+                    GeneralHelper::SAMEDAY_SERVICE_PUDO_CODE,
+                    $service->getIsTesting()
+                );
+            } catch (NoSuchEntityException $e) {
+                $pudoService = null;
+            }
+
+            if (null !== $pudoService) {
+                $pudoService->setStatus($service->getStatus());
+                $this->repository->save($pudoService);
+            }
+        }
 
         $redirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
 

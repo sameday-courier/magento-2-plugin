@@ -2,6 +2,7 @@
 
 namespace SamedayCourier\Shipping\Api;
 
+use Magento\Framework\Exception\NoSuchEntityException;
 use SamedayCourier\Shipping\Api\Data\ServiceInterface;
 use SamedayCourier\Shipping\Api\Data\ServiceSearchResultsInterface;
 
@@ -26,7 +27,7 @@ interface ServiceRepositoryInterface
      *
      * @return ServiceInterface
      *
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws NoSuchEntityException
      */
     public function get($id);
 
@@ -38,9 +39,19 @@ interface ServiceRepositoryInterface
      *
      * @return ServiceInterface
      *
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws NoSuchEntityException
      */
     public function getBySamedayId($samedayId, $isTesting);
+
+    /**
+     * @param string $code
+     * @param bool $isTesting
+     *
+     * @return ServiceInterface
+     *
+     * @throws NoSuchEntityException
+     */
+    public function getBySamedayCode(string $code, bool $isTesting): ServiceInterface;
 
     /**
      * Retrieve services with testing flag.

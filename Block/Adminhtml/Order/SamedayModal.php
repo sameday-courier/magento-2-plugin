@@ -9,6 +9,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Sales\Model\Order\Interceptor as Order;
 use Magento\Sales\Model\Order\Payment\Interceptor as Payment;
 use SamedayCourier\Shipping\Exception\NotAnOrderMatchedException;
+use SamedayCourier\Shipping\Helper\GeneralHelper;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
 use SamedayCourier\Shipping\Model\Data\Service;
 
@@ -121,6 +122,10 @@ class SamedayModal extends Template
         $displayLockerDetails = $this->storedDataHelper::DISPLAY_HTML_ELEM['hide'];
         if ($this->storedDataHelper->isEligibleToLocker($serviceCode)) {
             $displayLockerDetails = $this->storedDataHelper::DISPLAY_HTML_ELEM['show'];
+
+            if (isset($samedaycourierLocker['oohType'])) {
+                $serviceCode = GeneralHelper::OOH_SERVICES[$samedaycourierLocker['oohType']];
+            }
         }
 
         $city = null;
