@@ -2,7 +2,10 @@
 
 namespace SamedayCourier\Shipping\Helper;
 
-class GeneralHelper
+use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\App\Helper\Context;
+
+class GeneralHelper extends AbstractHelper
 {
     public const SAMEDAY_SERVICE_6H_CODE = '6H';
     public const SAMEDAY_SERVICE_24H_CODE = '24';
@@ -12,13 +15,22 @@ class GeneralHelper
     public const SAMEDAY_SERVICE_PUDO_CODE = 'PP';
     public const OOH_SERVICE_LABEL = 'Out of home delivery';
 
+    public function __construct(Context $context)
+    {
+        parent::__construct($context);
+    }
+
     public const OOH_LABEL = [
-        ApiHelper::ROMANIA_CODE => 'Ridicare personala',
-        ApiHelper::BULGARIA_CODE => 'Лично вземане',
-        ApiHelper::HUNGARY_CODE => 'Személyes átvétel',
+        ApiHelper::ROMANIA_CODE => 'Ridicare Sameday Point/Easybox',
+        ApiHelper::BULGARIA_CODE => 'вземете от Sameday Point/Easybox',
+        ApiHelper::HUNGARY_CODE => 'Felvenni től Sameday Point/Easybox',
     ];
 
-    public const OOH_LABEL_INFO = 'Optiunea Ridicare Personala include ambele servicii LockerNextDay, respectiv Pudo !';
+    public const OOH_LABEL_INFO = [
+        ApiHelper::ROMANIA_CODE => 'Optiunea Ridicare Personala include ambele servicii LockerNextDay, respectiv Pudo!',
+        ApiHelper::BULGARIA_CODE => 'Тази опция включва LockerNextDay и PUDO!',
+        ApiHelper::HUNGARY_CODE => 'Ez az opció magában foglalja a LockerNextDay és a PUDO szolgáltatást is!',
+    ];
 
     /**
      * OOH - stands for Out of home Services
@@ -54,8 +66,11 @@ class GeneralHelper
         return in_array($serviceCode, self::OOH_SERVICES, true);
     }
 
+    /**
+     * @return string
+     */
     public function getHostCountry(): string
     {
-        return ApiHelper::ROMANIA_CODE;
+        return $this->scopeConfig->getValue('carriers/samedaycourier/country') ?? ApiHelper::ROMANIA_CODE;
     }
 }

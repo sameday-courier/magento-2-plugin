@@ -36,10 +36,10 @@ class Active extends Value
         AbstractDb $resourceCollection = null,
         array $data = []
     ) {
+        parent::__construct($context, $registry, $config, $cacheTypeList, $resource, $resourceCollection, $data);
+
         $this->apiHelper = $apiHelper;
         $this->encryptor = $encryptor;
-
-        parent::__construct($context, $registry, $config, $cacheTypeList, $resource, $resourceCollection, $data);
     }
 
     /**

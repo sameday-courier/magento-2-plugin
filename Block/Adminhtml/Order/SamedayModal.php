@@ -37,7 +37,10 @@ class SamedayModal extends Template
         $this->json = $json;
     }
 
-    public function getHostCountry()
+    /**
+     * @return string
+     */
+    public function getHostCountry(): string
     {
         return $this->storedDataHelper->getHostCountry();
     }

@@ -52,6 +52,8 @@ class Shipping extends AbstractCarrier implements CarrierInterface
         PickupPointRepositoryInterface $pickupPointRepository,
         array $data = []
     ) {
+        parent::__construct($scopeConfig, $rateErrorFactory, $logger, $data);
+
         $this->samedayApiHelper = $samedayApiHelper;
         $this->storedDataHelper = $storedDataHelper;
         $this->cartSession = $cartSession;
@@ -60,8 +62,6 @@ class Shipping extends AbstractCarrier implements CarrierInterface
         $this->serviceRepository = $serviceRepository;
         $this->pickupPointRepository = $pickupPointRepository;
         $this->scopeConfig = $scopeConfig;
-
-        parent::__construct($scopeConfig, $rateErrorFactory, $logger, $data);
     }
 
     /**

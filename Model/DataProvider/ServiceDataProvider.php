@@ -46,10 +46,9 @@ class ServiceDataProvider extends AbstractDataProvider
         array $data = []
     )
     {
-        $this->collection = $collectionFactory->create();
-
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
 
+        $this->collection = $collectionFactory->create();
         $this->generalHelper = $generalHelper;
         $this->samedayServiceRepository = $samedayServiceRepository;
     }
@@ -101,7 +100,9 @@ class ServiceDataProvider extends AbstractDataProvider
                     $meta['service']['children']['name']['arguments']['data']['config'] = [
                         'disabled' => true,
                         'tooltip' => [
-                            'description' => __($this->generalHelper::OOH_LABEL_INFO)
+                            'description' => __($this->generalHelper::OOH_LABEL_INFO[
+                                $this->generalHelper->getHostCountry()
+                            ])
                         ],
                     ];
                 }

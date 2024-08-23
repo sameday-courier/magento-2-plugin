@@ -78,7 +78,10 @@ class StoredDataHelper extends AbstractHelper
         return (bool) $this->scopeConfig->getValue(self::SAMEDAYCOURIER_ENV_MODE);
     }
 
-    public function getHostCountry()
+    /**
+     * @return string
+     */
+    public function getHostCountry(): string
     {
         return $this->apiHelper->getHostCountry();
     }

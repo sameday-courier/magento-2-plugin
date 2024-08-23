@@ -43,12 +43,17 @@ class ApiHelper extends AbstractHelper
     /**
      * @var WriterInterface
      */
-    protected $configWriter;
+    private $configWriter;
 
     /**
      * @var PersistenceDataHandler
      */
-    protected $persistenceDataHandler;
+    private $persistenceDataHandler;
+
+    /**
+     * @var GeneralHelper $generalHelper
+     */
+    private $generalHelper;
 
     public const ELIGIBLE_SAMEDAY_SERVICES = [
         GeneralHelper::SAMEDAY_SERVICE_6H_CODE,
@@ -110,7 +115,8 @@ class ApiHelper extends AbstractHelper
         LoggerInterface $logger,
         ManagerInterface $messageManager,
         WriterInterface $configWriter,
-        PersistenceDataHandler $persistenceDataHandler
+        PersistenceDataHandler $persistenceDataHandler,
+        GeneralHelper $generalHelper
     )
     {
         parent::__construct($context);
@@ -121,6 +127,7 @@ class ApiHelper extends AbstractHelper
         $this->messageManager = $messageManager;
         $this->configWriter = $configWriter;
         $this->persistenceDataHandler = $persistenceDataHandler;
+        $this->generalHelper = $generalHelper;
     }
 
     /**
@@ -133,7 +140,7 @@ class ApiHelper extends AbstractHelper
      */
     public function initClient(string $username = null, string $password = null, $url_env = null): SamedayClient
     {
-        $country = $this->getHostCountry();
+        $country = $this->generalHelper->getHostCountry();
         $testing = (int) $this->scopeConfig->getValue('carriers/samedaycourier/testing');
 
         if ($username === null && $password === null) {
@@ -161,11 +168,6 @@ class ApiHelper extends AbstractHelper
     public function getEnvMode()
     {
         return $this->scopeConfig->getValue('carriers/samedaycourier/testing');
-    }
-
-    public function getHostCountry()
-    {
-        return $this->scopeConfig->getValue('carriers/samedaycourier/country') ?? self::ROMANIA_CODE;
     }
 
     /**
@@ -283,5 +285,15 @@ class ApiHelper extends AbstractHelper
     public function getAwbLabelFormat(): string
     {
         return $this->scopeConfig->getValue('carriers/samedaycourier/awb_label_format') ?? AwbPdfType::A4;
+    }
+
+    /**
+     * // possible values ro, bg, hu
+     *
+     * @return string
+     */
+    public function getHostCountry(): string
+    {
+        return $this->generalHelper->getHostCountry();
     }
 }
