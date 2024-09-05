@@ -159,7 +159,7 @@ class LocalDataImporter extends AbstractHelper
                 ;
 
                 if (false !== $this->generalHelper->isOoHService($serviceObject->getCode())) {
-                    $service->setName($this->generalHelper::OOH_LABEL[$this->apiHelper->getHostCountry()]);
+                    $service->setName($this->generalHelper::OOH_LABEL[$this->generalHelper->getHostCountry()]);
                 }
 
                 $this->serviceRepository->save($service);

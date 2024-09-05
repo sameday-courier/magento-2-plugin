@@ -21,18 +21,17 @@ class Collection extends SearchResult
     private $config;
 
     /**
-     * Collection constructor.
-     *
+     * @var GeneralHelper $generalHelper
+     */
+    private $generalHelper;
+
+    /**
      * @param ScopeConfigInterface $config
      * @param EntityFactory $entityFactory
      * @param Logger $logger
      * @param FetchStrategy $fetchStrategy
      * @param EventManager $eventManager
-     * @param null $mainTable
-     * @param null $resourceModel
-     * @param null $identifierName
-     * @param null $connectionName
-     *
+     * @param GeneralHelper $generalHelper
      * @throws LocalizedException
      */
     public function __construct(
@@ -41,12 +40,12 @@ class Collection extends SearchResult
         Logger $logger,
         FetchStrategy $fetchStrategy,
         EventManager $eventManager,
-        $mainTable = null,
-        $resourceModel = null,
-        $identifierName = null,
-        $connectionName = null
+        GeneralHelper $generalHelper
     )
     {
+        $this->config = $config;
+        $this->generalHelper = $generalHelper;
+
         parent::__construct(
             $entityFactory,
             $logger,
@@ -54,11 +53,7 @@ class Collection extends SearchResult
             $eventManager,
             'samedaycourier_shipping_service',
             Service::class,
-            $identifierName,
-            $connectionName
         );
-
-        $this->config = $config;
     }
 
     /**
@@ -69,7 +64,7 @@ class Collection extends SearchResult
         $select = parent::getSelect();
 
         $inUseServices = [];
-        foreach ((new GeneralHelper())->getInUseServices() as $service) {
+        foreach ($this->generalHelper->getInUseServices() as $service) {
             $inUseServices[] = sprintf('"%s"', $service);
         }
 
