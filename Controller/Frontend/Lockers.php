@@ -22,6 +22,11 @@ class Lockers extends Action
     /** @var ResultFactory $resultFactory */
     protected $resultFactory;
 
+    /**
+     * @var Json
+     */
+    protected $json;
+
     public function __construct(
         Context $context,
         LockerRepositoryInterface $lockerRepository,
