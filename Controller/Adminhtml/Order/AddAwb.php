@@ -122,10 +122,13 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             throw new NotAnOrderMatchedException();
         }
 
-        $values = $this->getRequest()->getParams();
+        $requestParams = $this->getRequest()->getParams();
 
-        $serviceId =  $values['service'];
-        $packageWeight = max($values['package_weight'], 1);
+        $resultRedirect = $this->resultRedirectFactory->create();
+        $resultRedirect->setPath('sales/order/view', ['order_id' => $requestParams['order_id']]);
+
+        $serviceId =  $requestParams['service'];
+        $packageWeight = max($requestParams['package_weight'], 1);
 
         /** @var OrderAddressInterface $shippingAddress */
         $shippingAddress = $order->getShippingAddress();
@@ -178,7 +181,23 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         $regionName = $shippingAddress->getRegion();
         $city = $shippingAddress->getCity();
         $address = implode(' ', $shippingAddress->getStreet());
-        $phone = $shippingAddress->getTelephone();
+
+        $fieldErrors = null;
+        if ('' === $email = $order->getCustomerEmail() ?? '') {
+            $fieldErrors[] = 'Must complete email address!';
+        }
+
+        if ('' === $phone = $shippingAddress->getTelephone()) {
+            $fieldErrors[] = 'Must complete phone number!';
+        }
+
+        if (null !== $fieldErrors) {
+            $this->manager->addErrorMessage(
+                implode("\n", $fieldErrors)
+            );
+
+            return $resultRedirect;
+        }
 
         $contactPerson = sprintf('%s %s',
             $shippingAddress->getFirstname(),
@@ -192,12 +211,12 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         }
 
         $serviceTaxIds = [];
-        if (isset($values['locker_first_mile'])) {
-            $serviceTaxIds[] = $values['locker_first_mile'];
+        if (isset($requestParams['locker_first_mile'])) {
+            $serviceTaxIds[] = $requestParams['locker_first_mile'];
         }
 
         $apiRequest = new SamedayPostAwbRequest(
-            $values['pickup_point'],
+            $requestParams['pickup_point'],
             null,
             (new PackageType(PackageType::PARCEL)),
             [(new ParcelDimensionsObject($packageWeight))],
@@ -209,12 +228,12 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
                 $address,
                 $contactPerson,
                 $phone,
-                $order->getCustomerEmail(),
+                $email,
                 $company,
                 $postalCode
             )),
-            $values['insured_value'],
-            $values['repayment'],
+            $requestParams['insured_value'],
+            $requestParams['repayment'],
             null,
             null,
             $serviceTaxIds,
@@ -222,7 +241,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             null,
             null,
             null,
-            $values['observation'],
+            $requestParams['observation'],
             null,
             $lockerLastMile,
             null,
@@ -248,17 +267,14 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
 
             $parcels = $this->serializer->serialize($parcelsArr);
             $awb = $this->awbFactory->create()
-                ->setOrderId($values['order_id'])
+                ->setOrderId($requestParams['order_id'])
                 ->setAwbNumber($response->getAwbNumber())
-                ->setAwbCost($values['repayment'])
+                ->setAwbCost($requestParams['repayment'])
                 ->setParcels($parcels);
 
             $this->awbRepository->save($awb);
             $this->manager->addSuccessMessage("Sameday awb successfully created!");
         }
-
-        $resultRedirect = $this->resultRedirectFactory->create();
-        $resultRedirect->setPath('sales/order/view', ['order_id' => $values['order_id']]);
 
         return $resultRedirect;
     }
