@@ -182,17 +182,18 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         $city = $shippingAddress->getCity();
         $address = implode(' ', $shippingAddress->getStreet());
 
-        if ('' || null === $email = $order->getCustomerEmail()) {
-            $this->manager->addErrorMessage(
-                'Must complete mail!'
-            );
-
-            return $resultRedirect;
+        $fieldErrors = null;
+        if ('' === $email = $order->getCustomerEmail() ?? '') {
+            $fieldErrors[] = 'Must complete email address!';
         }
 
-        if ('' || null === $phone = $shippingAddress->getTelephone()) {
+        if ('' === $phone = $shippingAddress->getTelephone()) {
+            $fieldErrors[] = 'Must complete phone number!';
+        }
+
+        if (null !== $fieldErrors) {
             $this->manager->addErrorMessage(
-                'Must complete phone number!'
+                implode("\n", $fieldErrors)
             );
 
             return $resultRedirect;
