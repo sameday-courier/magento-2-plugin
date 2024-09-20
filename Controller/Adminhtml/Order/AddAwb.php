@@ -100,7 +100,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             $resultRawFactory,
             $orderManagement,
             $orderRepository,
-            $logger,
+            $logger
         );
 
         $this->awbRepository = $awbRepository;
