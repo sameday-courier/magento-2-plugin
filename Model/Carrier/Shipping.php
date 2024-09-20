@@ -65,6 +65,14 @@ class Shipping extends AbstractCarrier implements CarrierInterface
     }
 
     /**
+     * @return bool
+     */
+    public function isTrackingAvailable(): bool
+    {
+        return true;
+    }
+
+    /**
      * @inheritdoc
      */
     public function checkAvailableShipCountries(DataObject $request)
@@ -151,7 +159,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
                 $shippingCost = 0;
             } elseif ($service->getUseEstimatedCost()) {
                 $shippingCostEstimation = $this->shippingEstimateCost($request, $service->getSamedayId());
-                $shippingCost = $shippingCostEstimation ?  $shippingCostEstimation->getCost() : $service->getPrice();
+                $shippingCost = $shippingCostEstimation ? $shippingCostEstimation->getCost() : $service->getPrice();
             }
 
             $method

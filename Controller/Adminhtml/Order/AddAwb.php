@@ -9,16 +9,19 @@ use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\Response\Http\FileFactory;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\Result\RawFactory;
+use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
 use Magento\Framework\Translate\InlineInterface;
 use Magento\Framework\View\Result\LayoutFactory;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Sales\Api\Data\OrderAddressInterface;
-use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderManagementInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Controller\Adminhtml\Order as AdminOrder;
+use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Sales\Model\Order;
 use Psr\Log\LoggerInterface;
 use Sameday\Objects\ParcelDimensionsObject;
 use Sameday\Objects\PostAwb\Request\AwbRecipientEntityObject;
@@ -32,11 +35,10 @@ use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
 use SamedayCourier\Shipping\Exception\NotAnOrderMatchedException;
 use SamedayCourier\Shipping\Helper\ApiHelper;
 use Sameday\Responses\SamedayPostAwbResponse;
-use Magento\Framework\Message\ManagerInterface;
-use Magento\Framework\Serialize\SerializerInterface;
 use SamedayCourier\Shipping\Helper\GeneralHelper;
 use SamedayCourier\Shipping\Helper\ShippingService;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
+use SamedayCourier\Shipping\Helper\OrderShipmentHelper;
 
 class AddAwb extends AdminOrder implements HttpPostActionInterface
 {
@@ -59,6 +61,11 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
      */
     private $storedDataHelper;
 
+    /**
+     * @var OrderShipmentHelper $orderShipmentHelper
+     */
+    private $orderShipmentHelper;
+
     public function __construct(
         Action\Context $context,
         Registry $coreRegistry,
@@ -78,7 +85,8 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         SerializerInterface $serializer,
         ServiceRepositoryInterface $serviceRepository,
         StoredDataHelper $storedDataHelper,
-        ShippingService $shippingService
+        ShippingService $shippingService,
+        OrderShipmentHelper $orderShipmentHelper
     )
     {
         parent::__construct(
@@ -103,16 +111,18 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         $this->serviceRepository = $serviceRepository;
         $this->shippingService = $shippingService;
         $this->storedDataHelper = $storedDataHelper;
+        $this->orderShipmentHelper = $orderShipmentHelper;
     }
 
     /**
-     * @inheritDoc
-     * @throws NotAnOrderMatchedException
+     * @return Redirect
+     *
      * @throws NoSuchEntityException
+     * @throws NotAnOrderMatchedException
      */
-    public function execute()
+    public function execute(): Redirect
     {
-        /** @var OrderInterface $order */
+        /** @var Order $order */
         $order = $this->_initOrder();
         if (!$order) {
             throw new NotAnOrderMatchedException();
@@ -266,13 +276,27 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             }
 
             $parcels = $this->serializer->serialize($parcelsArr);
+
+            // Store AWB Details
             $awb = $this->awbFactory->create()
                 ->setOrderId($requestParams['order_id'])
                 ->setAwbNumber($response->getAwbNumber())
                 ->setAwbCost($requestParams['repayment'])
                 ->setParcels($parcels);
-
             $this->awbRepository->save($awb);
+
+            // Generate Order Shipment and store it's tracking
+            if (null !== $orderShipment = $this->orderShipmentHelper->saveOrderShipment($order)) {
+                $this->orderShipmentHelper->saveTracking(
+                    $orderShipment,
+                    [
+                        'carrier_code' => ShippingService::SHIPPING_METHOD_CODE,
+                        'title' => $service->getName(),
+                        'number' => $awb->getAwbNumber(),
+                    ]
+                );
+            }
+
             $this->manager->addSuccessMessage("Sameday awb successfully created!");
         }
 
