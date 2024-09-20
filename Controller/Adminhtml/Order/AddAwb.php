@@ -293,7 +293,6 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
                         'carrier_code' => ShippingService::SHIPPING_METHOD_CODE,
                         'title' => $service->getName(),
                         'number' => $awb->getAwbNumber(),
-                        'description' => '',
                     ]
                 );
             }
