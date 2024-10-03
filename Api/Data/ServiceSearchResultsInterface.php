@@ -12,7 +12,7 @@ interface ServiceSearchResultsInterface extends SearchResultsInterface
     /**
      * @return ServiceInterface[]
      */
-    public function getItems();
+    public function getItems(): array;
 
     /**
      * @api
@@ -20,5 +20,5 @@ interface ServiceSearchResultsInterface extends SearchResultsInterface
      *
      * @return $this
      */
-    public function setItems(array $items);
+    public function setItems(array $items): self;
 }

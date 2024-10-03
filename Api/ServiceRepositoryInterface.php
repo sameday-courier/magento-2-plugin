@@ -2,9 +2,9 @@
 
 namespace SamedayCourier\Shipping\Api;
 
+use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use SamedayCourier\Shipping\Api\Data\ServiceInterface;
-use SamedayCourier\Shipping\Api\Data\ServiceSearchResultsInterface;
 
 /**
  * @api
@@ -12,13 +12,11 @@ use SamedayCourier\Shipping\Api\Data\ServiceSearchResultsInterface;
 interface ServiceRepositoryInterface
 {
     /**
-     * Create or update a service.
-     *
      * @param ServiceInterface $service
      *
-     * @return ServiceInterface
+     * @return void
      */
-    public function save(ServiceInterface $service);
+    public function save(ServiceInterface $service): void;
 
     /**
      * Get service by ID.
@@ -29,7 +27,7 @@ interface ServiceRepositoryInterface
      *
      * @throws NoSuchEntityException
      */
-    public function get($id);
+    public function get(int $id): ServiceInterface;
 
     /**
      * Retrieve service by samedayId.
@@ -41,7 +39,7 @@ interface ServiceRepositoryInterface
      *
      * @throws NoSuchEntityException
      */
-    public function getBySamedayId($samedayId, $isTesting);
+    public function getBySamedayId(int $samedayId, bool $isTesting): ServiceInterface;
 
     /**
      * @param string $code
@@ -54,29 +52,29 @@ interface ServiceRepositoryInterface
     public function getBySamedayCode(string $code, bool $isTesting): ServiceInterface;
 
     /**
-     * Retrieve services with testing flag.
+     * Retrieve services which match a specified criteria.
      *
-     * @param $isTesting
+     * @param SearchCriteriaInterface $searchCriteria
      *
      * @return ServiceInterface[]
      */
-    public function getListByTesting($isTesting);
+    public function getList(SearchCriteriaInterface $searchCriteria): array;
 
     /**
-     * Retrieve services which match a specified criteria.
+     * Retrieve services with testing flag.
      *
-     * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
+     * @param bool $isTesting
      *
-     * @return ServiceSearchResultsInterface
+     * @return ServiceInterface[]
      */
-    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria);
+    public function getListByTesting(bool $isTesting): array;
 
     /**
      * @param bool $isTesting
      *
-     * @return ServiceSearchResultsInterface
+     * @return ServiceInterface[]
      */
-    public function getAllActive($isTesting);
+    public function getAllActive(bool $isTesting): array;
 
     /**
      * Delete service.
@@ -85,7 +83,7 @@ interface ServiceRepositoryInterface
      *
      * @return bool
      */
-    public function delete(ServiceInterface $service);
+    public function delete(ServiceInterface $service): bool;
 
     /**
      * Delete service by ID.
@@ -94,5 +92,5 @@ interface ServiceRepositoryInterface
      *
      * @return bool
      */
-    public function deleteById($id);
+    public function deleteById(int $id): bool;
 }

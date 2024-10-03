@@ -2,8 +2,9 @@
 
 namespace SamedayCourier\Shipping\Api;
 
+use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
 use SamedayCourier\Shipping\Api\Data\PickupPointInterface;
-use SamedayCourier\Shipping\Api\Data\PickupPointSearchResultsInterface;
 
 /**
  * @api
@@ -15,9 +16,9 @@ interface PickupPointRepositoryInterface
      *
      * @param PickupPointInterface $pickupPoint
      *
-     * @return PickupPointInterface
+     * @return void
      */
-    public function save(PickupPointInterface $pickupPoint);
+    public function save(PickupPointInterface $pickupPoint): void;
 
     /**
      * Get pickup point by ID.
@@ -26,9 +27,9 @@ interface PickupPointRepositoryInterface
      *
      * @return PickupPointInterface
      *
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws NoSuchEntityException
      */
-    public function get($id);
+    public function get(int $id): PickupPointInterface;
 
     /**
      * Retrieve pickup point by samedayId.
@@ -38,34 +39,34 @@ interface PickupPointRepositoryInterface
      *
      * @return PickupPointInterface
      *
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws NoSuchEntityException
      */
-    public function getBySamedayId($samedayId, $isTesting);
+    public function getBySamedayId(int $samedayId, bool $isTesting): PickupPointInterface;
 
     /**
      * Retrieve pickup points with testing flag.
      *
-     * @param $isTesting
+     * @param bool $isTesting
      *
      * @return PickupPointInterface[]
      */
-    public function getListByTesting($isTesting);
+    public function getListByTesting(bool $isTesting): array;
 
     /**
      * Retrieve pickup points which match a specified criteria.
      *
-     * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
+     * @param SearchCriteriaInterface $searchCriteria
      *
-     * @return PickupPointSearchResultsInterface
+     * @return PickupPointInterface[]
      */
-    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria);
+    public function getList(SearchCriteriaInterface $searchCriteria): array;
 
     /**
      * Get the default pickup point
      *
      * @return PickupPointInterface
      */
-    public function getDefaultPickupPoint();
+    public function getDefaultPickupPoint(): PickupPointInterface;
 
     /**
      * Delete pickup point.
@@ -74,7 +75,7 @@ interface PickupPointRepositoryInterface
      *
      * @return bool
      */
-    public function delete(PickupPointInterface $pickupPoint);
+    public function delete(PickupPointInterface $pickupPoint): bool;
 
     /**
      * Delete pickup point by ID.
@@ -83,5 +84,5 @@ interface PickupPointRepositoryInterface
      *
      * @return bool
      */
-    public function deleteById($id);
+    public function deleteById(int $id): bool;
 }
