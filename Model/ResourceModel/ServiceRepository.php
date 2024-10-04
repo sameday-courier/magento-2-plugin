@@ -2,18 +2,17 @@
 
 namespace SamedayCourier\Shipping\Model\ResourceModel;
 
+use Exception;
 use Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface;
-use Magento\Framework\Api\Search\FilterGroup;
 use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\Api\SortOrder;
+use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use SamedayCourier\Shipping\Api\Data\ServiceInterface;
-use SamedayCourier\Shipping\Api\Data\ServiceSearchResultsInterface;
 use SamedayCourier\Shipping\Api\Data\ServiceSearchResultsInterfaceFactory;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
+use SamedayCourier\Shipping\Helper\SearchResultHelper;
 use SamedayCourier\Shipping\Model\ServiceFactory;
-use SamedayCourier\Shipping\Model\ResourceModel\Service\Collection;
 use SamedayCourier\Shipping\Model\ResourceModel\Service\CollectionFactory;
 
 /**
@@ -52,12 +51,18 @@ class ServiceRepository implements ServiceRepositoryInterface
     private $searchCriteriaBuilder;
 
     /**
+     * @var SearchResultHelper $searchResultHelper
+     */
+    private $searchResultHelper;
+
+    /**
      * @param ServiceFactory $serviceFactory
      * @param Service $serviceResourceModel
      * @param CollectionFactory $serviceCollectionFactory
      * @param ServiceSearchResultsInterfaceFactory $serviceSearchResultsFactory
      * @param JoinProcessorInterface $extensionAttributesJoinProcessor
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param SearchResultHelper $searchResultHelper
      */
     public function __construct(
         ServiceFactory $serviceFactory,
@@ -65,7 +70,8 @@ class ServiceRepository implements ServiceRepositoryInterface
         CollectionFactory $serviceCollectionFactory,
         ServiceSearchResultsInterfaceFactory $serviceSearchResultsFactory,
         JoinProcessorInterface $extensionAttributesJoinProcessor,
-        SearchCriteriaBuilder $searchCriteriaBuilder
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        SearchResultHelper $searchResultHelper
     ) {
         $this->serviceFactory = $serviceFactory;
         $this->serviceResourceModel = $serviceResourceModel;
@@ -73,14 +79,17 @@ class ServiceRepository implements ServiceRepositoryInterface
         $this->serviceSearchResultsFactory = $serviceSearchResultsFactory;
         $this->extensionAttributesJoinProcessor = $extensionAttributesJoinProcessor;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->searchResultHelper = $searchResultHelper;
     }
 
     /**
-     * @inheritdoc
+     * @param ServiceInterface $service
+     *
+     * @return void
      *
      * @throws AlreadyExistsException
      */
-    public function save(ServiceInterface $service)
+    public function save(ServiceInterface $service): void
     {
         $serviceModel = $this->serviceFactory->create();
         if ($service->getId()) {
@@ -88,16 +97,18 @@ class ServiceRepository implements ServiceRepositoryInterface
         }
 
         $serviceModel->updateData($service);
+
         $this->serviceResourceModel->save($serviceModel);
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
      * @return ServiceInterface
      *
      * @throws NoSuchEntityException
      */
-    public function get($id): ServiceInterface
+    public function get(int $id): ServiceInterface
     {
         $serviceModel = $this->serviceFactory->create();
         $this->serviceResourceModel->load($serviceModel, $id);
@@ -110,38 +121,56 @@ class ServiceRepository implements ServiceRepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * @param int $samedayId
+     * @param bool $isTesting
+     *
+     * @return ServiceInterface
+     *
+     * @throws NoSuchEntityException
      */
-    public function getBySamedayId($samedayId, $isTesting)
+    public function getBySamedayId(int $samedayId, bool $isTesting): ServiceInterface
     {
-        $searchCriteria = $this->searchCriteriaBuilder
+        $items = $this->getList(
+            $this->searchCriteriaBuilder
             ->addFilter(ServiceInterface::SAMEDAY_ID, $samedayId)
             ->addFilter(ServiceInterface::IS_TESTING, $isTesting)
             ->setPageSize(1)
-            ->create();
-
-        $items = $this->getList($searchCriteria)->getItems();
+            ->create()
+        );
 
         if (!$items) {
-            throw NoSuchEntityException::doubleField(ServiceInterface::SAMEDAY_ID, $samedayId, ServiceInterface::IS_TESTING, $isTesting);
+            throw NoSuchEntityException::doubleField(
+                ServiceInterface::SAMEDAY_ID,
+                $samedayId,
+                ServiceInterface::IS_TESTING,
+                $isTesting
+            );
         }
 
         return $items[0];
     }
 
+    /**
+     * @param string $code
+     * @param bool $isTesting
+     *
+     * @return ServiceInterface
+     *
+     * @throws NoSuchEntityException
+     */
     public function getBySamedayCode(string $code, bool $isTesting): ServiceInterface
     {
-        $searchCriteria = $this->searchCriteriaBuilder
+        $items = $this->getList(
+            $this->searchCriteriaBuilder
             ->addFilter(ServiceInterface::CODE, $code)
             ->addFilter(ServiceInterface::IS_TESTING, $isTesting)
             ->setPageSize(1)
-            ->create();
-
-        $items = $this->getList($searchCriteria)->getItems();
+            ->create()
+        );
 
         if (!$items) {
             throw NoSuchEntityException::doubleField(
-                ServiceInterface::SAMEDAY_ID, CODE,
+                ServiceInterface::SAMEDAY_ID, ServiceInterface::CODE,
                 ServiceInterface::IS_TESTING, $isTesting
             );
         }
@@ -150,47 +179,16 @@ class ServiceRepository implements ServiceRepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * @param SearchCriteriaInterface $searchCriteria
+     *
+     * @return ServiceInterface[]
      */
-    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria)
+    public function getList(SearchCriteriaInterface $searchCriteria): array
     {
-        /** @var Collection $collection */
         $collection = $this->serviceCollectionFactory->create();
         $this->extensionAttributesJoinProcessor->process($collection, ServiceInterface::class);
 
-        // Add filters from root filter group to the collection.
-        /** @var FilterGroup $group */
-        foreach ($searchCriteria->getFilterGroups() as $group) {
-            $fields = [];
-            $conditions = [];
-
-            foreach ($group->getFilters() as $filter) {
-                $condition = $filter->getConditionType() ? $filter->getConditionType() : 'eq';
-                $fields[] = $filter->getField();
-                $conditions[] = [$condition => $filter->getValue()];
-            }
-
-            if ($fields) {
-                $collection->addFieldToFilter($fields, $conditions);
-            }
-        }
-
-        $sortOrders = $searchCriteria->getSortOrders();
-        /** @var SortOrder $sortOrder */
-        if ($sortOrders) {
-            foreach ($searchCriteria->getSortOrders() as $sortOrder) {
-                $collection->addOrder(
-                    $sortOrder->getField(),
-                    ($sortOrder->getDirection() == SortOrder::SORT_ASC) ? 'ASC' : 'DESC'
-                );
-            }
-        } else {
-            // Set a default sorting order.
-            $collection->addOrder('id', 'ASC');
-        }
-
-        $collection->setCurPage($searchCriteria->getCurrentPage());
-        $collection->setPageSize($searchCriteria->getPageSize());
+        $collection = $this->searchResultHelper->buildSearchCollection($searchCriteria, $collection);
 
         /** @var ServiceInterface[] $services */
         $services = [];
@@ -200,66 +198,78 @@ class ServiceRepository implements ServiceRepositoryInterface
             $services[] = $service->getDataModel();
         }
 
-        /** @var ServiceSearchResultsInterface $searchResults */
-        $searchResults = $this->serviceSearchResultsFactory->create()
+        return $this->serviceSearchResultsFactory->create()
             ->setItems($services)
             ->setSearchCriteria($searchCriteria)
-            ->setTotalCount($collection->getSize());
-
-        return $searchResults;
+            ->setTotalCount($collection->getSize())
+            ->getItems()
+        ;
     }
 
     /**
-     * @inheritdoc
-     */
-    public function getListByTesting($isTesting)
-    {
-        $searchCriteria = $this->searchCriteriaBuilder
-            ->addFilter(ServiceInterface::IS_TESTING, $isTesting)
-            ->create();
-
-        return $this->getList($searchCriteria);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getAllActive($isTesting)
-    {
-        $searchCriteria = $this->searchCriteriaBuilder
-            ->addFilter(ServiceInterface::STATUS, true)
-            ->addFilter(ServiceInterface::IS_TESTING, $isTesting)
-            ->create();
-
-        return $this->getList($searchCriteria);
-    }
-
-    public function getAllActiveByTesting($isTesting)
-    {
-        $searchCriteria = $this->searchCriteriaBuilder
-            ->addFilter(ServiceInterface::STATUS, true)
-            ->addFilter(ServiceInterface::IS_TESTING, $isTesting)
-            ->create();
-
-        return $this->getList($searchCriteria);
-    }
-
-    /**
-     * @inheritdoc
+     * @param bool $isTesting
      *
-     * @throws \Exception
+     * @return ServiceInterface[]
      */
-    public function delete(ServiceInterface $service)
+    public function getListByTesting(bool $isTesting): array
+    {
+        return $this->getList(
+            $this->searchCriteriaBuilder
+            ->addFilter(ServiceInterface::IS_TESTING, $isTesting)
+            ->create()
+        );
+    }
+
+    /**
+     * @param bool $isTesting
+     *
+     * @return ServiceInterface[]
+     */
+    public function getAllActive(bool $isTesting): array
+    {
+        return $this->getList(
+            $this->searchCriteriaBuilder
+            ->addFilter(ServiceInterface::STATUS, true)
+            ->addFilter(ServiceInterface::IS_TESTING, $isTesting)
+            ->create()
+        );
+    }
+
+    /**
+     * @param $isTesting
+     *
+     * @return ServiceInterface[]
+     */
+    public function getAllActiveByTesting($isTesting): array
+    {
+        return $this->getList(
+            $this->searchCriteriaBuilder
+            ->addFilter(ServiceInterface::STATUS, true)
+            ->addFilter(ServiceInterface::IS_TESTING, $isTesting)
+            ->create()
+        );
+    }
+
+    /**
+     * @param ServiceInterface $service
+     *
+     * @return bool
+     *
+     * @throws Exception
+     */
+    public function delete(ServiceInterface $service): bool
     {
         return $this->deleteById($service->getId());
     }
 
     /**
-     * @inheritdoc
+     * @param int $id
      *
-     * @throws \Exception
+     * @return bool
+     *
+     * @throws Exception
      */
-    public function deleteById($id)
+    public function deleteById(int $id): bool
     {
         $serviceModel = $this->serviceFactory->create();
         $this->serviceResourceModel->load($serviceModel, $id);

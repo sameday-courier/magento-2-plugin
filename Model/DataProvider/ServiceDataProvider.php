@@ -2,6 +2,7 @@
 
 namespace SamedayCourier\Shipping\Model\DataProvider;
 
+use Exception;
 use Magento\Ui\DataProvider\AbstractDataProvider;
 use SamedayCourier\Shipping\Helper\GeneralHelper;
 use SamedayCourier\Shipping\Model\ResourceModel\Service\CollectionFactory;
@@ -92,7 +93,7 @@ class ServiceDataProvider extends AbstractDataProvider
             if ($id > 0) {
                 try {
                     $service = $this->samedayServiceRepository->get($id);
-                } catch (\Exception $exception) {
+                } catch (Exception $exception) {
                     $service = null;
                 }
 

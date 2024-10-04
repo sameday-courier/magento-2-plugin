@@ -12,7 +12,7 @@ interface LockerSearchResultsInterface extends SearchResultsInterface
     /**
      * @return LockerInterface[]
      */
-    public function getItems();
+    public function getItems(): array;
 
     /**
      * @api
@@ -20,5 +20,5 @@ interface LockerSearchResultsInterface extends SearchResultsInterface
      *
      * @return $this
      */
-    public function setItems(array $items);
+    public function setItems(array $items): self;
 }

@@ -137,7 +137,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         $resultRedirect = $this->resultRedirectFactory->create();
         $resultRedirect->setPath('sales/order/view', ['order_id' => $requestParams['order_id']]);
 
-        $serviceId =  $requestParams['service'];
+        $serviceId =  (int) $requestParams['service'];
         $packageWeight = max($requestParams['package_weight'], 1);
 
         /** @var OrderAddressInterface $shippingAddress */
@@ -145,7 +145,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
 
         $service = $this->serviceRepository->getBySamedayId(
             $serviceId,
-            $this->apiHelper->getEnvMode()
+            (bool) $this->apiHelper->getEnvMode()
         );
 
         $lockerLastMile = null;

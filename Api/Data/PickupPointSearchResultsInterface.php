@@ -12,7 +12,7 @@ interface PickupPointSearchResultsInterface extends SearchResultsInterface
     /**
      * @return PickupPointInterface[]
      */
-    public function getItems();
+    public function getItems() :array;
 
     /**
      * @api
@@ -20,5 +20,5 @@ interface PickupPointSearchResultsInterface extends SearchResultsInterface
      *
      * @return $this
      */
-    public function setItems(array $items);
+    public function setItems(array $items) :self;
 }

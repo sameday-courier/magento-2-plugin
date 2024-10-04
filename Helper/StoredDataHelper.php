@@ -9,6 +9,8 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Sameday\Objects\Service\OptionalTaxObject;
 use SamedayCourier\Shipping\Api\Data\LockerInterface;
+use SamedayCourier\Shipping\Api\Data\PickupPointInterface;
+use SamedayCourier\Shipping\Api\Data\ServiceInterface;
 use SamedayCourier\Shipping\Api\PickupPointRepositoryInterface;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
 use SamedayCourier\Shipping\Model\ResourceModel\LockerRepository;
@@ -101,16 +103,27 @@ class StoredDataHelper extends AbstractHelper
         return (string) $this->scopeConfig->getValue(self::REPAYMENT_TAX_LABEL);
     }
 
-    public function getPickupPoints()
+    /**
+     * @return PickupPointInterface[]
+     */
+    public function getPickupPoints(): array
     {
         return $this->pickupPointRepository->getListByTesting($this->isTesting());
     }
 
-    public function getServices()
+    /**
+     * @return ServiceInterface[]
+     */
+    public function getServices(): array
     {
         return $this->serviceRepository->getAllActiveByTesting($this->isTesting());
     }
 
+    /**
+     * @param $samedayId
+     *
+     * @return LockerInterface|null
+     */
     public function getLocker($samedayId): ?LockerInterface
     {
         try {
@@ -122,6 +135,7 @@ class StoredDataHelper extends AbstractHelper
 
     /**
      * @param $samedayServiceOptionalTaxes
+     *
      * @return string
      */
     public function serializeServiceOptionalTaxes($samedayServiceOptionalTaxes): string

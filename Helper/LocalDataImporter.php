@@ -183,12 +183,12 @@ class LocalDataImporter extends AbstractHelper
                     'sameday_id' => $service->getSamedayId()
                 );
             },
-            $this->serviceRepository->getListByTesting($isTesting)->getItems()
+            $this->serviceRepository->getListByTesting($isTesting)
         );
 
         // Delete local services that aren't present in remote services anymore.
         foreach ($localServices as $localService) {
-            if (!in_array($localService['sameday_id'], $remoteServices, false)) {
+            if (!in_array($localService['sameday_id'], $remoteServices)) {
                 $this->serviceRepository->deleteById($localService['id']);
             }
         }
@@ -276,12 +276,12 @@ class LocalDataImporter extends AbstractHelper
                     'sameday_id' => $pickupPoint->getSamedayId()
                 );
             },
-            $this->pickupPointRepository->getListByTesting($isTesting)->getItems()
+            $this->pickupPointRepository->getListByTesting($isTesting)
         );
 
         // Delete local pickup points that aren't present in remote pickup points anymore.
         foreach ($localPickupPoints as $localPickupPoint) {
-            if (!in_array($localPickupPoint['sameday_id'], $remotePickupPoints, false)) {
+            if (!in_array($localPickupPoint['sameday_id'], $remotePickupPoints)) {
                 $this->pickupPointRepository->deleteById($localPickupPoint['id']);
             }
         }
@@ -300,46 +300,52 @@ class LocalDataImporter extends AbstractHelper
         $sameday = new Sameday($this->apiHelper->initClient());
         $isTesting = $this->apiHelper->getEnvMode();
 
-        $request = new SamedayGetLockersRequest();
-        try {
-            $lockers = $sameday->getLockers($request);
-        } catch (Exception $e) {
-            return (new LocalDataImporterResponse())
-                ->setSucceed(false)
-                ->setMessage(__($e->getMessage()))
-            ;
-        }
-
         $remoteLockers = [];
-        foreach ($lockers->getLockers() as $lockerObject) {
-            $locker = null;
+        $page = 1;
+        do {
+            $request = new SamedayGetLockersRequest();
+            $request->setPage($page++);
             try {
-                $locker = $this->lockerRepository->getLockerBySamedayId($lockerObject->getId());
-            } catch (NoSuchEntityException $exception) {
-                $locker = $this->lockerFactory->create();
+                $lockers = $sameday->getLockers($request);
+            } catch (Exception $e) {
+                return (new LocalDataImporterResponse())
+                    ->setSucceed(false)
+                    ->setMessage(__($e->getMessage()))
+                ;
             }
 
-            $locker
-                ->setLockerId($lockerObject->getId())
-                ->setName($lockerObject->getName())
-                ->setCounty($lockerObject->getCounty())
-                ->setCity($lockerObject->getCity())
-                ->setAddress($lockerObject->getAddress())
-                ->setPostalCode($lockerObject->getPostalCode())
-                ->setLat($lockerObject->getLat())
-                ->setLng($lockerObject->getLong())
-                ->setIsTesting($isTesting);
+            foreach ($lockers->getLockers() as $lockerObject) {
+                $locker = null;
+                try {
+                    $locker = $this->lockerRepository->getLockerBySamedayId($lockerObject->getId());
+                } catch (NoSuchEntityException $exception) {
+                    $locker = $this->lockerFactory->create();
+                }
 
-            $this->lockerRepository->save($locker);
-            $remoteLockers[] = $lockerObject->getId();
-        }
+                $locker
+                    ->setLockerId($lockerObject->getId())
+                    ->setName($lockerObject->getName())
+                    ->setCounty($lockerObject->getCounty())
+                    ->setCity($lockerObject->getCity())
+                    ->setAddress($lockerObject->getAddress())
+                    ->setPostalCode($lockerObject->getPostalCode())
+                    ->setLat($lockerObject->getLat())
+                    ->setLng($lockerObject->getLong())
+                    ->setIsTesting($isTesting);
 
-        $localLockers = $this->lockerRepository->getListByTesting($isTesting);
-        foreach ($localLockers->getItems() as $locker) {
-            if (!in_array($locker['locker_id'], $remoteLockers, false)) {
-                $this->lockerRepository->deleteById($locker['id']);
+                $this->lockerRepository->save($locker);
+                $remoteLockers[] = $lockerObject->getId();
             }
-        }
+
+            $localLockers = $this->lockerRepository->getListByTesting($isTesting);
+            foreach ($localLockers as $locker) {
+                if (!in_array($locker['locker_id'], $remoteLockers)) {
+                    try {
+                        $this->lockerRepository->deleteById($locker['id']);
+                    } catch (Exception $e) {}
+                }
+            }
+        } while ($page <= $lockers->getPages());
 
         return (new LocalDataImporterResponse())
             ->setSucceed(true)

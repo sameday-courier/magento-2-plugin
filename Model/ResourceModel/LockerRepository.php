@@ -2,16 +2,17 @@
 
 namespace SamedayCourier\Shipping\Model\ResourceModel;
 
-use Magento\Framework\Api\Search\FilterGroup;
+use Exception;
+use Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\Api\SortOrder;
+use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use SamedayCourier\Shipping\Api\Data\LockerInterface;
-use SamedayCourier\Shipping\Api\Data\LockerSearchResultsInterface;
 use SamedayCourier\Shipping\Api\Data\LockerSearchResultsInterfaceFactory;
 use SamedayCourier\Shipping\Api\LockerRepositoryInterface;
+use SamedayCourier\Shipping\Helper\SearchResultHelper;
 use SamedayCourier\Shipping\Model\LockerFactory;
-use SamedayCourier\Shipping\Model\ResourceModel\Locker\Collection;
 use SamedayCourier\Shipping\Model\ResourceModel\Locker\CollectionFactory;
 
 /**
@@ -40,7 +41,7 @@ class LockerRepository implements LockerRepositoryInterface
     private $lockerSearchResultsFactory;
 
     /**
-     * @var \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface
+     * @var JoinProcessorInterface
      */
     private $extensionAttributesJoinProcessor;
 
@@ -50,20 +51,18 @@ class LockerRepository implements LockerRepositoryInterface
     private $searchCriteriaBuilder;
 
     /**
-     * LockerRepository constructor.
-     *
-     * @param LockerFactory $lockerFactory
-     * @param Locker $lockerResourceModel
-     * @param \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $extensionAttributesJoinProcessor
-     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @var SearchResultHelper $searchResultHelper
      */
+    private $searchResultHelper;
+
     public function __construct(
         LockerFactory $lockerFactory,
         Locker $lockerResourceModel,
         CollectionFactory $lockerCollectionFactory,
         LockerSearchResultsInterfaceFactory $lockerSearchResultsFactory,
-        \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $extensionAttributesJoinProcessor,
-        SearchCriteriaBuilder $searchCriteriaBuilder
+        JoinProcessorInterface $extensionAttributesJoinProcessor,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        SearchResultHelper $searchResultHelper
     ) {
         $this->lockerFactory = $lockerFactory;
         $this->lockerResourceModel = $lockerResourceModel;
@@ -71,10 +70,15 @@ class LockerRepository implements LockerRepositoryInterface
         $this->lockerSearchResultsFactory = $lockerSearchResultsFactory;
         $this->extensionAttributesJoinProcessor = $extensionAttributesJoinProcessor;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->searchResultHelper = $searchResultHelper;
     }
 
     /**
-     * @inheritdoc
+     * @param $id
+     *
+     * @return LockerInterface
+     *
+     * @throws NoSuchEntityException
      */
     public function getLockerBySamedayId($id): LockerInterface
     {
@@ -104,18 +108,17 @@ class LockerRepository implements LockerRepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * @param LockerInterface $locker
      *
-     * @throws \Magento\Framework\Exception\AlreadyExistsException
+     * @return void
+     *
+     * @throws AlreadyExistsException
      */
-    public function save(LockerInterface $locker)
+    public function save(LockerInterface $locker): void
     {
-        $lockerModel = null;
+        $lockerModel = $this->lockerFactory->create();
         if ($locker->getId()) {
-            $lockerModel = $this->lockerFactory->create();
             $this->lockerResourceModel->load($lockerModel, $locker->getId());
-        } else {
-            $lockerModel = $this->lockerFactory->create();
         }
 
         $lockerModel->updateData($locker);
@@ -124,47 +127,15 @@ class LockerRepository implements LockerRepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * @param SearchCriteriaInterface $searchCriteria
+     * @return LockerInterface[]
      */
-    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria)
+    public function getList(SearchCriteriaInterface $searchCriteria): array
     {
-        /** @var Collection $collection */
         $collection = $this->lockerCollectionFactory->create();
         $this->extensionAttributesJoinProcessor->process($collection, LockerInterface::class);
 
-        // Add filters from root filter group to the collection.
-        /** @var FilterGroup $group */
-        foreach ($searchCriteria->getFilterGroups() as $group) {
-            $fields = [];
-            $conditions = [];
-
-            foreach ($group->getFilters() as $filter) {
-                $condition = $filter->getConditionType() ? $filter->getConditionType() : 'eq';
-                $fields[] = $filter->getField();
-                $conditions[] = [$condition => $filter->getValue()];
-            }
-
-            if ($fields) {
-                $collection->addFieldToFilter($fields, $conditions);
-            }
-        }
-
-        $sortOrders = $searchCriteria->getSortOrders();
-        /** @var SortOrder $sortOrder */
-        if ($sortOrders) {
-            foreach ($searchCriteria->getSortOrders() as $sortOrder) {
-                $collection->addOrder(
-                    $sortOrder->getField(),
-                    ($sortOrder->getDirection() == SortOrder::SORT_ASC) ? 'ASC' : 'DESC'
-                );
-            }
-        } else {
-            // Set a default sorting order.
-            $collection->addOrder('id', 'ASC');
-        }
-
-        $collection->setCurPage($searchCriteria->getCurrentPage());
-        $collection->setPageSize($searchCriteria->getPageSize());
+        $this->searchResultHelper->buildSearchCollection($searchCriteria, $collection);
 
         /** @var LockerInterface[] $lockers */
         $lockers = [];
@@ -174,33 +145,33 @@ class LockerRepository implements LockerRepositoryInterface
             $lockers[] = $locker->getStoredData();
         }
 
-        /** @var LockerSearchResultsInterface $searchResults */
-        $searchResults = $this->lockerSearchResultsFactory->create()
+        return $this->lockerSearchResultsFactory->create()
             ->setItems($lockers)
             ->setSearchCriteria($searchCriteria)
-            ->setTotalCount($collection->getSize());
-
-        return $searchResults;
+            ->setTotalCount($collection->getSize())
+            ->getItems()
+        ;
     }
 
     /**
-     * @inheritdoc
-     */
-    public function getListByTesting($isTesting)
-    {
-        $searchCriteria = $this->searchCriteriaBuilder
-            ->addFilter(LockerInterface::IS_TESTING, $isTesting)
-            ->create();
-
-        return $this->getList($searchCriteria);
-    }
-
-    /**
-     * @inheritdoc
+     * @param $isTesting
      *
-     * @throws \Exception
+     * @return LockerInterface[]
      */
-    public function deleteById($id)
+    public function getListByTesting($isTesting): array
+    {
+        return $this->getList($this->searchCriteriaBuilder
+            ->addFilter(LockerInterface::IS_TESTING, $isTesting)
+            ->create()
+        );
+    }
+
+    /**
+     * @param int $id
+     * @return bool
+     * @throws Exception
+     */
+    public function deleteById(int $id): bool
     {
         $lockerModel = $this->lockerFactory->create();
         $this->lockerResourceModel->load($lockerModel, $id);
