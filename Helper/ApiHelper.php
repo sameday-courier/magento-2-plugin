@@ -187,17 +187,17 @@ class ApiHelper extends AbstractHelper
      *
      * @return false|SamedayResponseInterface
      */
-    public function doRequest(SamedayRequestInterface $request, string $type = '', $showFlashMessage = true)
+    public function doRequest(SamedayRequestInterface $request, string $type = '', bool $showFlashMessage = true)
     {
         try {
             return (new Sameday($this->initClient()))->{$type}($request);
         } catch (SamedayBadRequestException $e) {
-            $errors = $e->getErrors();
-
-            $allErrors = array();
-            foreach ($errors as $error) {
-                foreach ($error['errors'] as $message) {
-                    $allErrors[] = implode('.', $error['key']) . ': ' . $message;
+            $allErrors = ['Bad Request'];
+            if (!empty($errors = $e->getErrors())) {
+                foreach ($errors as $error) {
+                    foreach ($error['errors'] as $message) {
+                        $allErrors[] = implode('.', $error['key']) . ': ' . $message;
+                    }
                 }
             }
 
@@ -206,12 +206,19 @@ class ApiHelper extends AbstractHelper
             if ($showFlashMessage) {
                 $this->messageManager->addErrorMessage(__($message));
             }
+            $this->logger->error(
+                'Sameday Bad Request Exception',
+                ['error' => $e->getRawResponse()->getBody()]
+            );
         } catch(Exception $e) {
             if ($showFlashMessage) {
                 $this->messageManager->addErrorMessage(__($e->getMessage()));
             }
 
-            $this->logger->error('Sameday communication error', ['error' => $e->getCode() . ' : ' . $e->getMessage()]);
+            $this->logger->error(
+                'Sameday communication error',
+                ['error' => $e->getCode() . ' : ' . $e->getMessage()]
+            );
         }
 
         return false;
