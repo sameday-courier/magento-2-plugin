@@ -17,6 +17,7 @@ class Lockers extends Action
     /** @var LockerRepositoryInterface $lockerRepository */
     private $lockerRepository;
 
+    /** @var ScopeConfigInterface $config */
     private $config;
 
     /** @var ResultFactory $resultFactory */
@@ -60,7 +61,7 @@ class Lockers extends Action
         $lockers = $this->lockerRepository->getListByTesting($isTesting);
         $dump = [];
         /** @var Locker $locker */
-        foreach ($lockers->getItems() as $locker) {
+        foreach ($lockers as $locker) {
             $dump[$locker['city']]['label'] = $locker['city'] . ' (' . $locker['county'] . ')';
             $dump[$locker['city']]['lockers'][] = [
                 'id' => $locker['id'],

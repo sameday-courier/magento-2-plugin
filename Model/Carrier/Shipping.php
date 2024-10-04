@@ -117,7 +117,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
         ;
 
         $services = array_filter(
-            $this->serviceRepository->getAllActive($isTesting)->getItems(),
+            $this->serviceRepository->getAllActive($isTesting),
             static function(Service $service) use ($eligibleServices) {
                 return in_array($service->getCode(), $eligibleServices, true);
             }

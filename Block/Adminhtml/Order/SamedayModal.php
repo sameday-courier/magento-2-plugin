@@ -47,12 +47,12 @@ class SamedayModal extends Template
 
     public function getPickupPoints()
     {
-        return $this->storedDataHelper->getPickupPoints()->getItems();
+        return $this->storedDataHelper->getPickupPoints();
     }
 
     public function getServices()
     {
-        return $this->storedDataHelper->getServices()->getItems();
+        return $this->storedDataHelper->getServices();
     }
 
     private function filterServiceByCode($code)
