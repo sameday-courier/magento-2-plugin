@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">samedaycourier_shipping_pickuppoint_add.samedaycourier_shipping_pickuppoint_add_data_source</item>
+            <item name="deps" xsi:type="string">samedaycourier_shipping_pickuppoint_add.samedaycourier_shipping_pickuppoint_add_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Add Pickup Point</item>
+        <item name="layout" xsi:type="array">
+            <item name="type" xsi:type="string">tabs</item>
+        </item>
+        <item name="config" xsi:type="array">
+            <item name="dataScope" xsi:type="string">data</item>
+            <item name="namespace" xsi:type="string">samedaycourier_shipping_pickuppoint_add</item>
+        </item>
+        <item name="buttons" xsi:type="array">
+            <item name="back" xsi:type="string">SamedayCourier\Shipping\Block\Adminhtml\PickupPoint\Add\BackButton</item>
+            <item name="save" xsi:type="array">
+                <item name="name" xsi:type="string">save</item>
+                <item name="label" xsi:type="string" translate="true">Add Pickup Point</item>
+                <item name="class" xsi:type="string">primary</item>
+            </item>
+        </item>
+    </argument>
+    <dataSource name="samedaycourier_shipping_pickuppoint_add_data_source">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="class" xsi:type="string">SamedayCourier\Shipping\Model\DataProvider\PickupPointDataProvider</argument>
+            <argument name="name" xsi:type="string">samedaycourier_shipping_pickuppoint_add_data_source</argument>
+            <argument name="primaryFieldName" xsi:type="string">id</argument>
+            <argument name="requestFieldName" xsi:type="string">id</argument>
+            <argument name="data" xsi:type="array">
+                <item name="submit_url" path="*/*/add" xsi:type="url" />
+            </argument>
+        </argument>
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+    </dataSource>
+    <fieldset name="pickuppoint">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">Pickup Points</item>
+            </item>
+        </argument>
+        <field name="alias">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">Alias</item>
+                    <item name="visible" xsi:type="boolean">true</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                </item>
+            </argument>
+        </field>
+        <field name="county">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">County</item>
+                    <item name="visible" xsi:type="boolean">true</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                </item>
+            </argument>
+        </field>
+        <field name="city">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">City</item>
+                    <item name="visible" xsi:type="boolean">true</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                </item>
+            </argument>
+        </field>
+        <field name="address">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">Address</item>
+                    <item name="visible" xsi:type="boolean">true</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                </item>
+            </argument>
+        </field>
+        <field name="contact_person_name">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">Contact Person Name</item>
+                    <item name="visible" xsi:type="boolean">true</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                </item>
+            </argument>
+        </field>
+        <field name="contact_person_phone_number">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">Contact Person Phone</item>
+                    <item name="visible" xsi:type="boolean">true</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                </item>
+            </argument>
+        </field>
+        <field name="is_default" formElement="checkbox">
+            <settings>
+                <label translate="true">Is Default</label>
+                <tooltip>
+                    <description translate="true">Check if you want to set up this Pickup Point as Default</description>
+                </tooltip>
+                <dataType>boolean</dataType>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <prefer>toggle</prefer>
+                        <valueMap>
+                            <map name="true" xsi:type="number">1</map>
+                            <map name="false" xsi:type="number">0</map>
+                        </valueMap>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+    </fieldset>
+</form>
+
