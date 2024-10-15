@@ -53,14 +53,31 @@
                     <item name="formElement" xsi:type="string">input</item>
                 </item>
             </argument>
+            <settings>
+                <label translate="true">Alias</label>
+                <tooltip>
+                    <description translate="true">This is the name that appear in eAWB platform</description>
+                </tooltip>
+                <dataType>string</dataType>
+            </settings>
         </field>
-        <field name="county">
+        <field name="countryId">
             <argument name="data" xsi:type="array">
+                <item name="options" xsi:type="object">SamedayCourier\Shipping\Ui\Component\Listing\Column\CountryColumn</item>
                 <item name="config" xsi:type="array">
-                    <item name="label" xsi:type="string">County</item>
-                    <item name="visible" xsi:type="boolean">true</item>
                     <item name="dataType" xsi:type="string">text</item>
-                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="label" xsi:type="string" translate="true">Country</item>
+                    <item name="formElement" xsi:type="string">select</item>
+                </item>
+            </argument>
+        </field>
+        <field name="countyId">
+            <argument name="data" xsi:type="array">
+                <item name="options" xsi:type="object">SamedayCourier\Shipping\Ui\Component\Listing\Column\CountyColumn</item>
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">County</item>
+                    <item name="formElement" xsi:type="string">select</item>
                 </item>
             </argument>
         </field>
@@ -78,6 +95,16 @@
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="label" xsi:type="string">Address</item>
+                    <item name="visible" xsi:type="boolean">true</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                </item>
+            </argument>
+        </field>
+        <field name="postalCode">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">Postal code</item>
                     <item name="visible" xsi:type="boolean">true</item>
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="formElement" xsi:type="string">input</item>
@@ -108,7 +135,9 @@
             <settings>
                 <label translate="true">Is Default</label>
                 <tooltip>
-                    <description translate="true">Check if you want to set up this Pickup Point as Default</description>
+                    <description translate="true">
+                        Check if you want to set up this Pickup Point as Default in eAWB platform
+                    </description>
                 </tooltip>
                 <dataType>boolean</dataType>
             </settings>

@@ -5,9 +5,15 @@ namespace SamedayCourier\Shipping\Controller\Adminhtml\PickupPoint;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\View\Result\Page;
-use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\View\Result\PageFactory;
+use Sameday\Objects\CountryObject;
+use Sameday\Objects\CountyObject;
+use Sameday\Objects\PickupPoint\CityObject;
+use Sameday\Objects\PickupPoint\ContactPersonObject;
+use Sameday\Objects\PickupPoint\PickupPointObject;
+use Sameday\Requests\SamedayPostPickupPointRequest;
+use SamedayCourier\Shipping\Helper\ApiHelper;
 
 class Add extends Action
 {
@@ -17,16 +23,25 @@ class Add extends Action
     private $resultPageFactory;
 
     /**
-     * Index constructor.
-     *
+     * @var ApiHelper $apiHelper
+     */
+    private $apiHelper;
+
+    /**
      * @param Context $context
      * @param PageFactory $resultPageFactory
+     * @param ApiHelper $apiHelper
      */
-    public function __construct(Context $context, PageFactory $resultPageFactory)
+    public function __construct(
+        Context $context,
+        PageFactory $resultPageFactory,
+        ApiHelper $apiHelper
+    )
     {
         parent::__construct($context);
 
         $this->resultPageFactory = $resultPageFactory;
+        $this->apiHelper = $apiHelper;
     }
 
     /**
@@ -43,7 +58,29 @@ class Add extends Action
             return $page;
         }
 
-        // WIP - process form and request Sameday API
+        $pickupPointObject = new PickupPointObject(
+            '',
+            new CountryObject($pickupPoint['countryId'], '', ''),
+            new CountyObject($pickupPoint['countyId'], '', ''),
+            new CityObject('', $pickupPoint['city'], '', '', ''),
+            $pickupPoint['address'],
+            (bool) $pickupPoint['is_default'],
+            [
+                new ContactPersonObject(
+                    '',
+                    $pickupPoint['contact_person_name'],
+                    $pickupPoint['contact_person_phone_number'],
+                    true
+                ),
+            ],
+            $pickupPoint['alias'],
+            $pickupPoint['postalCode']
+        );
+
+        $this->apiHelper->doRequest(
+            new SamedayPostPickupPointRequest($pickupPointObject),
+            'postPickupPoint',
+        );
 
         $redirect = $this->resultRedirectFactory->create();
 
