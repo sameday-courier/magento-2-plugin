@@ -62,7 +62,7 @@ class Add extends Action
             '',
             new CountryObject($pickupPoint['countryId'], '', ''),
             new CountyObject($pickupPoint['countyId'], '', ''),
-            new CityObject('', $pickupPoint['city'], '', '', ''),
+            new CityObject($pickupPoint['cityId'], '', '', '', ''),
             $pickupPoint['address'],
             (bool) $pickupPoint['is_default'],
             [
