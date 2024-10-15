@@ -77,12 +77,15 @@ class Add extends Action
             $pickupPoint['postalCode']
         );
 
-        $this->apiHelper->doRequest(
-            new SamedayPostPickupPointRequest($pickupPointObject),
-            'postPickupPoint',
-        );
-
         $redirect = $this->resultRedirectFactory->create();
+
+        if (false === $this->apiHelper->doRequest(
+                new SamedayPostPickupPointRequest($pickupPointObject),
+                'postPickupPoint',
+            )
+        ) {
+            return $redirect->setPath('samedaycourier_shipping/pickuppoint/add');
+        }
 
         return $redirect->setPath('samedaycourier_shipping/pickuppoint/index');
     }
