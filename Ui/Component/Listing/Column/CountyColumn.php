@@ -59,6 +59,6 @@ class CountyColumn extends Column implements OptionSourceInterface
             false
         );
 
-        return $counties->getCounties();
+        return $counties->getCounties() ?? [];
     }
 }
