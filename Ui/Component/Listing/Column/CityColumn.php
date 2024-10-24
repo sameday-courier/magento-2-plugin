@@ -6,12 +6,12 @@ use Magento\Framework\Data\OptionSourceInterface;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Ui\Component\Listing\Columns\Column;
-use Sameday\Objects\CountyObject;
-use Sameday\Requests\SamedayGetCountiesRequest;
-use Sameday\Responses\SamedayGetCountiesResponse;
+use Sameday\Objects\CityObject;
+use Sameday\Requests\SamedayGetCitiesRequest;
+use Sameday\Responses\SamedayGetCitiesResponse;
 use SamedayCourier\Shipping\Helper\ApiHelper;
 
-class CountyColumn extends Column implements OptionSourceInterface
+class CityColumn extends Column implements OptionSourceInterface
 {
     /**
      * @var ApiHelper $apiHelper
@@ -37,30 +37,30 @@ class CountyColumn extends Column implements OptionSourceInterface
     public function toOptionArray(): array
     {
         return array_map(
-            static function (CountyObject $county) {
+            static function (CityObject $city) {
                 return [
-                    'value' => $county->getId(),
-                    'label' => $county->getName(),
+                    'value' => $city->getId(),
+                    'label' => $city->getName(),
                 ];
             },
-            $this->getCounties()
+            $this->getCities()
         );
     }
 
     /**
-     * @return CountyObject[]
+     * @return CityObject[]
      */
-    private function getCounties(): array
+    private function getCities(): array
     {
-        /** @var SamedayGetCountiesResponse|false $counties */
-        $counties = $this->apiHelper->doRequest(
-            new SamedayGetCountiesRequest(''),
-            'getCounties',
+        /** @var SamedayGetCitiesResponse|false $cities */
+        $cities = $this->apiHelper->doRequest(
+            new SamedayGetCitiesRequest('1'),
+            'getCities',
             false
         );
 
-        if (false !== $counties) {
-            return $counties->getCounties();
+        if (false !== $cities) {
+            return $cities->getCities();
         }
 
         return [];

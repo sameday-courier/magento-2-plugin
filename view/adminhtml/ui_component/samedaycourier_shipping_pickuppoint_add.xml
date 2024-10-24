@@ -83,11 +83,11 @@
         </field>
         <field name="cityId">
             <argument name="data" xsi:type="array">
+                <item name="options" xsi:type="object">SamedayCourier\Shipping\Ui\Component\Listing\Column\CityColumn</item>
                 <item name="config" xsi:type="array">
-                    <item name="label" xsi:type="string">City</item>
-                    <item name="visible" xsi:type="boolean">true</item>
                     <item name="dataType" xsi:type="string">text</item>
-                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="label" xsi:type="string" translate="true">City</item>
+                    <item name="formElement" xsi:type="string">select</item>
                 </item>
             </argument>
         </field>
