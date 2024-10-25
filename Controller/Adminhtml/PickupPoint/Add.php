@@ -58,29 +58,27 @@ class Add extends Action
             return $page;
         }
 
-        $pickupPointObject = new PickupPointObject(
-            '',
-            new CountryObject($pickupPoint['countryId'], '', ''),
-            new CountyObject($pickupPoint['countyId'], '', ''),
-            new CityObject($pickupPoint['cityId'], '', '', '', ''),
-            $pickupPoint['address'],
-            (bool) $pickupPoint['is_default'],
-            [
-                new ContactPersonObject(
-                    '',
-                    $pickupPoint['contact_person_name'],
-                    $pickupPoint['contact_person_phone_number'],
-                    true
-                ),
-            ],
-            $pickupPoint['alias'],
-            $pickupPoint['postalCode']
-        );
 
         $redirect = $this->resultRedirectFactory->create();
 
         if (false === $this->apiHelper->doRequest(
-                new SamedayPostPickupPointRequest($pickupPointObject),
+                new SamedayPostPickupPointRequest(
+                    $pickupPoint['countryId'],
+                    $pickupPoint['countyId'],
+                    $pickupPoint['cityId'],
+                    $pickupPoint['address'],
+                    $pickupPoint['postalCode'],
+                    $pickupPoint['alias'],
+                    [
+                        new ContactPersonObject(
+                            0,
+                            $pickupPoint['contact_person_name'],
+                            $pickupPoint['contact_person_phone_number'],
+                            true
+                        ),
+                    ],
+                    (bool) $pickupPoint['is_default']
+                ),
                 'postPickupPoint',
             )
         ) {
