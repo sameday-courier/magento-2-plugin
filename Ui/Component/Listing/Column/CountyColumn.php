@@ -36,14 +36,22 @@ class CountyColumn extends Column implements OptionSourceInterface
      */
     public function toOptionArray(): array
     {
-        return array_map(
-            static function (CountyObject $county) {
-                return [
-                    'value' => $county->getId(),
-                    'label' => $county->getName(),
-                ];
-            },
-            $this->getCounties()
+        return array_merge(
+            [
+                [
+                    'value' => '',
+                    'label' => 'Select county'
+                ]
+            ],
+            array_map(
+                static function (CountyObject $county) {
+                    return [
+                        'value' => $county->getId(),
+                        'label' => $county->getName(),
+                    ];
+                },
+                $this->getCounties()
+            )
         );
     }
 

@@ -81,6 +81,13 @@
                 </item>
             </argument>
         </field>
+        <hidden name="url">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">pickuppoint</item>
+                </item>
+            </argument>
+        </hidden>
         <field name="cityId">
             <argument name="data" xsi:type="array">
                 <item name="options" xsi:type="object">SamedayCourier\Shipping\Ui\Component\Listing\Column\CityColumn</item>
