@@ -146,5 +146,12 @@
                 </item>
             </argument>
         </column>
+        <actionsColumn name="actions" class="SamedayCourier\Shipping\Ui\Component\Listing\Column\DeleteAction">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="deleteUrl" xsi:type="string">samedaycourier_shipping/pickuppoint/delete/*</item>
+                </item>
+            </argument>
+        </actionsColumn>
     </columns>
 </listing>

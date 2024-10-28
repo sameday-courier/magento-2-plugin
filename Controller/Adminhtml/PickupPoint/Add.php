@@ -11,6 +11,7 @@ use Sameday\Objects\CountryObject;
 use Sameday\Objects\CountyObject;
 use Sameday\Objects\PickupPoint\CityObject;
 use Sameday\Objects\PickupPoint\ContactPersonObject;
+use Sameday\Objects\PickupPoint\PickupPointContactPersonObject;
 use Sameday\Objects\PickupPoint\PickupPointObject;
 use Sameday\Requests\SamedayPostPickupPointRequest;
 use SamedayCourier\Shipping\Helper\ApiHelper;
@@ -70,8 +71,7 @@ class Add extends Action
                     $pickupPoint['postalCode'],
                     $pickupPoint['alias'],
                     [
-                        new ContactPersonObject(
-                            0,
+                        new PickupPointContactPersonObject(
                             $pickupPoint['contact_person_name'],
                             $pickupPoint['contact_person_phone_number'],
                             true

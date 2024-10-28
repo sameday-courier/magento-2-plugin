@@ -7,7 +7,7 @@ use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Ui\Component\Listing\Columns\Column;
 use Magento\Framework\UrlInterface;
 
-class EditAction extends Column
+class DeleteAction extends Column
 {
     /**
      * @var UrlInterface
@@ -31,6 +31,7 @@ class EditAction extends Column
         array $data = []
     ) {
         parent::__construct($context, $uiComponentFactory, $components, $data);
+
         $this->urlBuilder = $urlBuilder;
     }
 
@@ -51,14 +52,14 @@ class EditAction extends Column
             }
 
             $name = $this->getData('name');
-            $editUrl = $this->getData('config/editUrl') ?: '#';
+            $editUrl = $this->getData('config/deleteUrl') ?: '#';
 
-            $item[$name]['edit'] = [
+            $item[$name]['delete'] = [
                 'href' => $this->urlBuilder->getUrl(
                     $editUrl,
                     ['id' => $item['id']]
                 ),
-                'label' => __('Edit'),
+                'label' => __('Delete'),
             ];
         }
 
