@@ -2,11 +2,12 @@
 
 namespace SamedayCourier\Shipping\Controller\Adminhtml\PickupPoint;
 
+use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\View\Result\Page;
 use Magento\Framework\View\Result\PageFactory;
 
-class Index extends \Magento\Backend\App\Action
+class Index extends Action
 {
     /**
      * @var PageFactory
@@ -27,9 +28,9 @@ class Index extends \Magento\Backend\App\Action
     }
 
     /**
-     * @return Page|\Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
+     * @return Page
      */
-    public function execute()
+    public function execute(): Page
     {
         /** @var Page $page */
         $page = $this->resultPageFactory->create();

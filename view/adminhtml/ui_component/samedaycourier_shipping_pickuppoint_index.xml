@@ -7,9 +7,15 @@
         </item>
         <item name="spinner" xsi:type="string">samedaycourier_shipping_pickuppoint_index_columns</item>
         <item name="buttons" xsi:type="array">
+            <item name="add" xsi:type="array">
+                <item name="name" xsi:type="string">add</item>
+                <item name="label" xsi:type="string" translate="true">Add PickupPoint</item>
+                <item name="class" xsi:type="string">action-secondary</item>
+                <item name="url" xsi:type="string">*/*/add</item>
+            </item>
             <item name="refresh" xsi:type="array">
                 <item name="name" xsi:type="string">refresh</item>
-                <item name="label" xsi:type="string" translate="true">Refresh</item>
+                <item name="label" xsi:type="string" translate="true">Refresh PickupPoints</item>
                 <item name="class" xsi:type="string">primary</item>
                 <item name="url" xsi:type="string">*/*/refresh</item>
             </item>
@@ -140,5 +146,12 @@
                 </item>
             </argument>
         </column>
+        <actionsColumn name="actions" class="SamedayCourier\Shipping\Ui\Component\Listing\Column\DeleteAction">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="deleteUrl" xsi:type="string">samedaycourier_shipping/pickuppoint/delete/*</item>
+                </item>
+            </argument>
+        </actionsColumn>
     </columns>
 </listing>

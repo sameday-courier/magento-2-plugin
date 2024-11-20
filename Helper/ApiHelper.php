@@ -78,6 +78,12 @@ class ApiHelper extends AbstractHelper
         self::BULGARIA_CODE,
     ];
 
+    public const DEFAULT_COUNTRIES = [
+        self::ROMANIA_CODE => ['value' => 187, 'label' => 'Romania'],
+        self::BULGARIA_CODE => ['value' => 34, 'label' => 'Bulgaria'],
+        self::HUNGARY_CODE => ['value' => 237, 'label' => 'Hungary'],
+    ];
+
     public const PRODUCTION_CODE = 0;
     public const DEMO_CODE = 1;
     public const ROMANIA_CODE = "ro";
