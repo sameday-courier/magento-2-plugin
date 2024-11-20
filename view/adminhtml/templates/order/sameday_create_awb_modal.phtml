@@ -214,13 +214,13 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
         </form>
     </div>
 </div>
-
 <script>
     require(
         [
             'jquery',
             'Magento_Ui/js/modal/modal',
-            'lockersPluginSdk'
+            'lockersPluginSdk',
+            'select2'
         ],
         function (
             $,
@@ -258,6 +258,10 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
             var popup = modal(options, $('#popup-add-awb'));
             $("#openmodal").click(function() {
                 $("#popup-add-awb").modal('openModal');
+            });
+
+            $('#pickup_point').select2({
+                selectOnClose: true
             });
 
             $("#changeLocker").on('click', (el) => {
