@@ -209,6 +209,17 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             return $resultRedirect;
         }
 
+        $nrOfPackages = $requestParams['packages'];
+        $packages = [];
+        for ($i = 0; $i < $nrOfPackages; $i++) {
+            $packages[] = new ParcelDimensionsObject(
+                (float) $requestParams['package_weight'][$i],
+                (float) $requestParams['package_length'][$i],
+                (float) $requestParams['package_width'][$i],
+                (float) $requestParams['package_height'][$i],
+            );
+        }
+
         $contactPerson = sprintf('%s %s',
             $shippingAddress->getFirstname(),
             $shippingAddress->getLastname()
@@ -228,8 +239,8 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         $apiRequest = new SamedayPostAwbRequest(
             $requestParams['pickup_point'],
             null,
-            (new PackageType(PackageType::PARCEL)),
-            [(new ParcelDimensionsObject($packageWeight))],
+            new PackageType(PackageType::PARCEL),
+            $packages,
             $serviceId,
             (new AwbPaymentType(AwbPaymentType::CLIENT)),
             (new AwbRecipientEntityObject(

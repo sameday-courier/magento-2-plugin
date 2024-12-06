@@ -47,44 +47,39 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
             </div>
             <div class="row">
                 <div class="col-25">
-                    <label for="package_weight">
-                        <?= __('Package weight') ?>
+                    <label for="packages" style="font-weight: bolder">
+                        <?= __('Nr. of Packages') ?>
                     </label>
                 </div>
                 <div class="col-75">
-                    <input name="package_weight" id="package_weight" type="number" step="any" min="0" value="<?= $block->getOrderDetails()['weight'] ?>">
+                    <input name="packages" title="Use up/down buttons in order to add/remove packages" pattern="^[0-9]" id="packages" type="number" step="1" min="1" value="1" style="font-weight: bolder">
                 </div>
             </div>
-            <div class="row">
-                <div class="col-25">
-                    <label for="package_length">
-                        <?= __('Package length') ?>
-                    </label>
-                </div>
-                <div class="col-75">
-                    <input name="package_length" id="package_length" type="number" step="any" min="0">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-25">
-                    <label for="package_width">
-                        <?= __('Package width') ?>
-                    </label>
-                </div>
-                <div class="col-75">
-                     <input name="package_width" id="package_width" type="number" step="any" min="0">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-25">
-                    <label for="package_height">
-                        <?= __('Package height') ?>
-                    </label>
-                </div>
-                <div class="col-75">
-                    <input name="package_height" id="package_height" type="number" step="any" min="0">
+            <!-- Package Dimensions //-->
+            <div class="row" id="package_dimensions">
+                    <div class="package_dimensions_fields">
+                        <div class="col-25">
+                            <label for="insured_value">
+                                <?= __('Package dimensions') ?>
+                            </label>
+                        </div>
+                        <div class="col-75">
+                            <div class="col-25">
+                                <input name="package_weight[]" id="package_weight" type="number" step="any" min="0" value="<?= $block->getOrderDetails()['weight'] ?>">
+                            </div>
+                            <div class="col-25">
+                                <input name="package_length[]" id="package_length" type="number" step="any" min="0" placeholder="length">
+                            </div>
+                            <div class="col-25">
+                                <input name="package_width[]" id="package_width" type="number" step="any" min="0" placeholder="width">
+                            </div>
+                            <div class="col-25">
+                                <input name="package_height[]" id="package_height" type="number" step="any" min="0" placeholder="height">
+                            </div>
+                    </div>
                 </div>
             </div>
+            <!-- End of Package Dimensions //-->
             <div class="row">
                 <div class="col-25">
                     <?= __('Service') ?>
@@ -226,7 +221,7 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
             $,
             modal,
         ) {
-            var options = {
+            let options = {
                 type: 'popup',
                 responsive: true,
                 innerScroll: true,
@@ -311,6 +306,18 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                 /* Toggle Element */
                 showLockerDetails.style.display = currentService.getAttribute('data-service_locker_to_show');
                 showLockerFirstMile.style.display = currentService.getAttribute('data-service_eligible_locker_first_mile');
+            });
+
+            // Add new many parcels
+            $(document).on('change', '#packages', (element) => {
+                let nrOfPackages = parseInt(element.target.value);
+                let nrOfFields = document.getElementsByClassName('package_dimensions_fields').length;
+
+                if (nrOfPackages > nrOfFields) {
+                    $(".package_dimensions_fields").last().clone().appendTo("#package_dimensions");
+                } else {
+                    $(".package_dimensions_fields").last().remove();
+                }
             });
         }
     );
