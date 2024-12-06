@@ -45,6 +45,20 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                     <input name="insured_value" id="insured_value" type="number" step="any" min="0" value="0">
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-25">
+                    <?= __('Package type') ?>
+                </div>
+                <div class="col-75">
+                    <select name="package_type" id="package_type">
+                        <option value="0"><?= __('Parcel') ?></option>
+                        <option value="1"><?= __('Envelope') ?></option>
+                        <option value="2"><?= __('Large parcel') ?></option>
+                    </select>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-25">
                     <label for="packages" style="font-weight: bolder">
@@ -55,6 +69,7 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                     <input name="packages" title="Use up/down buttons in order to add/remove packages" pattern="^[0-9]" id="packages" type="number" step="1" min="1" value="1" style="font-weight: bolder">
                 </div>
             </div>
+
             <!-- Package Dimensions //-->
             <div class="row" id="package_dimensions">
                     <div class="package_dimensions_fields">
@@ -80,6 +95,7 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                 </div>
             </div>
             <!-- End of Package Dimensions //-->
+
             <div class="row">
                 <div class="col-25">
                     <?= __('Service') ?>
@@ -158,19 +174,6 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                                 <?= $pickupPoint->getSamedayAlias() ?>
                             </option>
                         <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-25">
-                    <?= __('Package type') ?>
-                </div>
-                <div class="col-75">
-                    <select name="package_type" id="package_type">
-                        <option value="0"><?= __('Parcel') ?></option>
-                        <option value="1"><?= __('Envelope') ?></option>
-                        <option value="2"><?= __('Large parcel') ?></option>
                     </select>
                 </div>
             </div>
