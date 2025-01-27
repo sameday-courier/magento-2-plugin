@@ -3,22 +3,28 @@
 namespace SamedayCourier\Shipping\Helper;
 
 use Exception;
+use Magento\Customer\Model\Data\Region;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Sameday\Objects\CountyObject;
 use Sameday\Requests\SamedayGetLockersRequest;
 use Sameday\Requests\SamedayGetPickupPointsRequest;
 use Sameday\Requests\SamedayGetServicesRequest;
 use Sameday\Sameday;
+use SamedayCourier\Shipping\Api\CityRepositoryInterface;
 use SamedayCourier\Shipping\Api\Data\LockerInterfaceFactory;
+use SamedayCourier\Shipping\Api\Data\CityInterfaceFactory;
 use SamedayCourier\Shipping\Api\Data\PickupPointInterface;
 use SamedayCourier\Shipping\Api\Data\PickupPointInterfaceFactory;
 use SamedayCourier\Shipping\Api\Data\ServiceInterface;
 use SamedayCourier\Shipping\Api\Data\ServiceInterfaceFactory;
 use SamedayCourier\Shipping\Api\LockerRepositoryInterface;
 use SamedayCourier\Shipping\Api\PickupPointRepositoryInterface;
+use SamedayCourier\Shipping\Api\RegionRepositoryInterface;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
 use Sameday\Exceptions\SamedaySDKException;
+use SamedayCourier\Shipping\Model\ResourceModel\CityRepository;
 
 class LocalDataImporter extends AbstractHelper
 {
@@ -26,6 +32,16 @@ class LocalDataImporter extends AbstractHelper
      * @var ApiHelper $apiHelper
      */
     private $apiHelper;
+
+    /**
+     * @var SamedayCountiesHelper $samedayCountiesHelper
+     */
+    private $samedayCountiesHelper;
+
+    /**
+     * @var SamedayCitiesHelper $samedayCitiesHelper
+     */
+    private $samedayCitiesHelper;
 
     /**
      * @var GeneralHelper $generalHelper
@@ -41,6 +57,11 @@ class LocalDataImporter extends AbstractHelper
      * @var ServiceRepositoryInterface
      */
     private $serviceRepository;
+
+    /**
+     * @var RegionRepositoryInterface $regionRepository
+     */
+    private $regionRepository;
 
     /**
      * @var PickupPointInterfaceFactory
@@ -63,6 +84,16 @@ class LocalDataImporter extends AbstractHelper
     private $lockerRepository;
 
     /**
+     * @var CityInterfaceFactory
+     */
+    private $cityFactory;
+
+    /**
+     * @var CityRepository
+     */
+    private $cityRepository;
+
+    /**
      * @var StoredDataHelper
      */
     private $storeDataHelper;
@@ -71,37 +102,52 @@ class LocalDataImporter extends AbstractHelper
      * @param Context $context
      * @param ApiHelper $apiHelper
      * @param GeneralHelper $generalHelper
+     * @param SamedayCountiesHelper $samedayCountiesHelper
+     * @param SamedayCitiesHelper $samedayCitiesHelper
      * @param ServiceInterfaceFactory $serviceFactory
      * @param ServiceRepositoryInterface $serviceRepository
      * @param StoredDataHelper $storedDataHelper
      * @param PickupPointInterfaceFactory $pickupPointFactory
      * @param PickupPointRepositoryInterface $pickupPointRepository
      * @param LockerRepositoryInterface $lockerRepository
+     * @param RegionRepositoryInterface $regionRepository
      * @param LockerInterfaceFactory $lockerFactory
+     * @param CityRepositoryInterface $cityRepository
+     * @param CityInterfaceFactory $cityFactory
      */
     public function __construct(
         Context $context,
         ApiHelper $apiHelper,
         GeneralHelper $generalHelper,
+        SamedayCountiesHelper $samedayCountiesHelper,
+        SamedayCitiesHelper $samedayCitiesHelper,
         ServiceInterfaceFactory $serviceFactory,
         ServiceRepositoryInterface $serviceRepository,
         StoredDataHelper $storedDataHelper,
         PickupPointInterfaceFactory $pickupPointFactory,
         PickupPointRepositoryInterface $pickupPointRepository,
         LockerRepositoryInterface $lockerRepository,
-        LockerInterfaceFactory $lockerFactory
+        RegionRepositoryInterface $regionRepository,
+        LockerInterfaceFactory $lockerFactory,
+        CityRepositoryInterface $cityRepository,
+        CityInterfaceFactory $cityFactory
     ) {
         parent::__construct($context);
 
         $this->apiHelper = $apiHelper;
         $this->generalHelper = $generalHelper;
+        $this->samedayCountiesHelper = $samedayCountiesHelper;
+        $this->samedayCitiesHelper = $samedayCitiesHelper;
         $this->serviceFactory = $serviceFactory;
         $this->serviceRepository = $serviceRepository;
         $this->storeDataHelper = $storedDataHelper;
         $this->pickupPointFactory = $pickupPointFactory;
         $this->pickupPointRepository = $pickupPointRepository;
         $this->lockerRepository = $lockerRepository;
+        $this->regionRepository = $regionRepository;
         $this->lockerFactory = $lockerFactory;
+        $this->cityRepository = $cityRepository;
+        $this->cityFactory = $cityFactory;
     }
 
     /**
@@ -350,6 +396,45 @@ class LocalDataImporter extends AbstractHelper
         return (new LocalDataImporterResponse())
             ->setSucceed(true)
             ->setMessage(__('Lockers was imported with success!')
+        );
+    }
+
+    /**
+     * @return LocalDataImporterResponse
+     */
+    public function importCities(): LocalDataImporterResponse
+    {
+        /** @var CountyObject[] $counties */
+        $counties = $this->samedayCountiesHelper->getCounties();
+        foreach ($counties as $county) {
+            $cities = $this->samedayCitiesHelper->getCities($county->getId());
+            /** @var Region $region */
+            $region = $this->regionRepository->getByCodeAndCountryCode(
+                $county->getCode(),
+                $this->apiHelper->getHostCountry()
+            );
+            foreach ($cities as $city) {
+                try {
+                    $samedayCity = $this->cityRepository->getBySamedayId((int) $city['value']);
+                } catch (Exception $exception) {
+                    $samedayCity = $this->cityFactory->create();
+                }
+
+                $samedayCity->setSamedayId($city['value']);
+                $samedayCity->setName($city['label']);
+                $samedayCity->setRegionId($region->getRegionId());
+
+                try {
+                    $this->cityRepository->save($samedayCity);
+                } catch (Exception $e) {
+                    continue;
+                }
+            }
+        }
+
+        return (new LocalDataImporterResponse())
+            ->setSucceed(true)
+            ->setMessage(__('Cities was imported with success!')
         );
     }
 }
