@@ -10,25 +10,26 @@ use Sameday\Objects\CountyObject;
 use Sameday\Requests\SamedayGetCountiesRequest;
 use Sameday\Responses\SamedayGetCountiesResponse;
 use SamedayCourier\Shipping\Helper\ApiHelper;
+use SamedayCourier\Shipping\Helper\SamedayCountiesHelper;
 
 class CountyColumn extends Column implements OptionSourceInterface
 {
     /**
-     * @var ApiHelper $apiHelper
+     * @var SamedayCountiesHelper $samedayCountiesHelper
      */
-    private $apiHelper;
+    private $samedayCountiesHelper;
 
     public function __construct(
         ContextInterface $context,
         UiComponentFactory $uiComponentFactory,
-        ApiHelper $apiHelper,
+        SamedayCountiesHelper $samedayCountiesHelper,
         array $components = [],
         array $data = []
     )
     {
         parent::__construct($context, $uiComponentFactory, $components, $data);
 
-        $this->apiHelper = $apiHelper;
+        $this->samedayCountiesHelper = $samedayCountiesHelper;
     }
 
     /**
@@ -50,27 +51,8 @@ class CountyColumn extends Column implements OptionSourceInterface
                         'label' => $county->getName(),
                     ];
                 },
-                $this->getCounties()
+                $this->samedayCountiesHelper->getCounties()
             )
         );
-    }
-
-    /**
-     * @return CountyObject[]
-     */
-    private function getCounties(): array
-    {
-        /** @var SamedayGetCountiesResponse|false $counties */
-        $counties = $this->apiHelper->doRequest(
-            new SamedayGetCountiesRequest(''),
-            'getCounties',
-            false
-        );
-
-        if (false !== $counties) {
-            return $counties->getCounties();
-        }
-
-        return [];
     }
 }
