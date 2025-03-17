@@ -63,6 +63,14 @@
             "PRIMARY": true
         }
     },
+    "samedaycourier_city": {
+        "column": {
+            "id": true,
+            "name": true,
+            "sameday_id": true,
+            "region_id": true
+        }
+    },
     "sales_order": {
         "column": {
             "samedaycourier_locker": true,

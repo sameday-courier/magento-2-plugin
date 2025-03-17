@@ -67,6 +67,14 @@
                     <label>Displayed Error Message</label>
                 </field>
 
+                <field id="use_sameday_cities" translate="label" type="select" sortOrder="490" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Use Sameday Cities nomenclature</label>
+                    <tooltip>
+                        Enable this if you want to show Sameday Cities as a drop-down list in your Checkout form
+                    </tooltip>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
                 <field id="sort_order" translate="label" type="text" sortOrder="500" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Sort Order</label>
                 </field>
