@@ -3,7 +3,14 @@
  * See COPYING.txt for license details.
  */
 
-var config = {
+const config = {
+    config: {
+        mixins: {
+            'Magento_Checkout/js/view/shipping': {
+                'SamedayCourier_Shipping/js/view/update-city': true
+            }
+        }
+    },
     "paths": {
         "lockersPluginSdk": "https://cdn.sameday.ro/locker-plugin/lockerpluginsdk",
     }
