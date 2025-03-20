@@ -4,4 +4,9 @@
         <css src="SamedayCourier_Shipping::css/samedaycourier_shipping_admin.css"/>
         <css src="SamedayCourier_Shipping::lib/css/select2.css"/>
     </head>
+    <body>
+        <referenceBlock name="order_info">
+            <block class="SamedayCourier\Shipping\Block\Adminhtml\Awb\Buttons" name="awb_buttons" template="SamedayCourier_Shipping::awb/buttons.phtml" after="address_information"/>
+        </referenceBlock>
+    </body>
 </page>

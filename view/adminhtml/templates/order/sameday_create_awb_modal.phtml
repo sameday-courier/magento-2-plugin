@@ -10,8 +10,13 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
     <div class="admin__page-section-title">
         <span class="title"><?php /* @escapeNotVerified */ echo __('Sameday Courier') ?></span>
     </div>
+<!--    <div class="admin__page-section-content">-->
+<!--        <button id="openmodal">--><?php //= __('Generate awb') ?><!--</button>-->
+<!--    </div>-->
     <div class="admin__page-section-content">
-        <button id="openmodal"><?= __('Generate awb') ?></button>
+        <button type="button" onClick="setLocation('<?php echo $block->getAwbUrl(); ?>');">
+            <?php echo __('Generează AWB'); ?>
+        </button>
     </div>
 </section>
 
@@ -70,31 +75,29 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                 </div>
             </div>
 
-            <!-- Package Dimensions //-->
             <div class="row" id="package_dimensions">
-                    <div class="package_dimensions_fields">
+                <div class="package_dimensions_fields">
+                    <div class="col-25">
+                        <label for="insured_value">
+                            <?= __('Package dimensions') ?>
+                        </label>
+                    </div>
+                    <div class="col-75">
                         <div class="col-25">
-                            <label for="insured_value">
-                                <?= __('Package dimensions') ?>
-                            </label>
+                            <input name="package_weight[]" id="package_weight" type="number" step="any" min="0" value="<?= $block->getOrderDetails()['weight'] ?>">
                         </div>
-                        <div class="col-75">
-                            <div class="col-25">
-                                <input name="package_weight[]" id="package_weight" type="number" step="any" min="0" value="<?= $block->getOrderDetails()['weight'] ?>">
-                            </div>
-                            <div class="col-25">
-                                <input name="package_length[]" id="package_length" type="number" step="any" min="0" placeholder="length">
-                            </div>
-                            <div class="col-25">
-                                <input name="package_width[]" id="package_width" type="number" step="any" min="0" placeholder="width">
-                            </div>
-                            <div class="col-25">
-                                <input name="package_height[]" id="package_height" type="number" step="any" min="0" placeholder="height">
-                            </div>
+                        <div class="col-25">
+                            <input name="package_length[]" id="package_length" type="number" step="any" min="0" placeholder="length">
+                        </div>
+                        <div class="col-25">
+                            <input name="package_width[]" id="package_width" type="number" step="any" min="0" placeholder="width">
+                        </div>
+                        <div class="col-25">
+                            <input name="package_height[]" id="package_height" type="number" step="any" min="0" placeholder="height">
+                        </div>
                     </div>
                 </div>
             </div>
-            <!-- End of Package Dimensions //-->
 
             <div class="row">
                 <div class="col-25">
