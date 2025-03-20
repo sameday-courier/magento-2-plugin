@@ -8,10 +8,6 @@
         </arguments>
     </type>
 
-    <type name="Magento\Sales\Block\Adminhtml\Order\View\Info">
-        <plugin name="addMyButton" type="SamedayCourier\Shipping\Plugin\Block\Adminhtml\Order\View"/>
-    </type>
-
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
             <argument name="collections" xsi:type="array">

@@ -1,0 +1,14 @@
+<?php
+/** @var $block SamedayCourier\Shipping\Block\Adminhtml\Order\SamedaySection */
+?>
+
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?php echo __('SamedayCourier') ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <button type="button" class="edit sameday-primary" onClick="setLocation('<?php echo $block->goToAwbFormUrl(); ?>');">
+            <?php echo __('Generate Sameday AWB'); ?>
+        </button>
+    </div>
+</section>

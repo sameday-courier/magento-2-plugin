@@ -41,7 +41,6 @@ class View
             return $this->createEditAwbModalHtml($subject, $result, $orderHasAwb);
         }
 
-
         return $result;
     }
 

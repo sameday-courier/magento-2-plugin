@@ -6,7 +6,10 @@
     </head>
     <body>
         <referenceBlock name="order_info">
-            <block class="SamedayCourier\Shipping\Block\Adminhtml\Awb\Buttons" name="awb_buttons" template="SamedayCourier_Shipping::awb/buttons.phtml" after="address_information"/>
+            <block class="SamedayCourier\Shipping\Block\Adminhtml\Order\SamedaySection"
+                   name="sameday.awb.view.section"
+                   template="SamedayCourier_Shipping::order/sameday_section.phtml"
+            />
         </referenceBlock>
     </body>
 </page>

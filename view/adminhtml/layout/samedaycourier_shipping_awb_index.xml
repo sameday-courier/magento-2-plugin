@@ -1,9 +1,13 @@
 <?xml version="1.0"?>
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <update handle="styles"/>
+    <head>
+        <css src="SamedayCourier_Shipping::css/samedaycourier_shipping_admin.css"/>
+        <css src="SamedayCourier_Shipping::lib/css/select2.css"/>
+    </head>
     <body>
         <referenceContainer name="content">
-            <block class="Magento\Framework\View\Element\Template" name="samedaycourier_shipping_awb_index" template="SamedayCourier_Shipping::awb/index.phtml"/>
+            <block class="SamedayCourier\Shipping\Block\Adminhtml\Awb\Form" name="samedaycourier_shipping_awb_index" template="SamedayCourier_Shipping::awb/form.phtml"/>
         </referenceContainer>
     </body>
 </page>

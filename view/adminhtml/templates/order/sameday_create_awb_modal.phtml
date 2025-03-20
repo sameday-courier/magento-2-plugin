@@ -10,13 +10,8 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
     <div class="admin__page-section-title">
         <span class="title"><?php /* @escapeNotVerified */ echo __('Sameday Courier') ?></span>
     </div>
-<!--    <div class="admin__page-section-content">-->
-<!--        <button id="openmodal">--><?php //= __('Generate awb') ?><!--</button>-->
-<!--    </div>-->
     <div class="admin__page-section-content">
-        <button type="button" onClick="setLocation('<?php echo $block->getAwbUrl(); ?>');">
-            <?php echo __('Generează AWB'); ?>
-        </button>
+        <button id="openmodal"><?= __('Generate awb') ?></button>
     </div>
 </section>
 
@@ -256,7 +251,7 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedayModal;
                 ]
             };
 
-            var popup = modal(options, $('#popup-add-awb'));
+            modal(options, $('#popup-add-awb'));
             $("#openmodal").click(function() {
                 $("#popup-add-awb").modal('openModal');
             });
