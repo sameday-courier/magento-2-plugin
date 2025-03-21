@@ -39,7 +39,7 @@ class SamedaySection extends Template
     public function goToAwbFormUrl(): string
     {
 
-        return $this->getUrl('samedaycourier_shipping/awb/index',
+        return $this->getUrl('samedaycourier_shipping/awb/form',
             [
                 'order_id' => $this->getOrder()->getId(),
             ]

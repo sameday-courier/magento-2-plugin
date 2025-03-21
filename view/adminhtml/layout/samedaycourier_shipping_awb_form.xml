@@ -4,10 +4,11 @@
     <head>
         <css src="SamedayCourier_Shipping::css/samedaycourier_shipping_admin.css"/>
         <css src="SamedayCourier_Shipping::lib/css/select2.css"/>
+        <script src="SamedayCourier_Shipping::js/awb-form.js"/>
     </head>
     <body>
         <referenceContainer name="content">
-            <block class="SamedayCourier\Shipping\Block\Adminhtml\Awb\Form" name="samedaycourier_shipping_awb_index" template="SamedayCourier_Shipping::awb/form.phtml"/>
+            <block class="SamedayCourier\Shipping\Block\Adminhtml\Awb\Form" name="samedaycourier_shipping_awb_form" template="SamedayCourier_Shipping::awb/form.phtml"/>
         </referenceContainer>
     </body>
 </page>
