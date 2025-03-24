@@ -11,6 +11,7 @@ use SamedayCourier\Shipping\Block\Adminhtml\Awb\Form;
         <div class="admin__page-section-item">
             <section class="admin__page-section sameday-courier-section">
                 <form action="<?= $block->escapeUrl($block->getRouteAddAwb())?>" method="post" id="popup-add-awb-form" class="samedaycourier_shipping_generate_awb_form">
+                    <input type="hidden" id="changeLockerUrl" data-change_locker_url="<?php echo $block->escapeUrl($block->getOrderDetails()['changeLockerMethodUrl']); ?>">
                     <div class="row">
                         <div class="col-25">
                             <label for="repayment">

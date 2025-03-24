@@ -9,7 +9,7 @@ require(
             selectOnClose: true
         });
 
-        $("#changeLocker").on('click', (el) => {
+        document.getElementById('changeLocker').addEventListener('click', (el) => {
             const lockerPluginInit = {
                 clientId: 'b8cb2ee3-41b9-4c3d-aafe-1527b453d65e',
                 countryCode: el.target.getAttribute('data-country_code').toUpperCase(),
@@ -26,7 +26,7 @@ require(
             plugin.subscribe((locker) => {
                 $.ajax({
                     showLoader: true,
-                    url: "<?php print $block->escapeUrl($block->getOrderDetails()['changeLockerMethodUrl']); ?>",
+                    url: document.getElementById('changeLockerUrl').getAttribute('data-change_locker_url'),
                     data: {
                         'locker': locker,
                     },
@@ -36,9 +36,9 @@ require(
                     if (data.success) {
                         $('#lockerId_details').val(`${locker.name} ${locker.address}`);
                     }
-                });
 
-                plugin.close();
+                    plugin.close();
+                });
             });
         });
 
