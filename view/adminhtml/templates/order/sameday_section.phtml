@@ -7,8 +7,30 @@
         <span class="title"><?php echo __('SamedayCourier') ?></span>
     </div>
     <div class="admin__page-section-content">
+
         <button type="button" class="edit sameday-primary" onClick="setLocation('<?php echo $block->goToAwbFormUrl(); ?>');">
             <?php echo __('Generate Sameday AWB'); ?>
         </button>
+
+        <?php if ($block->orderHasAwb()): ?>
+            <div class="admin__page-section-content">
+                <button class="sameday-primary" id="add_parcel_modal"><?= __('Add new parcel') ?></button>
+                <button class="sameday-primary" id="awb_history_modal"><?= __('Awb history') ?></button>
+                <button class="sameday-primary"
+                        type="button"
+                        onclick="setLocation('<?php echo $block->escapeUrl($block->getRouteAwbAsPdf()); ?>')"
+                >
+                    <?= __('Show as pdf') ?>
+                </button>
+                <button class="sameday-primary"
+                        id="remove_awb"
+                        data-awb_id="<?php echo $block->getAwb()->getId(); ?>"
+                        data-sameday_awb_number="<?php echo $block->getAwb()->getAwbNumber(); ?>"
+                        data-remove_awb_url="<?php echo $block->getRouteRemoveAwb(); ?>"
+                >
+                    <?= __('Remove Awb') ?>
+                </button>
+            </div>
+        <?php endif; ?>
     </div>
 </section>

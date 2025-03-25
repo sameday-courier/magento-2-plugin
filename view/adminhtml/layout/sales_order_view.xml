@@ -3,6 +3,7 @@
     <head>
         <css src="SamedayCourier_Shipping::css/samedaycourier_shipping_admin.css"/>
         <css src="SamedayCourier_Shipping::lib/css/select2.css"/>
+        <script src="SamedayCourier_Shipping::js/sameday-section.js"/>
     </head>
     <body>
         <referenceBlock name="order_info">

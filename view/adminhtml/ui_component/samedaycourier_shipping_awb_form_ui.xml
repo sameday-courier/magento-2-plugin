@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Ui/etc/ui_configuration.xsd">
+    <dataSource name="samedaycourier_shipping_awb_form_data_source">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="class" xsi:type="string">Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider</argument>
+        </argument>
+    </dataSource>
     <argument name="data" xsi:type="array">
         <item name="buttons" xsi:type="array">
-            <item name="back" xsi:type="array">
-                <item name="name" xsi:type="string">back</item>
-                <item name="label" xsi:type="string" translate="true">Back</item>
-                <item name="class" xsi:type="string">action-scalable back</item>
-                <item name="url" xsi:type="string">*/*/</item>
-            </item>
+            <item name="back" xsi:type="string">SamedayCourier\Shipping\Block\Adminhtml\Awb\BackButton</item>
         </item>
     </argument>
 </listing>
