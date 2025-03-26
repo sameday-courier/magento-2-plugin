@@ -266,7 +266,7 @@ class Form extends Template
     /**
      * @return OrderInterface
      */
-    private function getOrder(): OrderInterface
+    public function getOrder(): OrderInterface
     {
         return $this->orderRepository->get($this->context->getRequest()->getParam('order_id'));
     }

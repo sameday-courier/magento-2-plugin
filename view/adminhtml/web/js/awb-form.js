@@ -69,5 +69,16 @@ require(
                 $(".package_dimensions_fields").last().remove();
             }
         });
+
+        $('#sameday-add-awb-form').append($('<input>', {
+            'name': 'form_key',
+            'value': window.FORM_KEY,
+            'type': 'hidden'
+        }));
+        $(document).on('click', '#sameday-add-awb-form-submit', (e) => {
+            e.preventDefault();
+
+            $('#sameday-add-awb-form').submit();
+        });
     }
 );

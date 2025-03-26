@@ -7,8 +7,9 @@ use SamedayCourier\Shipping\Block\Adminhtml\Awb\Form;
     <div class="admin__page-section-content">
         <div class="admin__page-section-item">
             <section class="admin__page-section sameday-courier-section">
-                <form action="<?= $block->escapeUrl($block->getRouteAddAwb())?>" method="post" id="popup-add-awb-form" class="samedaycourier_shipping_generate_awb_form">
+                <form action="<?= $block->escapeUrl($block->getRouteAddAwb())?>" method="post" id="sameday-add-awb-form" class="samedaycourier_shipping_generate_awb_form">
                     <input type="hidden" id="changeLockerUrl" data-change_locker_url="<?php echo $block->escapeUrl($block->getOrderDetails()['changeLockerMethodUrl']); ?>">
+                    <input type="hidden" name="order_id" value="<?= $block->getOrder()->getId() ?>">
                     <div class="row">
                         <div class="col-25">
                             <label for="repayment">
@@ -199,7 +200,12 @@ use SamedayCourier\Shipping\Block\Adminhtml\Awb\Form;
                     </div>
                     <div class="row">
                         <div class="col-75">
-                            <button type="submit" name="client_reference" class="edit sameday-primary" id="client_reference" style="height:50px"> Generate Awb</button>
+                            <button type="submit"
+                                    name="sameday-add-awb-form-submit"
+                                    form="sameday-add-awb-form"
+                                    class="edit sameday-primary"
+                                    id="sameday-add-awb-form-submit" style="height:50px"> Generate Awb
+                            </button>
                         </div>
                     </div>
                 </form>

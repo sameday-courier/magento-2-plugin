@@ -4,8 +4,8 @@ require(
         'Magento_Ui/js/modal/confirm'
     ],
     ($, confirm) => {
-        const removeAwb = $("#remove_awb");
-        if (undefined !== typeof removeAwb) {
+        const removeAwb = document.getElementById('remove_awb');
+        if (null !== removeAwb) {
             removeAwb.addEventListener("click", () => {
                 confirm({
                     title: $.mage.__('Remove awb confirmation'),

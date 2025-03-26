@@ -7,15 +7,10 @@
         <span class="title"><?php echo __('SamedayCourier') ?></span>
     </div>
     <div class="admin__page-section-content">
-
-        <button type="button" class="edit sameday-primary" onClick="setLocation('<?php echo $block->goToAwbFormUrl(); ?>');">
-            <?php echo __('Generate Sameday AWB'); ?>
-        </button>
-
         <?php if ($block->orderHasAwb()): ?>
             <div class="admin__page-section-content">
-                <button class="sameday-primary" id="add_parcel_modal"><?= __('Add new parcel') ?></button>
-                <button class="sameday-primary" id="awb_history_modal"><?= __('Awb history') ?></button>
+<!--                <button class="sameday-primary" id="add_parcel_modal">Add new parcel</button>-->
+<!--                <button class="sameday-primary" id="awb_history_modal">Awb history</button>-->
                 <button class="sameday-primary"
                         type="button"
                         onclick="setLocation('<?php echo $block->escapeUrl($block->getRouteAwbAsPdf()); ?>')"
@@ -31,6 +26,10 @@
                     <?= __('Remove Awb') ?>
                 </button>
             </div>
+        <?php else: ?>
+            <button type="button" class="edit sameday-primary" onClick="setLocation('<?php echo $block->goToAwbFormUrl(); ?>');">
+                <?php echo __('Generate Sameday AWB'); ?>
+            </button>
         <?php endif; ?>
     </div>
 </section>
