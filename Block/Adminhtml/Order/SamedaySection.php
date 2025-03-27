@@ -108,16 +108,6 @@ class SamedaySection extends Template
     /**
      * @return string
      */
-    public function getRouteAddParcel(): string
-    {
-        return $this->getUrl('samedaycourier_shipping/order/addparcel', [
-            'order_id' => $this->getOrder()->getId()
-        ]);
-    }
-
-    /**
-     * @return string
-     */
     public function getRouteRemoveAwb(): string
     {
         return $this->getUrl('samedaycourier_shipping/order/removeawb');

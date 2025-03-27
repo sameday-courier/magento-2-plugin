@@ -34,5 +34,15 @@ class Form extends Template
     {
         return $this->orderRepository->get($this->context->getRequest()->getParam('order_id'));
     }
+
+    /**
+     * @return string
+     */
+    public function getRouteAddParcel(): string
+    {
+        return $this->getUrl('samedaycourier_shipping/order/addparcel', [
+            'order_id' => $this->getOrder()->getId()
+        ]);
+    }
 }
 

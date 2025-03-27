@@ -7,9 +7,51 @@ use SamedayCourier\Shipping\Block\Adminhtml\Awb\Parcel\Form;
     <div class="admin__page-section-content">
         <div class="admin__page-section-item">
             <section class="admin__page-section sameday-courier-section">
-
-                Afisez formularul de adaugare pacel nou
-
+                <form action="<?= $block->escapeUrl($block->getRouteAddParcel())?>" method="post" id="add_parcel_form" class="samedaycourier_shipping_generate_awb_form">
+                    <div class="row">
+                        <div class="col-25">
+                            <label for="repayment">
+                                <?= __('Parcel weight') ?>
+                            </label>
+                        </div>
+                        <div class="col-75">
+                            <input name="parcel_weight" type="number" value="1" step="any" min="0">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                            <label for="repayment">
+                                <?= __('Parcel length') ?>
+                            </label>
+                        </div>
+                        <div class="col-75">
+                            <input name="parcel_length" type="number" step="any" min="0">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                            <label for="repayment">
+                                <?= __('Parcel height') ?>
+                            </label>
+                        </div>
+                        <div class="col-75">
+                            <input name="parcel_height" type="number" step="any" min="0">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                            <label for="repayment">
+                                <?= __('Parcel width') ?>
+                            </label>
+                        </div>
+                        <div class="col-75">
+                            <input name="parcel_width" type="number" step="any" min="0">
+                        </div>
+                    </div>
+                    <button type="button" class="edit sameday-primary" id="addNewParcel" form="add_parcel_form">
+                        <?= __('Add new Parcel') ?>
+                    </button>
+                </form>
             </section>
         </div>
     </div>
