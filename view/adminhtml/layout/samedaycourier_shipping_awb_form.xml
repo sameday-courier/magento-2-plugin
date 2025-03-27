@@ -3,6 +3,7 @@
     <update handle="styles"/>
     <head>
         <css src="SamedayCourier_Shipping::css/samedaycourier_shipping_awb_form.css"/>
+        <css src="SamedayCourier_Shipping::css/samedaycourier_shipping_common.css"/>
         <css src="SamedayCourier_Shipping::lib/css/select2.css"/>
         <script src="SamedayCourier_Shipping::js/awb-form.js"/>
     </head>
