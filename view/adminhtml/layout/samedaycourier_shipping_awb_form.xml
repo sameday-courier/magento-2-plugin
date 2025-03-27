@@ -9,7 +9,7 @@
     <body>
         <referenceContainer name="content">
             <block class="SamedayCourier\Shipping\Block\Adminhtml\Awb\Form" name="samedaycourier_shipping_awb_form" template="SamedayCourier_Shipping::awb/form.phtml"/>
-            <uiComponent name="samedaycourier_shipping_awb_form_ui" />
+            <uiComponent name="samedaycourier_shipping_awb_section_ui" />
         </referenceContainer>
     </body>
 </page>

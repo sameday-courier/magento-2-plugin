@@ -1,5 +1,6 @@
 <?php
-/** @var $block SamedayCourier\Shipping\Block\Adminhtml\Order\SamedaySection */
+/** @var $block SamedaySection */
+use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedaySection;
 ?>
 
 <section class="admin__page-section">
@@ -9,8 +10,20 @@
     <div class="admin__page-section-content">
         <?php if ($block->orderHasAwb()): ?>
             <div class="admin__page-section-content">
-<!--                <button class="sameday-primary" id="add_parcel_modal">Add new parcel</button>-->
-<!--                <button class="sameday-primary" id="awb_history_modal">Awb history</button>-->
+                <button class="sameday-primary"
+                        type="button"
+                        id="add_parcel_modal"
+                        onclick="setLocation('<?php echo $block->escapeUrl($block->goToAddNewParcelFormPage()); ?>')"
+                >
+                    <?= __('Add new parcel') ?>
+                </button>
+                <button class="sameday-primary"
+                        id="awb_history_modal"
+                        type="button"
+                        onclick="setLocation('<?php echo $block->escapeUrl($block->goToAwbHistoryPage()); ?>')"
+                >
+                    <?= __('Awb history') ?>
+                </button>
                 <button class="sameday-primary"
                         type="button"
                         onclick="setLocation('<?php echo $block->escapeUrl($block->getRouteAwbAsPdf()); ?>')"
@@ -25,9 +38,14 @@
                 >
                     <?= __('Remove Awb') ?>
                 </button>
+
+                <div id="popup_awb_history" style="display: none" class="samedaycourier_shipping_awb_history">
             </div>
         <?php else: ?>
-            <button type="button" class="edit sameday-primary" onClick="setLocation('<?php echo $block->goToAwbFormUrl(); ?>');">
+            <button class="edit sameday-primary"
+                    type="button"
+                    onClick="setLocation('<?php echo $block->goToAwbFormPage(); ?>');"
+            >
                 <?php echo __('Generate Sameday AWB'); ?>
             </button>
         <?php endif; ?>

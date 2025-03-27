@@ -47,10 +47,30 @@ class SamedaySection extends Template
     /**
      * @return string
      */
-    public function goToAwbFormUrl(): string
+    public function goToAwbFormPage(): string
     {
-
         return $this->getUrl('samedaycourier_shipping/awb/form',
+            [
+                'order_id' => $this->getOrder()->getId(),
+            ]
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function goToAwbHistoryPage(): string
+    {
+        return $this->getUrl('samedaycourier_shipping/awb/history',
+            [
+                'order_id' => $this->getOrder()->getId(),
+            ]
+        );
+    }
+
+    public function goToAddNewParcelFormPage(): string
+    {
+        return $this->getUrl('samedaycourier_shipping/awb_parcel/form',
             [
                 'order_id' => $this->getOrder()->getId(),
             ]
