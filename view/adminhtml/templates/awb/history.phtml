@@ -7,9 +7,68 @@ use SamedayCourier\Shipping\Block\Adminhtml\Awb\History;
     <div class="admin__page-section-content">
         <div class="admin__page-section-item">
             <section class="admin__page-section sameday-courier-section">
+                <div id="popup-awb-history" style="display: block" class="samedaycourier_shipping_awb_history">
+                    <?php
+                    $packageRows = '';
+                    foreach ($block->getParcelsHistory() as $package) {
+                        $summary = $package->getSummary();
+                        $packageHistory = $package->getHistory();
+                        $historyRows = '';
+                        foreach ($packageHistory as $history) {
+                            $historyRows .=
+                                '<td>' . $history->getName() . '</td>' .
+                                '<td>' . $history->getLabel() . '</td>' .
+                                '<td>' . $history->getState() . '</td>' .
+                                '<td>' . $history->getDate()->format('Y-m-d H:i:s') . '</td>' .
+                                '<td>' . $history->getCounty() . '</td>' .
+                                '<td>' . $history->getTransitLocation() . '</td>' .
+                                '<td>' . $history->getReason() . '</td>'
+                            ;
+                        }
+                        $packageRows .=
+                            '<tr>' .
+                            '<td style="text-align: center; cursor:pointer;" class="showHistoryDetails" value="-" data-awb-number="'.$summary->getParcelAwbNumber().'"> <strong> + </strong> </td>' .
+                            '<td>' . $summary->getParcelAwbNumber() . '</td>' .
+                            '<td>' . $summary->getParcelWeight() . '</td>' .
+                            '<td>' . ($summary->isDelivered() ? "Yes" : "No") . '</td>' .
+                            '<td>' . $summary->getDeliveryAttempts() . ' </td>' .
+                            '<td>' . ($summary->isPickedUp() ? 'Yes' : 'No') . '</td>' .
+                            '<td>' . ($summary->getPickedUpAt() ? $summary->getPickedUpAt()->format('Y-m-d H:i:s') : '') .'</td>' .
+                            '</tr>' .
+                            '<tr>' .
+                            '<td colspan="7">' .
+                            '<table class="history" id="history-'.$summary->getParcelAwbNumber().'" style="width: 100%; display: none; text-align: center">' .
+                            '<tr>' .
+                            '<th style="width: 15%">' . __("Status") . '</th>' .
+                            '<th style="width: 15%">' . __("Label") . '</th>' .
+                            '<th style="width: 15%">' . __("State") . '</th>' .
+                            '<th style="width: 15%">' . __("Date") . '</th>' .
+                            '<th style="width: 15%">' . __("County") . '</th>' .
+                            '<th style="width: 15%">' . __("Translation") . '</th>' .
+                            '<th style="width: 15%">' . __("Reason") . '</th>' .
+                            '</tr>' .
+                            $historyRows .
+                            '</table>' .
+                            '</td>' .
+                            '</tr>'
 
-                Afisez istoricul awb-urilor
 
+                        ;
+                    }
+                    ?>
+                    <table class="packages" style="width: 100%">
+                        <tr>
+                            <th></th>
+                            <th scope="col"><?= __('Parcel number') ?></th>
+                            <th scope="col"><?= __('Parcel weight') ?></th>
+                            <th scope="col"><?= __('Delivered') ?></th>
+                            <th scope="col"><?= __('Delivery attempts') ?></th>
+                            <th scope="col"><?= __('Is picked up') ?></th>
+                            <th scope="col"><?= __('Picked up at') ?></th>
+                        </tr>
+                        <?= $packageRows ?>
+                    </table>
+                </div>
             </section>
         </div>
     </div>
