@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Ui/etc/ui_configuration.xsd">
-    <dataSource name="samedaycourier_shipping_awb_form_data_source">
-        <argument name="dataProvider" xsi:type="configurableObject">
-            <argument name="class" xsi:type="string">Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider</argument>
-        </argument>
-    </dataSource>
     <argument name="data" xsi:type="array">
         <item name="buttons" xsi:type="array">
             <item name="back" xsi:type="string">SamedayCourier\Shipping\Block\Adminhtml\Awb\BackButton</item>
         </item>
     </argument>
+    <dataSource name="samedaycourier_shipping_empty_data_source">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="class" xsi:type="string">SamedayCourier\Shipping\Ui\DataProvider\EmptyDataProvider</argument>
+            <argument name="name" xsi:type="string">samedaycourier_shipping_empty_data_source</argument>
+        </argument>
+    </dataSource>
 </listing>

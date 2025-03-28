@@ -3,7 +3,7 @@
 namespace SamedayCourier\Shipping\Model\Data;
 
 use Magento\Framework\Api\AbstractExtensibleObject;
-use Sameday\Objects\PickupPoint\ContactPersonObject;
+use SamedayCourier\Shipping\Api\Data\PickupPointExtensionInterface;
 use SamedayCourier\Shipping\Api\Data\PickupPointInterface;
 
 class PickupPoint extends AbstractExtensibleObject implements PickupPointInterface
@@ -163,7 +163,7 @@ class PickupPoint extends AbstractExtensibleObject implements PickupPointInterfa
     /**
      * @inheritdoc
      */
-    public function setExtensionAttributes(\SamedayCourier\Shipping\Api\Data\PickupPointExtensionInterface $extensionAttributes)
+    public function setExtensionAttributes(PickupPointExtensionInterface $extensionAttributes)
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }

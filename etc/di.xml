@@ -14,6 +14,7 @@
                 <item name="samedaycourier_shipping_pickuppoint_data_source" xsi:type="string">SamedayCourier\Shipping\Model\ResourceModel\PickupPoint\Grid\Collection</item>
                 <item name="samedaycourier_shipping_service_data_source" xsi:type="string">SamedayCourier\Shipping\Model\ResourceModel\Service\Grid\Collection</item>
                 <item name="samedaycourier_shipping_locker_data_source" xsi:type="string">SamedayCourier\Shipping\Model\ResourceModel\Locker\Grid\Collection</item>
+                <item name="samedaycourier_shipping_empty_data_source" xsi:type="string">SamedayCourier\Shipping\Ui\DataProvider\EmptyDataProvider</item>
             </argument>
         </arguments>
     </type>
