@@ -73,6 +73,19 @@ class Shipping extends AbstractCarrier implements CarrierInterface
     }
 
     /**
+     * @param string $awbNumber
+     *
+     * @return string[]
+     */
+    public function getTrackingInfo(string $awbNumber): array
+    {
+        return [
+            'title' => 'Sameday Courier',
+            'number' => $awbNumber,
+        ];
+    }
+
+    /**
      * @inheritdoc
      */
     public function checkAvailableShipCountries(DataObject $request)
