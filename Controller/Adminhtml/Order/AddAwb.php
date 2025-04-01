@@ -137,8 +137,16 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         $resultRedirect = $this->resultRedirectFactory->create();
         $resultRedirect->setPath('sales/order/view', ['order_id' => $requestParams['order_id']]);
 
+
+
         if (null === $serviceId = $requestParams['service'] ?? null) {
             $this->manager->addErrorMessage("Must complete Service");
+
+            return $resultRedirect;
+        }
+
+        if (null === $pickupPointId = $requestParams['pickup_point'] ?? null) {
+            $this->manager->addErrorMessage("Must complete Pickup Point");
 
             return $resultRedirect;
         }
@@ -240,7 +248,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         }
 
         $apiRequest = new SamedayPostAwbRequest(
-            $requestParams['pickup_point'],
+            $pickupPointId,
             null,
             new PackageType(PackageType::PARCEL),
             $packages,
