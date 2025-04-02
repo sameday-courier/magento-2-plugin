@@ -17,15 +17,12 @@ define(
             totals: quote.getTotals(),
             isTaxDisplayedInGrandTotal: window.checkoutConfig.includeTaxInGrandTotal || false,
 
-            isDisplayed: function() {
+            isDisplayed: () => {
                 if (null === quote.paymentMethod()) {
-
                     return true;
                 }
 
-                let method = quote.paymentMethod().method;
-
-                return method === 'cashondelivery';
+                return ['cashondelivery', 'checkmo'].includes(quote.paymentMethod().method);
             },
 
             getTitle: () => {

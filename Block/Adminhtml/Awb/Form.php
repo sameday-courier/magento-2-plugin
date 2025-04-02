@@ -131,7 +131,7 @@ class Form extends Template
                 }
             } catch (Exception $exception) { return null; }
 
-            if (null === $paymentCode || $this->storedDataHelper::CASH_ON_DELIVERY_CODE === $paymentCode) {
+            if (null === $paymentCode || in_array($paymentCode, $this->storedDataHelper::COD_OPTIONS, true)) {
                 $repayment = $order->getGrandTotal();
             }
         }

@@ -40,7 +40,7 @@ class CheckoutRepaymentFee implements ObserverInterface
         $order = $observer->getOrder();
         $quote = $this->session->getQuote();
 
-        if ($quote->getPayment()->getMethod() === $this->storedDataHelper::CASH_ON_DELIVERY_CODE) {
+        if (in_array($quote->getPayment()->getMethod(), $this->storedDataHelper::COD_OPTIONS, true)) {
             $order->setData('samedaycourier_fee', $this->scopeConfig->getValue($this->storedDataHelper::REPAYMENT_TAX_VALUE));
         }
     }

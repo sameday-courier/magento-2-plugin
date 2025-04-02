@@ -25,6 +25,10 @@ class StoredDataHelper extends AbstractHelper
     public const REPAYMENT_TAX_LABEL = 'carriers/samedaycourier/repayment_tax_label';
     public const REPAYMENT_TAX_VALUE = 'carriers/samedaycourier/repayment_tax';
     public const CASH_ON_DELIVERY_CODE = 'cashondelivery';
+    public const CHECKMO_CODE = 'checkmo';
+    public const COD_OPTIONS = [
+        self::CASH_ON_DELIVERY_CODE, self::CHECKMO_CODE
+    ];
     public const SERVICE_OPTIONAL_TAX_PDO = 'PDO';
     public const DISPLAY_HTML_ELEM = [
         'show' => 'block',

@@ -10,7 +10,7 @@
         "roave/security-advisories": "dev-latest"
     },
   "type": "magento2-module",
-  "version": "1.8.6",
+  "version": "1.8.7",
   "autoload": {
     "files": [ "registration.php" ],
     "psr-4": {

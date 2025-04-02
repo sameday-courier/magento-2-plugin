@@ -201,12 +201,16 @@ class Shipping extends AbstractCarrier implements CarrierInterface
             } catch (\Exception $exception) {}
         }
         $repayment = 0;
-        if (null === $paymentMethodCode || $this->storedDataHelper::CASH_ON_DELIVERY_CODE === $paymentMethodCode) {
+        if (null === $paymentMethodCode || in_array($paymentMethodCode, $this->storedDataHelper::COD_OPTIONS, true)) {
             $repayment = $request->getData('package_value_with_discount');
         }
 
         $region = $objectManager->create(Region::class);
-        $regionName = $region->loadByCode($request->getData('dest_region_code'), $request->getData('dest_country_id'))->getName();
+        $regionName = $region->loadByCode(
+            $request->getData('dest_region_code'),
+            $request->getData('dest_country_id')
+        )->getName();
+
         $city = $request->getDestCity();
         if ($region->getCode() === 'B') {
             $city = 'Sectorul 1';

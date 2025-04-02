@@ -26,7 +26,10 @@ class Fee extends AbstractTotal
 
     private $feeLabel;
 
-    private $cashOnDeliveryCode;
+    /**
+     * @var array
+     */
+    private $cashOnDeliveryOptions;
 
     public function __construct(
         QuoteValidator $quoteValidator,
@@ -37,7 +40,7 @@ class Fee extends AbstractTotal
 
         $this->fee = $storedDataHelper->getRepaymentFeeValue();
         $this->feeLabel = $storedDataHelper->getRepaymentFeeLabel();
-        $this->cashOnDeliveryCode = $storedDataHelper::CASH_ON_DELIVERY_CODE;
+        $this->cashOnDeliveryOptions = $storedDataHelper::COD_OPTIONS;
     }
 
     public function collect(
@@ -52,8 +55,8 @@ class Fee extends AbstractTotal
 
         $fee = 0;
 
-        if (null === $quote->getPayment()->getMethod() ||
-            $this->cashOnDeliveryCode === $quote->getPayment()->getMethod()
+        if (null === $quote->getPayment()->getMethod()
+            || in_array($quote->getPayment()->getMethod(), $this->cashOnDeliveryOptions, true)
         ) {
             $fee = $this->fee;
         }
@@ -69,6 +72,10 @@ class Fee extends AbstractTotal
         return $this;
     }
 
+    /**
+     * @param Total $total
+     * @return void
+     */
     protected function clearValues(Total $total): void
     {
         $total->setTotalAmount('subtotal', 0);
