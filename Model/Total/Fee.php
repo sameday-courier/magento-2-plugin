@@ -74,6 +74,7 @@ class Fee extends AbstractTotal
 
     /**
      * @param Total $total
+     *
      * @return void
      */
     protected function clearValues(Total $total): void
