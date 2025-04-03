@@ -1,1 +1,1 @@
-magento-2-plugin.
+magento-2-plugin. documentation.
