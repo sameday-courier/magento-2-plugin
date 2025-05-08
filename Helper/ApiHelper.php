@@ -13,6 +13,7 @@ use Psr\Log\LoggerInterface;
 use Sameday\Exceptions\SamedayBadRequestException;
 use Sameday\Exceptions\SamedaySDKException;
 use Sameday\Objects\Types\AwbPdfType;
+use Sameday\Requests\SamedayGetAwbStatusHistoryRequest;
 use Sameday\Requests\SamedayRequestInterface;
 use Sameday\Responses\SamedayResponseInterface;
 use Sameday\Sameday;
@@ -308,5 +309,19 @@ class ApiHelper extends AbstractHelper
     public function getHostCountry(): string
     {
         return $this->generalHelper->getHostCountry();
+    }
+    public function getAwbHistory($number)
+    {
+        $sameday = $this->initClient();
+        $request = new SamedayGetAwbStatusHistoryRequest($number);
+
+        try {
+            $rawResponse = $sameday->sendRequest($request->buildRequest());
+            $response = new \Sameday\Responses\SamedayGetAwbStatusHistoryResponse($request, $rawResponse);
+
+            return $response;
+        } catch (Exception $e) {
+            return false;
+        }
     }
 }
