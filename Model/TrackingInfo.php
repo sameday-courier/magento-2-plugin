@@ -24,6 +24,8 @@ class TrackingInfo
      */
     public $trackSummary;
 
+    private $awbHistory;
+
     public function setCarrierTitle($title): TrackingInfo
     {
         $this->carrierTitle = $title;
@@ -56,19 +58,32 @@ class TrackingInfo
     }
     public function setTrackSummary(SamedayGetAwbStatusHistoryResponse $awbHistory): TrackingInfo
     {
-        $implodedHistory = implode(' | ', array_map(
-            static function ($history) {
-                return $history->date->format('Y-m-d H:i:s') . ": " . $history->label;
-            },
-            $awbHistory->history
-        ));
-        $this->trackSummary = $awbHistory->expeditionStatus->label .PHP_EOL . $implodedHistory;
+        $this->awbHistory = $awbHistory;
+        $this->trackSummary = $awbHistory->getExpeditionStatus()->getState();
         return $this;
     }
 
-    public function getTrackSummary(): string
+    public function getTrackSummary()
     {
-        return $this->trackSummary;
+        return null; // intentionally null so that magento will show tracking link
+    }
+    public function getErrorMessage()
+    {
+     return null; //intentionally null
+    }
+    public function getProgressdetail()
+    {
+        return array_map(
+            static function ($history) {
+               return  [
+                    'deliverydate'=> $history->getDate()->format('Y-m-d'),
+                    'deliverytime'=> $history->getDate()->format('H:i:s'),
+                    'deliverylocation'=> ($history->getTransitLocation()!=="") ? $history->getTransitLocation() :"N/A",
+                    'activity'=> $history->getState(),
+                ];
+            },
+            $this->awbHistory->getHistory()
+        );
     }
 
 }
