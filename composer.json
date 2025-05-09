@@ -1,5 +1,5 @@
 {
-  "name": "sameday/magento2-plugin",
+  "name": "sameday/magento-2-plugin",
   "description": "Magento 2 plugin for Sameday Courier shipping",
   "require": {
     "sameday-courier/php-sdk": "^v2.1.7",
@@ -10,7 +10,7 @@
         "roave/security-advisories": "dev-latest"
     },
   "type": "magento2-module",
-  "version": "1.8.7-feature-tracking",
+  "version": "1.8.8",
   "autoload": {
     "files": [ "registration.php" ],
     "psr-4": {
