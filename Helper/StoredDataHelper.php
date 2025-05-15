@@ -180,7 +180,9 @@ class StoredDataHelper extends AbstractHelper
     {
         $forCountryCode = strtolower($forCountryCode);
 
-        return self::SAMEDAY_ELIGIBLE_CURRENCIES[$forCountryCode];
+        return self::SAMEDAY_ELIGIBLE_CURRENCIES[$forCountryCode]
+            ?? self::SAMEDAY_ELIGIBLE_CURRENCIES[ApiHelper::ROMANIA_CODE]
+        ;
     }
 
     /**
