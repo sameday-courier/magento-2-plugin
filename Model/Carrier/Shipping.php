@@ -25,6 +25,7 @@ use SamedayCourier\Shipping\Helper\ApiHelper as SamedayApiHelper;
 use SamedayCourier\Shipping\Helper\ShippingService;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
 use SamedayCourier\Shipping\Model\Data\Service;
+use SamedayCourier\Shipping\Model\TrackingInfo;
 
 class Shipping extends AbstractCarrier implements CarrierInterface
 {
@@ -40,18 +41,19 @@ class Shipping extends AbstractCarrier implements CarrierInterface
     private $scopeConfig;
 
     public function __construct(
-        SamedayApiHelper $samedayApiHelper,
-        StoredDataHelper $storedDataHelper,
-        Session $cartSession,
-        ScopeConfigInterface $scopeConfig,
-        ErrorFactory $rateErrorFactory,
-        LoggerInterface $logger,
-        ResultFactory $rateResultFactory,
-        MethodFactory $rateMethodFactory,
-        ServiceRepositoryInterface $serviceRepository,
+        SamedayApiHelper               $samedayApiHelper,
+        StoredDataHelper               $storedDataHelper,
+        Session                        $cartSession,
+        ScopeConfigInterface           $scopeConfig,
+        ErrorFactory                   $rateErrorFactory,
+        LoggerInterface                $logger,
+        ResultFactory                  $rateResultFactory,
+        MethodFactory                  $rateMethodFactory,
+        ServiceRepositoryInterface     $serviceRepository,
         PickupPointRepositoryInterface $pickupPointRepository,
-        array $data = []
-    ) {
+        array                          $data = []
+    )
+    {
         parent::__construct($scopeConfig, $rateErrorFactory, $logger, $data);
 
         $this->samedayApiHelper = $samedayApiHelper;
@@ -75,14 +77,25 @@ class Shipping extends AbstractCarrier implements CarrierInterface
     /**
      * @param string $awbNumber
      *
-     * @return string[]
      */
-    public function getTrackingInfo(string $awbNumber): array
+    public function getTrackingInfo(string $awbNumber)
     {
-        return [
-            'title' => 'Sameday Courier',
-            'number' => $awbNumber,
-        ];
+
+        $trackingInfo = new TrackingInfo();
+        $trackingInfo->setCarrierTitle("Sameday Courier");
+        $trackingInfo->setTracking($awbNumber);
+        $trackingInfo->setUrl("https://www.sameday.ro/#awb=" . $awbNumber);
+
+        $awbHistory = $this->samedayApiHelper->getAwbHistory($awbNumber);
+        if (null === $awbHistory) {
+            return $trackingInfo;
+        }else{
+
+            $trackingInfo->setTrackSummary($awbHistory);
+
+            return $trackingInfo;
+        }
+
     }
 
     /**
@@ -127,19 +140,18 @@ class Shipping extends AbstractCarrier implements CarrierInterface
         }
 
         $result = $this->_rateResultFactory->create();
-        $isTesting = (bool) $this->scopeConfig->getValue(StoredDataHelper::SAMEDAYCOURIER_ENV_MODE);
+        $isTesting = (bool)$this->scopeConfig->getValue(StoredDataHelper::SAMEDAYCOURIER_ENV_MODE);
 
         $hostCountry = $this->samedayApiHelper->getHostCountry();
         $destCountry = strtolower($request->getData('dest_country_id'));
         $destCity = $request->getData('dest_city');
         $eligibleServices = $hostCountry === $destCountry
             ? $this->samedayApiHelper::ELIGIBLE_SAMEDAY_SERVICES
-            : $this->samedayApiHelper::ELIGIBLE_SAMEDAY_SERVICES_CROSSBORDER
-        ;
+            : $this->samedayApiHelper::ELIGIBLE_SAMEDAY_SERVICES_CROSSBORDER;
 
         $services = array_filter(
             $this->serviceRepository->getAllActive($isTesting),
-            static function(Service $service) use ($eligibleServices) {
+            static function (Service $service) use ($eligibleServices) {
                 return in_array($service->getCode(), $eligibleServices, true);
             }
         );
@@ -164,7 +176,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
             $method->setMethodTitle($service->getName());
             $method->setCountryCode($destCountry);
             $method->setDestCity($destCity);
-            $method->setShowLockersMap((bool) $this->scopeConfig->getValue('carriers/samedaycourier/show_lockers_map'));
+            $method->setShowLockersMap((bool)$this->scopeConfig->getValue('carriers/samedaycourier/show_lockers_map'));
             $method->setApiUsername($this->getConfigData('username'));
 
             $shippingCost = $service->getPrice();
@@ -198,7 +210,8 @@ class Shipping extends AbstractCarrier implements CarrierInterface
             try {
                 $payment = $cart->getQuote()->getPayment();
                 $paymentMethodCode = $payment->getMethod();
-            } catch (\Exception $exception) {}
+            } catch (\Exception $exception) {
+            }
         }
         $repayment = 0;
         if (null === $paymentMethodCode || in_array($paymentMethodCode, $this->storedDataHelper::COD_OPTIONS, true)) {
@@ -231,7 +244,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
                 $city,
                 $regionName ?? $request->getDestRegionCode(),
                 $request->getData('dest_street'),
-                $request->getData('firstname') . ' ' .  $request->getData('lastname'),
+                $request->getData('firstname') . ' ' . $request->getData('lastname'),
                 $request->getData('telephone'),
                 null,
                 null,
