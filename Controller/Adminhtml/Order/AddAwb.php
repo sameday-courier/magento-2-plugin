@@ -270,7 +270,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             null,
             $serviceTaxIds,
             null,
-            null,
+            $requestParams['client_reference'] . "_" . time(),
             null,
             null,
             $requestParams['observation'],

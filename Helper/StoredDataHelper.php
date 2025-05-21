@@ -174,13 +174,13 @@ class StoredDataHelper extends AbstractHelper
     /**
      * @param string $forCountryCode
      *
-     * @return string
+     * @return null|string
      */
-    public function buildDestCurrency(string $forCountryCode): string
+    public function buildDestCurrency(string $forCountryCode): ?string
     {
         $forCountryCode = strtolower($forCountryCode);
 
-        return self::SAMEDAY_ELIGIBLE_CURRENCIES[$forCountryCode];
+        return self::SAMEDAY_ELIGIBLE_CURRENCIES[$forCountryCode] ?? null;
     }
 
     /**
