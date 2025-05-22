@@ -87,10 +87,9 @@ class Shipping extends AbstractCarrier implements CarrierInterface
         $trackingInfo->setUrl("https://www.sameday.ro/#awb=" . $awbNumber);
 
         $awbHistory = $this->samedayApiHelper->getAwbHistory($awbNumber);
-        if (null === $awbHistory) {
+        if (false === $awbHistory) {
             return $trackingInfo;
         }else{
-
             $trackingInfo->setTrackSummary($awbHistory);
 
             return $trackingInfo;

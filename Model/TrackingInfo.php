@@ -73,17 +73,21 @@ class TrackingInfo
     }
     public function getProgressdetail()
     {
-        return array_map(
-            static function ($history) {
-               return  [
-                    'deliverydate'=> $history->getDate()->format('Y-m-d'),
-                    'deliverytime'=> $history->getDate()->format('H:i:s'),
-                    'deliverylocation'=> ($history->getTransitLocation()!=="") ? $history->getTransitLocation() :"N/A",
-                    'activity'=> $history->getState(),
-                ];
-            },
-            $this->awbHistory->getHistory()
-        );
+        if($this->awbHistory) {
+            return array_map(
+                static function ($history) {
+                    return [
+                        'deliverydate'     => $history->getDate()->format('Y-m-d'),
+                        'deliverytime'     => $history->getDate()->format('H:i:s'),
+                        'deliverylocation' => ($history->getTransitLocation() !== "") ? $history->getTransitLocation() : "N/A",
+                        'activity'         => $history->getState(),
+                    ];
+                },
+                $this->awbHistory->getHistory()
+            );
+        }
+
+        return [];
     }
 
 }
