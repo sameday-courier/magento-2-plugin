@@ -8,9 +8,9 @@ use SamedayCourier\Shipping\Api\Data\RegionInterface;
 class Region extends AbstractExtensibleObject implements RegionInterface
 {
     /**
-     * @return string
+     * @return null|string
      */
-    public function getRegionId(): string
+    public function getRegionId(): ?string
     {
         return $this->_get(self::REGION_ID);
     }
@@ -26,9 +26,9 @@ class Region extends AbstractExtensibleObject implements RegionInterface
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getCountryId(): string
+    public function getCountryId(): ?string
     {
         return $this->_get(self::COUNTRY_ID);
     }
@@ -44,9 +44,9 @@ class Region extends AbstractExtensibleObject implements RegionInterface
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getCode(): string
+    public function getCode(): ?string
     {
         return $this->_get(self::CODE);
     }
@@ -62,9 +62,9 @@ class Region extends AbstractExtensibleObject implements RegionInterface
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getDefaultName(): string
+    public function getDefaultName(): ?string
     {
         return $this->_get(self::DEFAULT_NAME);
     }
