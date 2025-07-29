@@ -488,13 +488,13 @@ class LocalDataImporter extends AbstractHelper
         }
 
         foreach ($cities as $city) {
-            try {
-                $region = $this->regionRepository->getByCodeAndCountryCode(
-                    $city['county_code'],
-                    $city['country_code']
-                );
-            } catch (NoSuchEntityException $exception) {
-                $region = $this->regionFactory->create();
+            $region = $this->regionRepository->getByCodeAndCountryCode(
+                $city['county_code'],
+                $city['country_code']
+            );
+
+            if (null === $region) {
+                continue;
             }
 
             try {
