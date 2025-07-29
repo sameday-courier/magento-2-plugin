@@ -69,7 +69,7 @@ class Region extends AbstractExtensibleModel
             ->setRegionId($this->getData('region_id'))
             ->setCountryId($this->getData('country_id'))
             ->setCode($this->getData('code'))
-            ->setName($this->getData('default_name'))
+            ->setDefaultName($this->getData('default_name'))
         ;
     }
 

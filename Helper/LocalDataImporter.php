@@ -453,7 +453,7 @@ class LocalDataImporter extends AbstractHelper
 
             $region->setCountryId($county['country_code']);
             $region->setCode($county['code']);
-            $region->setName($county['county']);
+            $region->setDefaultName($county['county']);
 
             $this->regionRepository->save($region);
         }

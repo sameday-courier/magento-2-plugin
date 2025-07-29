@@ -9,15 +9,15 @@ use Magento\Framework\Api\ExtensibleDataInterface;
  */
 interface RegionInterface extends ExtensibleDataInterface
 {
-    public const ID = 'region_id';
+    public const REGION_ID = 'region_id';
     public const COUNTRY_ID = 'country_id';
     public const CODE = 'code';
-    public const NAME = 'default_name';
+    public const DEFAULT_NAME = 'default_name';
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getRegionId();
+    public function getRegionId(): string;
 
     /**
      * @param $regionId
@@ -32,11 +32,11 @@ interface RegionInterface extends ExtensibleDataInterface
     public function getCountryId(): string;
 
     /**
-     * @param string $countryId
+     * @param $countryId
      *
      * @return self
      */
-    public function setCountryId(string $countryId): self;
+    public function setCountryId($countryId): self;
 
     /**
      * @return string
@@ -44,23 +44,23 @@ interface RegionInterface extends ExtensibleDataInterface
     public function getCode(): string;
 
     /**
-     * @param string $code
+     * @param $code
      *
      * @return self
      */
-    public function setCode(string $code): self;
+    public function setCode($code): self;
 
     /**
      * @return string
      */
-    public function getName(): string;
+    public function getDefaultName(): string;
 
     /**
-     * @param $name
+     * @param $defaultName
      *
      * @return self
      */
-    public function setName($name): self;
+    public function setDefaultName($defaultName): self;
 
     /**
      * Retrieve existing extension attributes object or create a new one.

@@ -7,44 +7,76 @@ use SamedayCourier\Shipping\Api\Data\RegionInterface;
 
 class Region extends AbstractExtensibleObject implements RegionInterface
 {
-    public function getRegionId()
+    /**
+     * @return string
+     */
+    public function getRegionId(): string
     {
-        $this->_get(self::ID);
+        return $this->_get(self::REGION_ID);
     }
 
+    /**
+     * @param $regionId
+     *
+     * @return RegionInterface
+     */
     public function setRegionId($regionId): RegionInterface
     {
-        return $this->setData(self::ID, $regionId);
+        return $this->setData(self::REGION_ID, $regionId);
     }
 
+    /**
+     * @return string
+     */
     public function getCountryId(): string
     {
         return $this->_get(self::COUNTRY_ID);
     }
 
-    public function setCountryId(string $countryId): RegionInterface
+    /**
+     * @param $countryId
+     *
+     * @return RegionInterface
+     */
+    public function setCountryId($countryId): RegionInterface
     {
         return $this->setData(self::COUNTRY_ID, $countryId);
     }
 
+    /**
+     * @return string
+     */
     public function getCode(): string
     {
         return $this->_get(self::CODE);
     }
 
+    /**
+     * @param $code
+     *
+     * @return RegionInterface
+     */
     public function setCode($code): RegionInterface
     {
         return $this->setData(self::CODE, $code);
     }
 
-    public function getName(): string
+    /**
+     * @return string
+     */
+    public function getDefaultName(): string
     {
-        return $this->_get(self::NAME);
+        return $this->_get(self::DEFAULT_NAME);
     }
 
-    public function setName($name): RegionInterface
+    /**
+     * @param $defaultName
+     *
+     * @return RegionInterface
+     */
+    public function setDefaultName($defaultName): RegionInterface
     {
-        return $this->setData(self::NAME, $name);
+        return $this->setData(self::DEFAULT_NAME, $defaultName);
     }
 
     /**
