@@ -7,9 +7,12 @@ require([
             setTimeout(() => {
                 let countySelect = $('[name="pickuppoint\\[countyId\\]"]');
                 countySelect.on('change', (e) => {
-                    refreshCity(e.target.value);
+                    console.log(countySelect);
+                    //refreshCity(e.target.value);
                 });
             }, 1000);
+
+            // SamedayCities[RO][idJudet]
 
             const refreshCity = (countyId) => {
                 const citySelect = $('[name="pickuppoint\\[cityId\\]"]');
