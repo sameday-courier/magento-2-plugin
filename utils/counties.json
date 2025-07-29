@@ -1,0 +1,562 @@
+[
+  {
+    "county": "Bucuresti",
+    "code": "B",
+    "country_code": "RO"
+  },
+  {
+    "county": "Alba",
+    "code": "AB",
+    "country_code": "RO"
+  },
+  {
+    "county": "Arad",
+    "code": "AR",
+    "country_code": "RO"
+  },
+  {
+    "county": "Arges",
+    "code": "AG",
+    "country_code": "RO"
+  },
+  {
+    "county": "Bacau",
+    "code": "BC",
+    "country_code": "RO"
+  },
+  {
+    "county": "Bihor",
+    "code": "BH",
+    "country_code": "RO"
+  },
+  {
+    "county": "Bistrita-Nasaud",
+    "code": "BN",
+    "country_code": "RO"
+  },
+  {
+    "county": "Botosani",
+    "code": "BT",
+    "country_code": "RO"
+  },
+  {
+    "county": "Brasov",
+    "code": "BV",
+    "country_code": "RO"
+  },
+  {
+    "county": "Braila",
+    "code": "BR",
+    "country_code": "RO"
+  },
+  {
+    "county": "Buzau",
+    "code": "BZ",
+    "country_code": "RO"
+  },
+  {
+    "county": "Calarasi",
+    "code": "CL",
+    "country_code": "RO"
+  },
+  {
+    "county": "Caras-Severin",
+    "code": "CS",
+    "country_code": "RO"
+  },
+  {
+    "county": "Cluj",
+    "code": "CJ",
+    "country_code": "RO"
+  },
+  {
+    "county": "Constanta",
+    "code": "CT",
+    "country_code": "RO"
+  },
+  {
+    "county": "Covasna",
+    "code": "CV",
+    "country_code": "RO"
+  },
+  {
+    "county": "Dambovita",
+    "code": "DB",
+    "country_code": "RO"
+  },
+  {
+    "county": "Dolj",
+    "code": "DJ",
+    "country_code": "RO"
+  },
+  {
+    "county": "Galati",
+    "code": "GL",
+    "country_code": "RO"
+  },
+  {
+    "county": "Giurgiu",
+    "code": "GR",
+    "country_code": "RO"
+  },
+  {
+    "county": "Gorj",
+    "code": "GJ",
+    "country_code": "RO"
+  },
+  {
+    "county": "Harghita",
+    "code": "HR",
+    "country_code": "RO"
+  },
+  {
+    "county": "Hunedoara",
+    "code": "HD",
+    "country_code": "RO"
+  },
+  {
+    "county": "Ialomita",
+    "code": "IL",
+    "country_code": "RO"
+  },
+  {
+    "county": "Iasi",
+    "code": "IS",
+    "country_code": "RO"
+  },
+  {
+    "county": "Ilfov",
+    "code": "IF",
+    "country_code": "RO"
+  },
+  {
+    "county": "Maramures",
+    "code": "MM",
+    "country_code": "RO"
+  },
+  {
+    "county": "Mehedinti",
+    "code": "MH",
+    "country_code": "RO"
+  },
+  {
+    "county": "Mures",
+    "code": "MS",
+    "country_code": "RO"
+  },
+  {
+    "county": "Neamt",
+    "code": "NT",
+    "country_code": "RO"
+  },
+  {
+    "county": "Olt",
+    "code": "OT",
+    "country_code": "RO"
+  },
+  {
+    "county": "Prahova",
+    "code": "PH",
+    "country_code": "RO"
+  },
+  {
+    "county": "Satu Mare",
+    "code": "SM",
+    "country_code": "RO"
+  },
+  {
+    "county": "Salaj",
+    "code": "SJ",
+    "country_code": "RO"
+  },
+  {
+    "county": "Sibiu",
+    "code": "SB",
+    "country_code": "RO"
+  },
+  {
+    "county": "Suceava",
+    "code": "SV",
+    "country_code": "RO"
+  },
+  {
+    "county": "Teleorman",
+    "code": "TR",
+    "country_code": "RO"
+  },
+  {
+    "county": "Timis",
+    "code": "TM",
+    "country_code": "RO"
+  },
+  {
+    "county": "Tulcea",
+    "code": "TL",
+    "country_code": "RO"
+  },
+  {
+    "county": "Vaslui",
+    "code": "VS",
+    "country_code": "RO"
+  },
+  {
+    "county": "Valcea",
+    "code": "VL",
+    "country_code": "RO"
+  },
+  {
+    "county": "Vrancea",
+    "code": "VN",
+    "country_code": "RO"
+  },
+  {
+    "county": "Bács-Kiskun",
+    "code": "BK",
+    "country_code": "HU"
+  },
+  {
+    "county": "Baranya",
+    "code": "BA",
+    "country_code": "HU"
+  },
+  {
+    "county": "Békés",
+    "code": "BE",
+    "country_code": "HU"
+  },
+  {
+    "county": "Békéscsaba",
+    "code": "BC",
+    "country_code": "HU"
+  },
+  {
+    "county": "Borsod-Abaúj-Zemplén",
+    "code": "BZ",
+    "country_code": "HU"
+  },
+  {
+    "county": "Budapest",
+    "code": "BU",
+    "country_code": "HU"
+  },
+  {
+    "county": "Csongrád-Csanád",
+    "code": "CS",
+    "country_code": "HU"
+  },
+  {
+    "county": "Debrecen",
+    "code": "DE",
+    "country_code": "HU"
+  },
+  {
+    "county": "Dunaújváros",
+    "code": "DU",
+    "country_code": "HU"
+  },
+  {
+    "county": "Eger",
+    "code": "EG",
+    "country_code": "HU"
+  },
+  {
+    "county": "Érd",
+    "code": "ER",
+    "country_code": "HU"
+  },
+  {
+    "county": "Fejér",
+    "code": "FE",
+    "country_code": "HU"
+  },
+  {
+    "county": "Győr",
+    "code": "GY",
+    "country_code": "HU"
+  },
+  {
+    "county": "Győr-Moson-Sopron",
+    "code": "GS",
+    "country_code": "HU"
+  },
+  {
+    "county": "Hajdú-Bihar",
+    "code": "HB",
+    "country_code": "HU"
+  },
+  {
+    "county": "Heves",
+    "code": "HE",
+    "country_code": "HU"
+  },
+  {
+    "county": "Hódmezővásárhely",
+    "code": "HV",
+    "country_code": "HU"
+  },
+  {
+    "county": "Jász-Nagykun-Szolnok",
+    "code": "JN",
+    "country_code": "HU"
+  },
+  {
+    "county": "Kaposvár",
+    "code": "KV",
+    "country_code": "HU"
+  },
+  {
+    "county": "Kecskemét",
+    "code": "KM",
+    "country_code": "HU"
+  },
+  {
+    "county": "Miskolc",
+    "code": "MI",
+    "country_code": "HU"
+  },
+  {
+    "county": "Nagykanizsa",
+    "code": "NK",
+    "country_code": "HU"
+  },
+  {
+    "county": "Nógrád",
+    "code": "NO",
+    "country_code": "HU"
+  },
+  {
+    "county": "Nyíregyháza",
+    "code": "NY",
+    "country_code": "HU"
+  },
+  {
+    "county": "Pécs",
+    "code": "PS",
+    "country_code": "HU"
+  },
+  {
+    "county": "Pest",
+    "code": "PE",
+    "country_code": "HU"
+  },
+  {
+    "county": "Salgótarján",
+    "code": "ST",
+    "country_code": "HU"
+  },
+  {
+    "county": "Somogy",
+    "code": "SO",
+    "country_code": "HU"
+  },
+  {
+    "county": "Sopron",
+    "code": "SN",
+    "country_code": "HU"
+  },
+  {
+    "county": "Szabolcs-Szatmár-Bereg",
+    "code": "SZ",
+    "country_code": "HU"
+  },
+  {
+    "county": "Szeged",
+    "code": "SD",
+    "country_code": "HU"
+  },
+  {
+    "county": "Székesfehérvár",
+    "code": "SF",
+    "country_code": "HU"
+  },
+  {
+    "county": "Szekszárd",
+    "code": "SS",
+    "country_code": "HU"
+  },
+  {
+    "county": "Szolnok",
+    "code": "SK",
+    "country_code": "HU"
+  },
+  {
+    "county": "Szombathely",
+    "code": "SH",
+    "country_code": "HU"
+  },
+  {
+    "county": "Tatabánya",
+    "code": "TB",
+    "country_code": "HU"
+  },
+  {
+    "county": "Tolna",
+    "code": "TO",
+    "country_code": "HU"
+  },
+  {
+    "county": "Vas",
+    "code": "VA",
+    "country_code": "HU"
+  },
+  {
+    "county": "Veszprém",
+    "code": "VM",
+    "country_code": "HU"
+  },
+  {
+    "county": "Veszprém city",
+    "code": "VE",
+    "country_code": "HU"
+  },
+  {
+    "county": "Zala",
+    "code": "ZA",
+    "country_code": "HU"
+  },
+  {
+    "county": "Zalaegerszeg",
+    "code": "ZE",
+    "country_code": "HU"
+  },
+  {
+    "county": "Blagoevgrad",
+    "code": "01",
+    "country_code": "BG"
+  },
+  {
+    "county": "Burgas",
+    "code": "02",
+    "country_code": "BG"
+  },
+  {
+    "county": "Dobrich",
+    "code": "08",
+    "country_code": "BG"
+  },
+  {
+    "county": "Gabrovo",
+    "code": "07",
+    "country_code": "BG"
+  },
+  {
+    "county": "Haskovo",
+    "code": "26",
+    "country_code": "BG"
+  },
+  {
+    "county": "Kardzhali",
+    "code": "09",
+    "country_code": "BG"
+  },
+  {
+    "county": "Kyustendil",
+    "code": "10",
+    "country_code": "BG"
+  },
+  {
+    "county": "Lovech",
+    "code": "11",
+    "country_code": "BG"
+  },
+  {
+    "county": "Montana",
+    "code": "12",
+    "country_code": "BG"
+  },
+  {
+    "county": "Pazardzhik",
+    "code": "13",
+    "country_code": "BG"
+  },
+  {
+    "county": "Pernik",
+    "code": "14",
+    "country_code": "BG"
+  },
+  {
+    "county": "Pleven",
+    "code": "15",
+    "country_code": "BG"
+  },
+  {
+    "county": "Plovdiv",
+    "code": "16",
+    "country_code": "BG"
+  },
+  {
+    "county": "Razgrad",
+    "code": "17",
+    "country_code": "BG"
+  },
+  {
+    "county": "Ruse",
+    "code": "18",
+    "country_code": "BG"
+  },
+  {
+    "county": "Shumen",
+    "code": "27",
+    "country_code": "BG"
+  },
+  {
+    "county": "Silistra",
+    "code": "19",
+    "country_code": "BG"
+  },
+  {
+    "county": "Sliven",
+    "code": "20",
+    "country_code": "BG"
+  },
+  {
+    "county": "Smolyan",
+    "code": "21",
+    "country_code": "BG"
+  },
+  {
+    "county": "Sofia (stolitsa)",
+    "code": "22",
+    "country_code": "BG"
+  },
+  {
+    "county": "Sofia",
+    "code": "23",
+    "country_code": "BG"
+  },
+  {
+    "county": "Stara Zagora",
+    "code": "24",
+    "country_code": "BG"
+  },
+  {
+    "county": "Targovishte",
+    "code": "25",
+    "country_code": "BG"
+  },
+  {
+    "county": "Varna",
+    "code": "03",
+    "country_code": "BG"
+  },
+  {
+    "county": "Veliko Tarnovo",
+    "code": "04",
+    "country_code": "BG"
+  },
+  {
+    "county": "Vidin",
+    "code": "05",
+    "country_code": "BG"
+  },
+  {
+    "county": "Vratsa",
+    "code": "06",
+    "country_code": "BG"
+  },
+  {
+    "county": "Yambol",
+    "code": "28",
+    "country_code": "BG"
+  }
+]

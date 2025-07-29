@@ -2,8 +2,8 @@
 
 namespace SamedayCourier\Shipping\Api;
 
-use Magento\Directory\Model\Region;
 use Magento\Framework\Api\ExtensibleDataInterface;
+use SamedayCourier\Shipping\Api\Data\RegionInterface;
 
 interface RegionRepositoryInterface extends ExtensibleDataInterface
 {
@@ -11,7 +11,14 @@ interface RegionRepositoryInterface extends ExtensibleDataInterface
      * @param string $regionCode
      * @param string $countryCode
      *
-     * @return Region
+     * @return RegionInterface
      */
-    public function getByCodeAndCountryCode(string $regionCode, string $countryCode): Region;
+    public function getByCodeAndCountryCode(string $regionCode, string $countryCode): ?RegionInterface;
+
+    /**
+     * @param RegionInterface $region
+     *
+     * @return void
+     */
+    public function save(RegionInterface $region): void;
 }
