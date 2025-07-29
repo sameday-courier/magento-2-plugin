@@ -3,11 +3,11 @@ require([
     ],
     ($) => {
         const _actions = [
-            //'importServices',
-            //'importPickupPoints',
+            'importServices',
+            'importPickupPoints',
             'importCounties',
-            //'importCities',
-            //'importLockers'
+            'importCities',
+            'importLockers',
         ];
         const importDataButton = document.getElementById('carriers_samedaycourier_samedayImportLocalData');
 
