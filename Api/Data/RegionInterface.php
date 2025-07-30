@@ -15,9 +15,9 @@ interface RegionInterface extends ExtensibleDataInterface
     public const DEFAULT_NAME = 'default_name';
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getRegionId(): string;
+    public function getRegionId(): ?string;
 
     /**
      * @param $regionId
@@ -27,9 +27,9 @@ interface RegionInterface extends ExtensibleDataInterface
     public function setRegionId($regionId): self;
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getCountryId(): string;
+    public function getCountryId(): ?string;
 
     /**
      * @param $countryId
@@ -39,9 +39,9 @@ interface RegionInterface extends ExtensibleDataInterface
     public function setCountryId($countryId): self;
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getCode(): string;
+    public function getCode(): ?string;
 
     /**
      * @param $code
@@ -51,9 +51,9 @@ interface RegionInterface extends ExtensibleDataInterface
     public function setCode($code): self;
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getDefaultName(): string;
+    public function getDefaultName(): ?string;
 
     /**
      * @param $defaultName
