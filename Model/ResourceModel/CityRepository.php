@@ -8,11 +8,13 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Api\SortOrder;
 use Magento\Framework\Exception\AlreadyExistsException;
+use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\TestFramework\Helper\Bootstrap;
 use SamedayCourier\Shipping\Api\Data\CityInterface;
 use SamedayCourier\Shipping\Api\Data\CitySearchResultsInterfaceFactory;
 use SamedayCourier\Shipping\Api\CityRepositoryInterface;
+use SamedayCourier\Shipping\Api\Data\RegionInterface;
+use SamedayCourier\Shipping\Helper\GeneralHelper;
 use SamedayCourier\Shipping\Helper\SearchResultHelper;
 use SamedayCourier\Shipping\Model\CityFactory;
 use SamedayCourier\Shipping\Model\ResourceModel\City\CollectionFactory;
@@ -23,6 +25,16 @@ class CityRepository implements CityRepositoryInterface
      * @var CityFactory
      */
     private $cityFactory;
+
+    /**
+     * @var GeneralHelper $generalHelper
+     */
+    private $generalHelper;
+
+    /**
+     * @var RegionRepository $regionRepository
+     */
+    private $regionRepository;
 
     /**
      * @var City
@@ -57,6 +69,8 @@ class CityRepository implements CityRepositoryInterface
     /**
      * @param CityFactory $cityFactory
      * @param City $cityResourceModel
+     * @param RegionRepository $regionRepository
+     * @param GeneralHelper $generalHelper
      * @param CollectionFactory $cityCollectionFactory
      * @param CitySearchResultsInterfaceFactory $citySearchResultsFactory
      * @param JoinProcessorInterface $extensionAttributesJoinProcessor
@@ -66,6 +80,8 @@ class CityRepository implements CityRepositoryInterface
     public function __construct(
         CityFactory $cityFactory,
         City $cityResourceModel,
+        RegionRepository $regionRepository,
+        GeneralHelper $generalHelper,
         CollectionFactory $cityCollectionFactory,
         CitySearchResultsInterfaceFactory $citySearchResultsFactory,
         JoinProcessorInterface $extensionAttributesJoinProcessor,
@@ -74,6 +90,8 @@ class CityRepository implements CityRepositoryInterface
     ) {
         $this->cityFactory = $cityFactory;
         $this->cityResourceModel = $cityResourceModel;
+        $this->generalHelper = $generalHelper;
+        $this->regionRepository = $regionRepository;
         $this->cityCollectionFactory = $cityCollectionFactory;
         $this->citySearchResultsFactory = $citySearchResultsFactory;
         $this->extensionAttributesJoinProcessor = $extensionAttributesJoinProcessor;
@@ -199,5 +217,57 @@ class CityRepository implements CityRepositoryInterface
         $this->cityResourceModel->delete($cityModel);
 
         return true;
+    }
+
+    /**
+     * @param string $regionId
+     *
+     * @return CityInterface[]
+     *
+     * @throws InputException
+     */
+    public function getByRegionId(string $regionId): array
+    {
+        return $this->getList(
+            $this->searchCriteriaBuilder
+                ->addFilter(CityInterface::REGION_ID, $regionId)
+                ->addSortOrder((new SortOrder())->setField('region_id')->setDirection(SortOrder::SORT_ASC))
+                ->create()
+            )
+        ;
+    }
+
+    /**
+     * @return array such as ["COUNTRY_CODE" => ["REGION_ID" => [[], [], ...]]
+     *
+     * @throws InputException
+     */
+    public function getCitiesForShipCountries(): array
+    {
+        $cities = [];
+        foreach ($this->generalHelper::AVAILABLE_SHIP_COUNTRIES as $countryCode) {
+            try {
+                $countryCode = strtoupper($countryCode);
+                $regions = $this->regionRepository->getByCountryId($countryCode);
+            } catch (Exception $e) {
+                continue;
+            }
+
+            foreach ($regions as $region) {
+                if (null !== $regionId = $region->getRegionId()) {
+                    $cities[$countryCode][$region->getRegionId()] = array_map(
+                        static function (CityInterface $city) {
+                            return [
+                                'label' => $city->getName(),
+                                'value' => $city->getName(),
+                            ];
+                        },
+                        $this->getByRegionId($regionId)
+                    );
+                }
+            }
+        }
+
+        return $cities;
     }
 }

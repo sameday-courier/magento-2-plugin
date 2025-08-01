@@ -83,6 +83,24 @@ class RegionRepository implements RegionRepositoryInterface
     }
 
     /**
+     * @param $countryId
+     *
+     * @return array []RegionInterface
+     *
+     * @throws InputException
+     */
+    public function getByCountryId($countryId) : array
+    {
+        return $this->getList(
+            $this->searchCriteriaBuilder
+                ->addFilter(RegionInterface::COUNTRY_ID, $countryId)
+                ->addSortOrder((new SortOrder())->setField('region_id')->setDirection(SortOrder::SORT_ASC))
+                ->create()
+            )
+        ;
+    }
+
+    /**
      * @param string $regionCode
      * @param string $countryCode
      *
@@ -99,7 +117,8 @@ class RegionRepository implements RegionRepositoryInterface
                 ->setPageSize(1)
                 ->addSortOrder((new SortOrder())->setField('region_id')->setDirection(SortOrder::SORT_ASC))
                 ->create()
-        );
+            )
+        ;
 
         if (!$items) {
             return null;

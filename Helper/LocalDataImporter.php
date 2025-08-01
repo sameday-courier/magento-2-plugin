@@ -5,7 +5,7 @@ namespace SamedayCourier\Shipping\Helper;
 use Exception;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
-use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Module\Dir;
 use Magento\Framework\Serialize\Serializer\Json;
@@ -112,6 +112,11 @@ class LocalDataImporter extends AbstractHelper
     private $jsonHelper;
 
     /**
+     * @var CacheHelper $cacheHelper
+     */
+    private $cacheHelper;
+
+    /**
      * @param Context $context
      * @param ApiHelper $apiHelper
      * @param GeneralHelper $generalHelper
@@ -149,7 +154,8 @@ class LocalDataImporter extends AbstractHelper
         CityRepositoryInterface $cityRepository,
         CityInterfaceFactory $cityFactory,
         Dir $moduleDirectory,
-        Json $jsonHelper
+        Json $jsonHelper,
+        CacheHelper $cacheHelper
     ) {
         parent::__construct($context);
 
@@ -170,6 +176,7 @@ class LocalDataImporter extends AbstractHelper
         $this->cityFactory = $cityFactory;
         $this->moduleDirectory = $moduleDirectory;
         $this->jsonHelper = $jsonHelper;
+        $this->cacheHelper = $cacheHelper;
     }
 
     /**
@@ -517,6 +524,23 @@ class LocalDataImporter extends AbstractHelper
         return (new LocalDataImporterResponse())
             ->setSucceed(true)
             ->setMessage(__('Cities was imported with success!')
+        );
+    }
+
+    /**
+     * @return LocalDataImporterResponse
+     *
+     * @throws InputException
+     */
+    public function importCitiesToCacheSystem(): LocalDataImporterResponse
+    {
+        $cities = $this->cityRepository->getCitiesForShipCountries();
+
+        $this->cacheHelper->cacheData($this->generalHelper::CACHE_CITIES_DATA_KEY, $cities);
+
+        return (new LocalDataImporterResponse())
+            ->setSucceed(true)
+            ->setMessage(__('Cities was imported with success in the cache system!')
         );
     }
 }
