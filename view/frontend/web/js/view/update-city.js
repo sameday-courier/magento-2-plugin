@@ -3,8 +3,9 @@ define(
     'jquery',
     'uiRegistry',
     'Magento_Checkout/js/model/quote',
+    'ko'
 ],
-($, uiRegistry, quote) => {
+($, uiRegistry, quote, ko) => {
     'use strict';
 
     return function (target) {
@@ -19,9 +20,15 @@ define(
                     cityComponent.setOptions([]);
                 }
 
-                quote.shippingAddress.subscribe(function (address) {
-                    if (address.regionId && address.regionId !== regionId) {
-                        this.loadCity(cityComponent, address.regionId);
+                this.regionIdObserver = ko.computed(function() {
+                    let address = quote.shippingAddress();
+
+                    return address ? address.regionId : null;
+                }.bind(this));
+
+                this.regionIdObserver.subscribe(function (regionId) {
+                    if (regionId) {
+                        this.loadCity(cityComponent, regionId);
                     }
                 }.bind(this));
 
@@ -30,7 +37,7 @@ define(
 
             loadCity: (cityComponent, regionId) => {
                 console.log(regionId);
-                cityComponent.setOptions([{value: '123', 'label': 'Sector 1'}, {value: '123', 'label': 'Sector 2'}]);
+                //cityComponent.setOptions([{value: '123', 'label': 'Sector 1'}, {value: '123', 'label': 'Sector 2'}]);
             }
         });
     };

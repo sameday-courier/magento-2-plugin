@@ -4,6 +4,7 @@ namespace SamedayCourier\Shipping\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
+use Sameday\Objects\Types\AwbPdfType;
 
 class GeneralHelper extends AbstractHelper
 {
@@ -14,11 +15,18 @@ class GeneralHelper extends AbstractHelper
     public const SAMEDAY_SERVICE_CROSSBORDER_LOCKER_CODE = 'XL';
     public const SAMEDAY_SERVICE_PUDO_CODE = 'PP';
     public const OOH_SERVICE_LABEL = 'Out of home delivery';
+    public const CACHE_CITIES_DATA_KEY = 'sameday_courier_cities';
 
     public function __construct(Context $context)
     {
         parent::__construct($context);
     }
+
+    public const AVAILABLE_SHIP_COUNTRIES = [
+        ApiHelper::ROMANIA_CODE,
+        ApiHelper::BULGARIA_CODE,
+        ApiHelper::HUNGARY_CODE,
+    ];
 
     public const OOH_LABEL = [
         ApiHelper::ROMANIA_CODE => 'Ridicare Sameday Point/Easybox',
@@ -57,6 +65,14 @@ class GeneralHelper extends AbstractHelper
     }
 
     /**
+     * @return string
+     */
+    public function getAwbLabelFormat(): string
+    {
+        return $this->scopeConfig->getValue('carriers/samedaycourier/awb_label_format') ?? AwbPdfType::A4;
+    }
+
+    /**
      * @param string $serviceCode
      *
      * @return bool
@@ -72,5 +88,13 @@ class GeneralHelper extends AbstractHelper
     public function getHostCountry(): string
     {
         return $this->scopeConfig->getValue('carriers/samedaycourier/country') ?? ApiHelper::ROMANIA_CODE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function useSamedayNomenclature(): bool
+    {
+        return (bool) $this->scopeConfig->getValue('carriers/samedaycourier/use_sameday_cities');
     }
 }
