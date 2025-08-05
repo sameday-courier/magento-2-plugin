@@ -2,9 +2,11 @@
 
 namespace SamedayCourier\Shipping\Model\Plugin\Checkout;
 
+use Magento\Framework\Exception\InputException;
 use Magento\Framework\Stdlib\ArrayManager;
 use SamedayCourier\Shipping\Helper\CacheHelper;
 use SamedayCourier\Shipping\Helper\GeneralHelper;
+use SamedayCourier\Shipping\Helper\SamedayCitiesHelper;
 
 class LayoutProcessor
 {
@@ -19,24 +21,24 @@ class LayoutProcessor
     private $generalHelper;
 
     /**
-     * @var CacheHelper
+     * @var SamedayCitiesHelper $samedayCitiesHelper
      */
-    private $cacheHelper;
+    private $samedayCitiesHelper;
 
     /**
      * @param ArrayManager $arrayManager
      * @param GeneralHelper $generalHelper
-     * @param CacheHelper $cacheHelper
+     * @param SamedayCitiesHelper $samedayCitiesHelper
      */
     public function __construct(
         ArrayManager $arrayManager,
         GeneralHelper $generalHelper,
-        CacheHelper $cacheHelper
+        SamedayCitiesHelper $samedayCitiesHelper
     )
     {
         $this->arrayManager = $arrayManager;
         $this->generalHelper = $generalHelper;
-        $this->cacheHelper = $cacheHelper;
+        $this->samedayCitiesHelper = $samedayCitiesHelper;
     }
 
     /**
@@ -79,6 +81,9 @@ class LayoutProcessor
         return $this->arrayManager->set($path, $jsLayout, $cityField);
     }
 
+    /**
+     * @throws InputException
+     */
     private function configureCityFieldAsDropDown($cityField): array
     {
         return array_merge(
@@ -95,7 +100,7 @@ class LayoutProcessor
                         'fallbackToText' => true,
                         'noOptionsMessage' => __('Please select a city.'),
                         'enableTypeAhead' => true,
-                        'samedayCities' => $this->cacheHelper->loadData($this->generalHelper::CACHE_CITIES_DATA_KEY)
+                        'samedayCities' => $this->samedayCitiesHelper->getCachedCities()
                     ]
                 ),
                 'dataScope' => 'shippingAddress.city',

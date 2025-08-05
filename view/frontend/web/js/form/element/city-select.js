@@ -10,10 +10,8 @@ define([
             fallbackToText: true,
             mode: 'dropdown',
             noOptionsMessage: 'No cities available',
-            regionId: null,
-            listens: {
-                'regionId': 'onRegionChanged'
-            }
+            region_id: null,
+            country_id: null,
         },
 
         /**
@@ -22,21 +20,13 @@ define([
         initialize: function () {
             this._super();
 
-            console.log(this);
-
-            this.setOptions(
-                [
-                    {value: '123', 'label': 'Sector 777'},
-                    {value: '123', 'label': 'Sector 2'},
-                    {value: '1234', 'label': 'Sector 55'}
-                ]
-            );
-
-            registry.async('checkout.steps.shipping-step.shippingAddress.shipping-address-fieldset.region_id')(function (regionComponent) {
+            registry.async(`${this.parentName}.region_id`)(function (regionComponent) {
                 if (regionComponent) {
-                    regionComponent.value.subscribe(function (value) {
-                        console.log(registry.get('checkout.steps.shipping-step.shippingAddress.shipping-address-fieldset.country_id').value);
-                        this.onRegionChanged(value);
+                    regionComponent.value.subscribe(function (newRegion) {
+                        this.onRegionChanged(
+                            registry.get(`${this.parentName}.country_id`).value(),
+                            newRegion,
+                        );
                     }.bind(this));
                 }
             }.bind(this));
@@ -46,14 +36,16 @@ define([
             return this;
         },
 
-        initObservable: function () {
-            this._super().observe(['regionId']);
+        onRegionChanged: function (newCountryId, newRegionId) {
+            let cities = this.samedayCities?.[newCountryId]?.[newRegionId] ?? [];
 
-            return this;
-        },
-
-        onRegionChanged: function (newRegionId) {
-            console.log(newRegionId);
+            if (cities && cities.length > 0) {
+                this.setOptions(cities);
+                console.log('Schimba in Drop-down !');
+            } else {
+                console.log('Schimba in Text !');
+                this.switchToTextInput();
+            }
         },
 
         checkForFallback: function () {
