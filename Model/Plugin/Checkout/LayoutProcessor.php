@@ -89,6 +89,7 @@ class LayoutProcessor
                     $cityField['config'] ?? [],
                     [
                         'elementTmpl' => 'ui/form/element/select',
+                        'customScope' => 'shippingAddress',
                         'template' => 'ui/form/field',
                         'mode' => 'dropdown',
                         'fallbackToText' => true,
@@ -97,14 +98,17 @@ class LayoutProcessor
                         'samedayCities' => $this->cacheHelper->loadData($this->generalHelper::CACHE_CITIES_DATA_KEY)
                     ]
                 ),
+                'dataScope' => 'shippingAddress.city',
+                'provider' => 'checkoutProvider',
                 'options' => [],
                 'validation' => [
                     'required-entry' => true
                 ],
                 'sortOrder' => '105',
                 'imports' => [
-                    'regionValue' => '${$.parentName}.region_id:value',
-                ]
+                    'regionId' => 'shippingAddress.region_id',
+                ],
+                'visible' => true,
             ]
         );
     }

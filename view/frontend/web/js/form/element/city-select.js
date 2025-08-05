@@ -1,7 +1,7 @@
 define([
-    'jquery',
     'Magento_Ui/js/form/element/select',
-], function ($, Select) {
+    'uiRegistry',
+], function (Select, registry) {
     'use strict';
 
     return Select.extend({
@@ -10,6 +10,10 @@ define([
             fallbackToText: true,
             mode: 'dropdown',
             noOptionsMessage: 'No cities available',
+            regionId: null,
+            listens: {
+                'regionId': 'onRegionChanged'
+            }
         },
 
         /**
@@ -18,9 +22,38 @@ define([
         initialize: function () {
             this._super();
 
+            console.log(this);
+
+            this.setOptions(
+                [
+                    {value: '123', 'label': 'Sector 777'},
+                    {value: '123', 'label': 'Sector 2'},
+                    {value: '1234', 'label': 'Sector 55'}
+                ]
+            );
+
+            registry.async('checkout.steps.shipping-step.shippingAddress.shipping-address-fieldset.region_id')(function (regionComponent) {
+                if (regionComponent) {
+                    regionComponent.value.subscribe(function (value) {
+                        console.log(registry.get('checkout.steps.shipping-step.shippingAddress.shipping-address-fieldset.country_id').value);
+                        this.onRegionChanged(value);
+                    }.bind(this));
+                }
+            }.bind(this));
+
             this.checkForFallback();
 
             return this;
+        },
+
+        initObservable: function () {
+            this._super().observe(['regionId']);
+
+            return this;
+        },
+
+        onRegionChanged: function (newRegionId) {
+            console.log(newRegionId);
         },
 
         checkForFallback: function () {
@@ -29,13 +62,6 @@ define([
             if (cities.length <= 1 && this.fallbackToText) {
                 this.switchToTextInput();
             }
-        },
-
-        /**
-         * @param {String} regionId
-         */
-        onRegionValueUpdate: function(regionId) {
-            console.log('🔄 Region changed to:', regionId);
         },
 
         switchToTextInput: function () {
