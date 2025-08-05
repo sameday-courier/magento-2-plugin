@@ -3,10 +3,10 @@ require([
     ],
     ($) => {
         const _actions = [
-            //'importServices',
-            //'importPickupPoints',
-            //'importCounties',
-            //'importCities',
+            'importServices',
+            'importPickupPoints',
+            'importCounties',
+            'importCities',
             'importCitiesToCacheSystem',
             //'importLockers',
         ];
