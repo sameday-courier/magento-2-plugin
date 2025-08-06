@@ -63,6 +63,7 @@ class LayoutProcessor
      * @param array $jsLayout
      *
      * @return array
+     * @throws InputException
      */
     private function processCityField(array $jsLayout): array
     {
@@ -76,7 +77,7 @@ class LayoutProcessor
             return $jsLayout;
         }
 
-        $cityField = $this->configureCityFieldAsDropDown($cityField);
+        $cityField = $this->configureCityField($cityField);
 
         return $this->arrayManager->set($path, $jsLayout, $cityField);
     }
@@ -84,12 +85,12 @@ class LayoutProcessor
     /**
      * @throws InputException
      */
-    private function configureCityFieldAsDropDown($cityField): array
+    private function configureCityField($cityField): array
     {
         return array_merge(
             $cityField,
             [
-                'component' => 'SamedayCourier_Shipping/js/form/element/city-select',
+                'component' => 'SamedayCourier_Shipping/js/form/element/city',
                 'config' => array_merge(
                     $cityField['config'] ?? [],
                     [
@@ -116,10 +117,5 @@ class LayoutProcessor
                 'visible' => true,
             ]
         );
-    }
-
-    private function configureCityFieldAsInputText(array $jsLayout): array
-    {
-        return $jsLayout;
     }
 }

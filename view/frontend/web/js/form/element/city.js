@@ -8,10 +8,9 @@ define([
         defaults: {
             samedayCities: {},
             fallbackToText: true,
+            elementTmpl: 'ui/form/element/select',
             mode: 'dropdown',
             noOptionsMessage: 'No cities available',
-            region_id: null,
-            country_id: null,
         },
 
         /**
@@ -20,13 +19,29 @@ define([
         initialize: function () {
             this._super();
 
+            console.log(this.samedayCities);
+
             registry.async(`${this.parentName}.region_id`)(function (regionComponent) {
                 if (regionComponent) {
+                    // After component is fully loaded
+                    this.onRegionChanged(
+                        registry.get(`${this.parentName}.country_id`).value(),
+                        registry.get(`${this.parentName}.region_id`).value(),
+                    );
+
+                    // After RegionID is changed
                     regionComponent.value.subscribe(function (newRegion) {
                         this.onRegionChanged(
                             registry.get(`${this.parentName}.country_id`).value(),
                             newRegion,
                         );
+
+                        registry.get(this.name, function (component) {
+                            if (component) {
+                                console.log('component: ', component);
+                                component.reload();
+                            }
+                        });
                     }.bind(this));
                 }
             }.bind(this));
@@ -40,7 +55,12 @@ define([
             let cities = this.samedayCities?.[newCountryId]?.[newRegionId] ?? [];
 
             if (cities && cities.length > 0) {
+                this.elementTmpl = 'ui/form/element/select';
+                this.mode = 'dropdown';
+                this.template = 'ui/form/field';
+
                 this.setOptions(cities);
+
                 console.log('Schimba in Drop-down !');
             } else {
                 console.log('Schimba in Text !');
