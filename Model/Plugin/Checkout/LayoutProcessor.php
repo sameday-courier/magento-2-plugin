@@ -94,26 +94,17 @@ class LayoutProcessor
                 'config' => array_merge(
                     $cityField['config'] ?? [],
                     [
-                        'elementTmpl' => 'ui/form/element/select',
+                        'template' => 'SamedayCourier_Shipping/checkout/city/city',
                         'customScope' => 'shippingAddress',
-                        'template' => 'ui/form/field',
-                        'mode' => 'dropdown',
-                        'fallbackToText' => true,
                         'noOptionsMessage' => __('Please select a city.'),
                         'enableTypeAhead' => true,
                         'samedayCities' => $this->samedayCitiesHelper->getCachedCities()
                     ]
                 ),
-                'dataScope' => 'shippingAddress.city',
-                'provider' => 'checkoutProvider',
-                'options' => [],
                 'validation' => [
                     'required-entry' => true
                 ],
                 'sortOrder' => '105',
-                'imports' => [
-                    'regionId' => 'shippingAddress.region_id',
-                ],
                 'visible' => true,
             ]
         );

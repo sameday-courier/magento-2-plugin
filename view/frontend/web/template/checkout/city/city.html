@@ -1,0 +1,17 @@
+<div class="field city">
+    <label for="city" class="label">
+        <span>City</span>
+    </label>
+    <div class="control">
+        <div data-bind="if: inputType() === 'input'">
+            <input type="text" data-bind="value: selectedOption, attr: { name: inputName, placeholder: placeholder, id: uid }" />
+        </div>
+
+        <div data-bind="if: inputType() === 'select'">
+            <select
+                data-bind="options: optionsList, optionsText: 'label', optionsValue: 'value', value: selectedOption, attr: { name: inputName, placeholder: placeholder, id: uid }"
+            >
+            </select>
+        </div>
+    </div>
+</div>
