@@ -1,16 +1,23 @@
 define([
     'Magento_Ui/js/form/element/select',
     'uiRegistry',
-], function (Select, registry) {
+    'knockout',
+], function (Select, registry, ko) {
     'use strict';
 
     return Select.extend({
         defaults: {
             samedayCities: {},
-            fallbackToText: true,
-            elementTmpl: 'ui/form/element/select',
-            mode: 'dropdown',
+            // fallbackToText: true,
+            // elementTmpl: 'ui/form/element/select',
+            // mode: 'dropdown',
             noOptionsMessage: 'No cities available',
+            placeholder: 'Please select a city.',
+            optionsList: ko.observableArray([]),
+            inputType: ko.observable('input'),
+            selectedOption: ko.observable(),
+            dataScope: 'shippingAddress.city',
+            provider: 'checkoutProvider',
         },
 
         /**
@@ -19,7 +26,7 @@ define([
         initialize: function () {
             this._super();
 
-            console.log(this.samedayCities);
+            console.log(this);
 
             registry.async(`${this.parentName}.region_id`)(function (regionComponent) {
                 if (regionComponent) {
@@ -35,13 +42,6 @@ define([
                             registry.get(`${this.parentName}.country_id`).value(),
                             newRegion,
                         );
-
-                        registry.get(this.name, function (component) {
-                            if (component) {
-                                console.log('component: ', component);
-                                component.reload();
-                            }
-                        });
                     }.bind(this));
                 }
             }.bind(this));
@@ -55,16 +55,18 @@ define([
             let cities = this.samedayCities?.[newCountryId]?.[newRegionId] ?? [];
 
             if (cities && cities.length > 0) {
-                this.elementTmpl = 'ui/form/element/select';
-                this.mode = 'dropdown';
-                this.template = 'ui/form/field';
+                // this.elementTmpl = 'ui/form/element/select';
+                // this.mode = 'dropdown';
+                // this.template = 'ui/form/field';
 
-                this.setOptions(cities);
+                this.inputType('select');
+                this.optionsList(cities);
 
                 console.log('Schimba in Drop-down !');
             } else {
+                this.inputType('input');
                 console.log('Schimba in Text !');
-                this.switchToTextInput();
+                //this.switchToTextInput();
             }
         },
 
@@ -72,15 +74,15 @@ define([
             let cities = this.samedayCities;
 
             if (cities.length <= 1 && this.fallbackToText) {
-                this.switchToTextInput();
+                // this.switchToTextInput();
             }
         },
 
-        switchToTextInput: function () {
-            this.elementTmpl = 'ui/form/element/input';
-            this.mode = 'text';
-            this.placeholder = this.noOptionsMessage;
-            this.template = 'ui/form/field';
-        },
+        // switchToTextInput: function () {
+        //     this.elementTmpl = 'ui/form/element/input';
+        //     this.mode = 'text';
+        //     this.placeholder = this.noOptionsMessage;
+        //     this.template = 'ui/form/field';
+        // },
     });
 });
