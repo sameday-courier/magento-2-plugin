@@ -6,7 +6,7 @@
         <div data-bind="if: inputType() === 'input'">
             <input class="input-text" type="text"
                data-bind="
-                value: selectedOption,
+                value: value,
                 attr: {
                     name: inputName,
                     placeholder: placeholder,
@@ -22,7 +22,7 @@
                 options: optionsList,
                 optionsText: 'label',
                 optionsValue: 'value',
-                value: selectedOption,
+                value: value,
                 attr: {
                         name: inputName,
                         placeholder: placeholder,
