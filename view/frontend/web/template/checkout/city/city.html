@@ -1,15 +1,39 @@
-<div class="field city">
-    <label for="city" class="label">
-        <span>City</span>
+<div class="field _required" data-bind="visible: visible, attr: {name: element.dataScope}, css: additionalClasses">
+    <label class="label" data-bind="attr: {'for': element.uid}">
+        <span data-bind="i18n: element.label"></span>
     </label>
-    <div class="control">
+    <div class="control" data-bind="css: {'_with-tooltip': element.tooltip}">
         <div data-bind="if: inputType() === 'input'">
-            <input type="text" data-bind="value: selectedOption, attr: { name: inputName, placeholder: placeholder, id: uid }" />
+            <input class="input-text" type="text"
+               data-bind="
+                value: selectedOption,
+                attr: {
+                    name: inputName,
+                    placeholder: placeholder,
+                    id: uid,
+                }
+            "
+            />
         </div>
 
         <div data-bind="if: inputType() === 'select'">
             <select
-                data-bind="options: optionsList, optionsText: 'label', optionsValue: 'value', value: selectedOption, attr: { name: inputName, placeholder: placeholder, id: uid }"
+                data-bind="
+                options: optionsList,
+                optionsText: 'label',
+                optionsValue: 'value',
+                value: selectedOption,
+                attr: {
+                        name: inputName,
+                        placeholder: placeholder,
+                        id: uid,
+                    },
+                optionsAfterRender: function(option, item) {
+                    if (item && item.disabled) {
+                        ko.applyBindingsToNode(option, {attr: {disabled: true}}, item);
+                    }
+                },
+            "
             >
             </select>
         </div>

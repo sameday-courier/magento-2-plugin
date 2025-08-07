@@ -34,8 +34,7 @@ class LayoutProcessor
         ArrayManager $arrayManager,
         GeneralHelper $generalHelper,
         SamedayCitiesHelper $samedayCitiesHelper
-    )
-    {
+    ) {
         $this->arrayManager = $arrayManager;
         $this->generalHelper = $generalHelper;
         $this->samedayCitiesHelper = $samedayCitiesHelper;
@@ -46,12 +45,12 @@ class LayoutProcessor
      * @param array $jsLayout
      *
      * @return array
+     * @throws InputException
      */
     public function afterProcess(
         \Magento\Checkout\Block\Checkout\LayoutProcessor $subject,
         array $jsLayout
-    ): array
-    {
+    ): array {
         if (false === $this->generalHelper->useSamedayNomenclature()) {
             return $jsLayout;
         }
@@ -95,17 +94,11 @@ class LayoutProcessor
                     $cityField['config'] ?? [],
                     [
                         'template' => 'SamedayCourier_Shipping/checkout/city/city',
-                        'customScope' => 'shippingAddress',
-                        'noOptionsMessage' => __('Please select a city.'),
-                        'enableTypeAhead' => true,
                         'samedayCities' => $this->samedayCitiesHelper->getCachedCities()
                     ]
                 ),
-                'validation' => [
-                    'required-entry' => true
-                ],
+                'placeholder' => 'Select a city',
                 'sortOrder' => '105',
-                'visible' => true,
             ]
         );
     }
