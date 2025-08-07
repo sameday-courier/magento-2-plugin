@@ -97,7 +97,7 @@ class LayoutProcessor
                         'samedayCities' => $this->samedayCitiesHelper->getCachedCities()
                     ]
                 ),
-                'placeholder' => 'Select a city',
+                'placeholder' => __('Please select a city'),
                 'sortOrder' => '105',
             ]
         );

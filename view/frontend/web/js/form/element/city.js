@@ -42,7 +42,7 @@ define([
 
             if (cities && cities.length > 0) {
                 this.inputType('select');
-                this.optionsList(cities);
+                this.optionsList([{'label': this.placeholder, 'value': ''}].concat(cities));
             } else {
                 this.inputType('input');
                 this.value('');
