@@ -10,7 +10,6 @@ define([
             samedayCities: {},
             optionsList: ko.observableArray([]),
             inputType: ko.observable('input'),
-            selectedOption: ko.observable(),
         },
 
         /**
@@ -46,7 +45,7 @@ define([
                 this.optionsList(cities);
             } else {
                 this.inputType('input');
-                this.selectedOption('');
+                this.value('');
             }
         },
     });
