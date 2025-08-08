@@ -2,7 +2,14 @@ require([
         'jquery',
     ],
     ($) => {
-        const _actions = ['importServices', 'importPickupPoints', 'importLockers'];
+        const _actions = [
+            'importServices',
+            'importPickupPoints',
+            'importCounties',
+            'importCities',
+            'importCitiesToCacheSystem',
+            'importLockers',
+        ];
         const importDataButton = document.getElementById('carriers_samedaycourier_samedayImportLocalData');
 
         const _is_set = (accessor) => {

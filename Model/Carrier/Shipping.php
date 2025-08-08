@@ -22,6 +22,7 @@ use Sameday\Requests\SamedayPostAwbEstimationRequest;
 use SamedayCourier\Shipping\Api\PickupPointRepositoryInterface;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
 use SamedayCourier\Shipping\Helper\ApiHelper as SamedayApiHelper;
+use SamedayCourier\Shipping\Helper\GeneralHelper;
 use SamedayCourier\Shipping\Helper\ShippingService;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
 use SamedayCourier\Shipping\Model\Data\Service;
@@ -91,7 +92,7 @@ class Shipping extends AbstractCarrier implements CarrierInterface
     public function checkAvailableShipCountries(DataObject $request)
     {
         $destCountry = strtolower($request->getData('dest_country_id'));
-        if (in_array($destCountry, $this->samedayApiHelper::AVAILABLE_SHIP_COUNTRIES, true)) {
+        if (in_array($destCountry, GeneralHelper::AVAILABLE_SHIP_COUNTRIES, true)) {
             // Ship only to Available Countries.
             return $this;
         }

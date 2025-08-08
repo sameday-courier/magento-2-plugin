@@ -24,7 +24,7 @@ class SearchResultHelper
             $fields = null;
             $conditions = null;
             foreach ($group->getFilters() as $filter) {
-                $condition = $filter->getConditionType() ? $filter->getConditionType() : 'eq';
+                $condition = $filter->getConditionType() ?: 'eq';
                 $fields[] = $filter->getField();
                 $conditions[] = [$condition => $filter->getValue()];
             }
@@ -40,7 +40,7 @@ class SearchResultHelper
             foreach ($searchCriteria->getSortOrders() as $sortOrder) {
                 $collection->addOrder(
                     $sortOrder->getField(),
-                    ($sortOrder->getDirection() == SortOrder::SORT_ASC) ? 'ASC' : 'DESC'
+                    ($sortOrder->getDirection() === SortOrder::SORT_ASC) ? 'ASC' : 'DESC'
                 );
             }
         } else {

@@ -1,0 +1,41 @@
+<div class="field _required" data-bind="visible: visible, attr: {name: element.dataScope}, css: additionalClasses">
+    <label class="label" data-bind="attr: {'for': element.uid}">
+        <span data-bind="i18n: element.label"></span>
+    </label>
+    <div class="control" data-bind="css: {'_with-tooltip': element.tooltip}">
+        <div data-bind="if: inputType() === 'input'">
+            <input class="input-text" type="text"
+               data-bind="
+                value: value,
+                attr: {
+                    name: inputName,
+                    placeholder: placeholder,
+                    id: uid,
+                }
+            "
+            />
+        </div>
+
+        <div data-bind="if: inputType() === 'select'">
+            <select
+                data-bind="
+                options: optionsList,
+                optionsText: 'label',
+                optionsValue: 'value',
+                value: value,
+                attr: {
+                        name: inputName,
+                        placeholder: placeholder,
+                        id: uid,
+                    },
+                optionsAfterRender: function(option, item) {
+                    if (item && item.disabled) {
+                        ko.applyBindingsToNode(option, {attr: {disabled: true}}, item);
+                    }
+                },
+            "
+            >
+            </select>
+        </div>
+    </div>
+</div>

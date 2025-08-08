@@ -2,6 +2,7 @@
 
 namespace SamedayCourier\Shipping\Model\ResourceModel;
 
+use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use SamedayCourier\Shipping\Api\Data\AwbInterface;
 use SamedayCourier\Shipping\Api\AwbRepositoryInterface;
@@ -52,18 +53,13 @@ class AwbRepository implements AwbRepositoryInterface
     }
 
     /**
-     * @inheritdoc
-     *
-     * @throws \Magento\Framework\Exception\AlreadyExistsException
+     * @throws AlreadyExistsException
      */
-    public function save(AwbInterface $awb)
+    public function save(AwbInterface $awb): void
     {
-        $awbModel = null;
+        $awbModel = $this->awbFactory->create();
         if ($awb->getId()) {
-            $awbModel = $this->awbFactory->create();
             $this->awbResourceModel->load($awbModel, $awb->getId());
-        } else {
-            $awbModel = $this->awbFactory->create();
         }
 
         $awbModel->updateData($awb);

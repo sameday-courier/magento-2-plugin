@@ -3,7 +3,7 @@
  * See COPYING.txt for license details.
  */
 
-var config = {
+const config = {
     "paths": {
         "lockersPluginSdk": "https://cdn.sameday.ro/locker-plugin/lockerpluginsdk",
     }

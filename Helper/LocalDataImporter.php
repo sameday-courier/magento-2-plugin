@@ -5,20 +5,29 @@ namespace SamedayCourier\Shipping\Helper;
 use Exception;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
+use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Module\Dir;
+use Magento\Framework\Serialize\Serializer\Json;
 use Sameday\Requests\SamedayGetLockersRequest;
 use Sameday\Requests\SamedayGetPickupPointsRequest;
 use Sameday\Requests\SamedayGetServicesRequest;
 use Sameday\Sameday;
+use SamedayCourier\Shipping\Api\CityRepositoryInterface;
 use SamedayCourier\Shipping\Api\Data\LockerInterfaceFactory;
+use SamedayCourier\Shipping\Api\Data\CityInterfaceFactory;
 use SamedayCourier\Shipping\Api\Data\PickupPointInterface;
 use SamedayCourier\Shipping\Api\Data\PickupPointInterfaceFactory;
 use SamedayCourier\Shipping\Api\Data\ServiceInterface;
 use SamedayCourier\Shipping\Api\Data\ServiceInterfaceFactory;
+use SamedayCourier\Shipping\Api\Data\RegionInterfaceFactory;
 use SamedayCourier\Shipping\Api\LockerRepositoryInterface;
 use SamedayCourier\Shipping\Api\PickupPointRepositoryInterface;
+use SamedayCourier\Shipping\Api\RegionRepositoryInterface;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
 use Sameday\Exceptions\SamedaySDKException;
+use SamedayCourier\Shipping\Model\Region;
+use SamedayCourier\Shipping\Model\ResourceModel\CityRepository;
 
 class LocalDataImporter extends AbstractHelper
 {
@@ -26,6 +35,16 @@ class LocalDataImporter extends AbstractHelper
      * @var ApiHelper $apiHelper
      */
     private $apiHelper;
+
+    /**
+     * @var SamedayCitiesHelper $samedayCitiesHelper
+     */
+    private $samedayCitiesHelper;
+
+    /**
+     * @var Dir $moduleDirectory
+     */
+    private $moduleDirectory;
 
     /**
      * @var GeneralHelper $generalHelper
@@ -43,6 +62,11 @@ class LocalDataImporter extends AbstractHelper
     private $serviceRepository;
 
     /**
+     * @var RegionRepositoryInterface $regionRepository
+     */
+    private $regionRepository;
+
+    /**
      * @var PickupPointInterfaceFactory
      */
     private $pickupPointFactory;
@@ -58,9 +82,24 @@ class LocalDataImporter extends AbstractHelper
     private $lockerFactory;
 
     /**
+     * @var RegionInterfaceFactory
+     */
+    private $regionFactory;
+
+    /**
      * @var LockerRepositoryInterface
      */
     private $lockerRepository;
+
+    /**
+     * @var CityInterfaceFactory
+     */
+    private $cityFactory;
+
+    /**
+     * @var CityRepository
+     */
+    private $cityRepository;
 
     /**
      * @var StoredDataHelper
@@ -68,40 +107,76 @@ class LocalDataImporter extends AbstractHelper
     private $storeDataHelper;
 
     /**
+     * @var Json $jsonHelper
+     */
+    private $jsonHelper;
+
+    /**
+     * @var CacheHelper $cacheHelper
+     */
+    private $cacheHelper;
+
+    /**
      * @param Context $context
      * @param ApiHelper $apiHelper
      * @param GeneralHelper $generalHelper
+     * @param SamedayCountiesHelper $samedayCountiesHelper
+     * @param SamedayCitiesHelper $samedayCitiesHelper
      * @param ServiceInterfaceFactory $serviceFactory
      * @param ServiceRepositoryInterface $serviceRepository
      * @param StoredDataHelper $storedDataHelper
      * @param PickupPointInterfaceFactory $pickupPointFactory
      * @param PickupPointRepositoryInterface $pickupPointRepository
      * @param LockerRepositoryInterface $lockerRepository
+     * @param RegionRepositoryInterface $regionRepository
      * @param LockerInterfaceFactory $lockerFactory
+     * @param RegionInterfaceFactory $regionFactory
+     * @param CityRepositoryInterface $cityRepository
+     * @param CityInterfaceFactory $cityFactory
+     * @param Dir $moduleDirectory
+     * @param Json $jsonHelper
      */
     public function __construct(
         Context $context,
         ApiHelper $apiHelper,
         GeneralHelper $generalHelper,
+        SamedayCountiesHelper $samedayCountiesHelper,
+        SamedayCitiesHelper $samedayCitiesHelper,
         ServiceInterfaceFactory $serviceFactory,
         ServiceRepositoryInterface $serviceRepository,
         StoredDataHelper $storedDataHelper,
         PickupPointInterfaceFactory $pickupPointFactory,
         PickupPointRepositoryInterface $pickupPointRepository,
         LockerRepositoryInterface $lockerRepository,
-        LockerInterfaceFactory $lockerFactory
+        RegionRepositoryInterface $regionRepository,
+        LockerInterfaceFactory $lockerFactory,
+        RegionInterfaceFactory $regionFactory,
+        CityRepositoryInterface $cityRepository,
+        CityInterfaceFactory $cityFactory,
+        Dir $moduleDirectory,
+        Json $jsonHelper,
+        CacheHelper $cacheHelper
     ) {
         parent::__construct($context);
 
         $this->apiHelper = $apiHelper;
         $this->generalHelper = $generalHelper;
+        $this->samedayCountiesHelper = $samedayCountiesHelper;
+        $this->samedayCitiesHelper = $samedayCitiesHelper;
         $this->serviceFactory = $serviceFactory;
         $this->serviceRepository = $serviceRepository;
         $this->storeDataHelper = $storedDataHelper;
         $this->pickupPointFactory = $pickupPointFactory;
         $this->pickupPointRepository = $pickupPointRepository;
         $this->lockerRepository = $lockerRepository;
+        $this->regionRepository = $regionRepository;
         $this->lockerFactory = $lockerFactory;
+        $this->regionFactory = $regionFactory;
+        $this->cityRepository = $cityRepository;
+        $this->cityFactory = $cityFactory;
+        $this->moduleDirectory = $moduleDirectory;
+        $this->jsonHelper = $jsonHelper;
+        $this->cacheHelper = $cacheHelper;
     }
 
     /**
@@ -281,7 +356,7 @@ class LocalDataImporter extends AbstractHelper
 
         // Delete local pickup points that aren't present in remote pickup points anymore.
         foreach ($localPickupPoints as $localPickupPoint) {
-            if (!in_array($localPickupPoint['sameday_id'], $remotePickupPoints)) {
+            if (!in_array((int) $localPickupPoint['sameday_id'], $remotePickupPoints, true)) {
                 $this->pickupPointRepository->deleteById($localPickupPoint['id']);
             }
         }
@@ -339,7 +414,7 @@ class LocalDataImporter extends AbstractHelper
 
             $localLockers = $this->lockerRepository->getListByTesting($isTesting);
             foreach ($localLockers as $locker) {
-                if (!in_array($locker['locker_id'], $remoteLockers)) {
+                if (!in_array((int) $locker['locker_id'], $remoteLockers, true)) {
                     try {
                         $this->lockerRepository->deleteById($locker['id']);
                     } catch (Exception $e) {}
@@ -350,6 +425,122 @@ class LocalDataImporter extends AbstractHelper
         return (new LocalDataImporterResponse())
             ->setSucceed(true)
             ->setMessage(__('Lockers was imported with success!')
+        );
+    }
+
+    public function importCounties(): LocalDataImporterResponse
+    {
+        $file = $this->moduleDirectory->getDir('SamedayCourier_Shipping') . '/utils/counties.json';
+        if (!file_exists($file)) {
+
+            return (new LocalDataImporterResponse())
+                ->setSucceed(false)
+                ->setMessage(__('Json file not found!'))
+            ;
+        }
+
+        try {
+            $counties = $this->jsonHelper->unserialize(file_get_contents($file));
+        } catch (\RuntimeException $exception) {
+            return (new LocalDataImporterResponse())
+                ->setSucceed(false)
+                ->setMessage(__($exception->getMessage()))
+            ;
+        }
+
+        foreach ($counties as $county) {
+            $region = $this->regionRepository->getByCodeAndCountryCode(
+                $county['code'],
+                $county['country_code']
+            );
+
+            if (null === $region) {
+                $region = $this->regionFactory->create();
+            }
+
+            $region->setCountryId($county['country_code']);
+            $region->setCode($county['code']);
+            $region->setDefaultName($county['county']);
+
+            $this->regionRepository->save($region);
+        }
+
+        return (new LocalDataImporterResponse())
+            ->setSucceed(true)
+            ->setMessage(__('Counties was imported with success!')
+        );
+    }
+
+    /**
+     * @return LocalDataImporterResponse
+     */
+    public function importCities(): LocalDataImporterResponse
+    {
+        $file = $this->moduleDirectory->getDir('SamedayCourier_Shipping') . '/utils/cities.json';
+        if (!file_exists($file)) {
+
+            return (new LocalDataImporterResponse())
+                ->setSucceed(false)
+                ->setMessage(__('Json file not found!'))
+            ;
+        }
+
+        try {
+            $cities = $this->jsonHelper->unserialize(file_get_contents($file));
+        } catch (\RuntimeException $exception) {
+            return (new LocalDataImporterResponse())
+                ->setSucceed(false)
+                ->setMessage(__($exception->getMessage()))
+            ;
+        }
+
+        foreach ($cities as $city) {
+            $region = $this->regionRepository->getByCodeAndCountryCode(
+                $city['county_code'],
+                $city['country_code']
+            );
+
+            if (null === $region) {
+                continue;
+            }
+
+            try {
+                $samedayCity = $this->cityRepository->getBySamedayId((int) $city['city_id']);
+            } catch (Exception $exception) {
+                $samedayCity = $this->cityFactory->create();
+            }
+
+            $samedayCity->setSamedayId($city['city_id']);
+            $samedayCity->setName($city['city_name']);
+            $samedayCity->setRegionId($region->getRegionId());
+
+            try {
+                $this->cityRepository->save($samedayCity);
+            } catch (Exception $e) {
+                continue;
+            }
+        }
+
+        return (new LocalDataImporterResponse())
+            ->setSucceed(true)
+            ->setMessage(__('Cities was imported with success!')
+        );
+    }
+
+    /**
+     * @return LocalDataImporterResponse
+     *
+     * @throws InputException
+     */
+    public function importCitiesToCacheSystem(): LocalDataImporterResponse
+    {
+        $cities = $this->cityRepository->getCitiesForShipCountries();
+
+        $this->cacheHelper->cacheData($this->generalHelper::CACHE_CITIES_DATA_KEY, $cities);
+
+        return (new LocalDataImporterResponse())
+            ->setSucceed(true)
+            ->setMessage(__('Cities was imported with success in the cache system!')
         );
     }
 }

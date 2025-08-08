@@ -54,6 +54,14 @@
     <preference for="SamedayCourier\Shipping\Api\PickupPointRepositoryInterface" type="SamedayCourier\Shipping\Model\ResourceModel\PickupPointRepository" />
     <preference for="SamedayCourier\Shipping\Api\Data\PickupPointSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
 
+    <preference for="SamedayCourier\Shipping\Api\Data\CityInterface" type="SamedayCourier\Shipping\Model\Data\City" />
+    <preference for="SamedayCourier\Shipping\Api\CityRepositoryInterface" type="SamedayCourier\Shipping\Model\ResourceModel\CityRepository" />
+    <preference for="SamedayCourier\Shipping\Api\Data\CitySearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
+
+    <preference for="SamedayCourier\Shipping\Api\Data\RegionInterface" type="SamedayCourier\Shipping\Model\Data\Region" />
+    <preference for="SamedayCourier\Shipping\Api\RegionRepositoryInterface" type="SamedayCourier\Shipping\Model\ResourceModel\RegionRepository" />
+    <preference for="SamedayCourier\Shipping\Api\Data\RegionSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
+
     <preference for="SamedayCourier\Shipping\Api\Data\ServiceInterface" type="SamedayCourier\Shipping\Model\Data\Service" />
     <preference for="SamedayCourier\Shipping\Api\ServiceRepositoryInterface" type="SamedayCourier\Shipping\Model\ResourceModel\ServiceRepository" />
     <preference for="SamedayCourier\Shipping\Api\Data\ServiceSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
@@ -64,5 +72,4 @@
 
     <preference for="SamedayCourier\Shipping\Api\Data\AwbInterface" type="SamedayCourier\Shipping\Model\Data\Awb" />
     <preference for="SamedayCourier\Shipping\Api\AwbRepositoryInterface" type="SamedayCourier\Shipping\Model\ResourceModel\AwbRepository" />
-    <preference for="SamedayCourier\Shipping\Api\Data\AwbSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
 </config>

@@ -60,4 +60,21 @@
         <column xsi:type="text" name="samedaycourier_fee" comment="Repayment fee"/>
         <column xsi:type="text" name="samedaycourier_destination_address_hd" comment="Sameday destination address for Home Delivery"/>
     </table>
+    <table name="samedaycourier_city" resource="default" engine="innodb" comment="Samedaycourier Cities">
+        <column xsi:type="int" identity="true" name="id" padding="11" unsigned="false" nullable="false" comment="City Id"/>
+        <column xsi:type="int" name="sameday_id" comment="Sameday Id"/>
+        <column xsi:type="text" name="name" comment="City Name"/>
+        <column xsi:type="int" name="region_id" padding="10" unsigned="true" nullable="false" comment="Region ID"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+            referenceId="SAMEDAYCOURIER_CITIES_REGION_ID_DIR_COUNTRY_REGION_REGION_ID"
+            table="samedaycourier_cities"
+            column="region_id"
+            referenceTable="directory_country_region"
+            referenceColumn="region_id"
+            onDelete="CASCADE"
+        />
+    </table>
 </schema>

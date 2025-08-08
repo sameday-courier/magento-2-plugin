@@ -72,12 +72,6 @@ class ApiHelper extends AbstractHelper
         GeneralHelper::SAMEDAY_SERVICE_PUDO_CODE,
     ];
 
-    public const AVAILABLE_SHIP_COUNTRIES = [
-        self::ROMANIA_CODE,
-        self::HUNGARY_CODE,
-        self::BULGARIA_CODE,
-    ];
-
     public const DEFAULT_COUNTRIES = [
         self::ROMANIA_CODE => ['value' => 187, 'label' => 'Romania'],
         self::BULGARIA_CODE => ['value' => 34, 'label' => 'Bulgaria'],
@@ -113,6 +107,7 @@ class ApiHelper extends AbstractHelper
      * @param ManagerInterface $messageManager
      * @param WriterInterface $configWriter
      * @param PersistenceDataHandler $persistenceDataHandler
+     * @param GeneralHelper $generalHelper
      */
     public function __construct(
         Context $context,
@@ -146,7 +141,7 @@ class ApiHelper extends AbstractHelper
      */
     public function initClient(string $username = null, string $password = null, $url_env = null): SamedayClient
     {
-        $country = $this->generalHelper->getHostCountry();
+        $country = $this->getHostCountry();
         $testing = (int) $this->scopeConfig->getValue('carriers/samedaycourier/testing');
 
         if ($username === null && $password === null) {
@@ -293,11 +288,6 @@ class ApiHelper extends AbstractHelper
         ];
 
         return $this->loginClient($form_values);
-    }
-
-    public function getAwbLabelFormat(): string
-    {
-        return $this->scopeConfig->getValue('carriers/samedaycourier/awb_label_format') ?? AwbPdfType::A4;
     }
 
     /**
