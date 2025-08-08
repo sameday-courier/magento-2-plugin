@@ -4,7 +4,6 @@ namespace SamedayCourier\Shipping\Model\Plugin\Checkout;
 
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Stdlib\ArrayManager;
-use SamedayCourier\Shipping\Helper\CacheHelper;
 use SamedayCourier\Shipping\Helper\GeneralHelper;
 use SamedayCourier\Shipping\Helper\SamedayCitiesHelper;
 
@@ -55,18 +54,23 @@ class LayoutProcessor
             return $jsLayout;
         }
 
-        return $this->processCityField($jsLayout);
+        foreach ($this->prepareCitiesFieldsPaths() as $fieldsPath) {
+            $jsLayout = $this->processCityField($fieldsPath, $jsLayout);
+        }
+
+        return $jsLayout;
     }
 
     /**
+     * @param string $path
      * @param array $jsLayout
      *
      * @return array
+     *
      * @throws InputException
      */
-    private function processCityField(array $jsLayout): array
+    private function processCityField(string $path, array $jsLayout): array
     {
-        $path = "components/checkout/children/steps/children/shipping-step/children/shippingAddress/children/shipping-address-fieldset/children/city";
         $cityField = $this->arrayManager->get(
             $path,
             $jsLayout
@@ -99,6 +103,33 @@ class LayoutProcessor
                 ),
                 'placeholder' => __('Please select a city'),
                 'sortOrder' => '105',
+            ]
+        );
+    }
+
+    /**
+     * @return array
+     */
+    private function prepareCitiesFieldsPaths(): array
+    {
+        return array_map(
+            static function (array $path) {
+                return sprintf(
+                    '%s/%s/%s',
+                    'components/checkout/children/steps/children',
+                    $path['step'],
+                    $path['name'],
+                );
+            },
+            [
+                [
+                    'step' => 'shipping-step/children',
+                    'name' => 'shippingAddress/children/shipping-address-fieldset/children/city'
+                ],
+                [
+                    'step' => 'billing-step/children',
+                    'name' => 'payment/children/payments-list/children/checkmo-form/children/form-fields/children/city'
+                ],
             ]
         );
     }
