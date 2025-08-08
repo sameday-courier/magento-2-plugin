@@ -8,7 +8,7 @@ require([
             'importCounties',
             'importCities',
             'importCitiesToCacheSystem',
-            //'importLockers',
+            'importLockers',
         ];
         const importDataButton = document.getElementById('carriers_samedaycourier_samedayImportLocalData');
 
