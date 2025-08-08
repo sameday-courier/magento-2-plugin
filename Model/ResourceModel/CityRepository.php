@@ -231,7 +231,7 @@ class CityRepository implements CityRepositoryInterface
         return $this->getList(
             $this->searchCriteriaBuilder
                 ->addFilter(CityInterface::REGION_ID, $regionId)
-                ->addSortOrder((new SortOrder())->setField('region_id')->setDirection(SortOrder::SORT_ASC))
+                ->addSortOrder((new SortOrder())->setField('id')->setDirection(SortOrder::SORT_ASC))
                 ->create()
             )
         ;
