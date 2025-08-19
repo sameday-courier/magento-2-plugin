@@ -69,6 +69,9 @@
             "name": true,
             "sameday_id": true,
             "region_id": true
+        },
+        "constraint": {
+            "PRIMARY": true
         }
     },
     "sales_order": {
