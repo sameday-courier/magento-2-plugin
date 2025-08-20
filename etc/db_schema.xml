@@ -4,7 +4,7 @@
         <column xsi:type="int" name="order_id" padding="11" unsigned="true" nullable="false" comment="Magento order ID"/>
         <column xsi:type="varchar" name="awb_number" length="255" nullable="false" comment="AWB Number"/>
         <column xsi:type="text" name="parcels" nullable="false" comment="AWB Parcels"/>
-        <column xsi:type="decimal" name="awb_cost" scale="2" nullable="false" comment="AWB Cost"/>
+        <column xsi:type="decimal" name="awb_cost" precision="12" scale="2" nullable="false" comment="AWB Cost"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="id"/>
         </constraint>
@@ -16,7 +16,7 @@
         <column xsi:type="varchar" name="county" length="255" nullable="false" comment="County"/>
         <column xsi:type="varchar" name="city" length="255" nullable="false" comment="City"/>
         <column xsi:type="varchar" name="address" length="255" nullable="false" comment="Address"/>
-        <column xsi:type="varchar" name="postal code" length="255" nullable="false" comment="Postal code"/>
+        <column xsi:type="varchar" name="postal_code" length="255" nullable="false" comment="Postal code"/>
         <column xsi:type="varchar" name="lat" length="255" nullable="false" comment="Latitude"/>
         <column xsi:type="varchar" name="lng" length="255" nullable="false" comment="Longitude"/>
         <column xsi:type="tinyint" name="is_testing" nullable="false" comment="Environment mode"/>
@@ -64,17 +64,18 @@
         <column xsi:type="int" identity="true" name="id" padding="11" unsigned="false" nullable="false" comment="City Id"/>
         <column xsi:type="int" name="sameday_id" comment="Sameday Id"/>
         <column xsi:type="text" name="name" comment="City Name"/>
-        <column xsi:type="int" name="region_id" padding="10" unsigned="true" nullable="false" comment="Region ID"/>
+        <column xsi:type="int" name="region_id" padding="10" unsigned="true" nullable="true" comment="Region ID"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="id"/>
         </constraint>
         <constraint xsi:type="foreign"
-            referenceId="SAMEDAYCOURIER_CITIES_REGION_ID_DIR_COUNTRY_REGION_REGION_ID"
-            table="samedaycourier_cities"
+            referenceId="SAMEDAYCOURIER_SHIPPING_CITY_REGION_ID_DIR_COUNTRY_REGION_REGION_ID"
+            table="samedaycourier_city"
             column="region_id"
             referenceTable="directory_country_region"
             referenceColumn="region_id"
-            onDelete="CASCADE"
+            onDelete="SET NULL"
+            onUpdate="CASCADE"
         />
     </table>
 </schema>
