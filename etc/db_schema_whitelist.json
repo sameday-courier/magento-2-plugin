@@ -19,7 +19,7 @@
             "county": true,
             "city": true,
             "address": true,
-            "postal code": true,
+            "postal_code": true,
             "lat": true,
             "lng": true,
             "is_testing": true
@@ -72,7 +72,7 @@
         },
         "constraint": {
             "PRIMARY": true,
-            "SAMEDAYCOURIER_CITIES_REGION_ID_DIR_COUNTRY_REGION_REGION_ID": true
+            "SAMEDAYCOURIER_SHIPPING_CITY_REGION_ID_DIR_COUNTRY_REGION_REGION_ID": true
         }
     },
     "sales_order": {
