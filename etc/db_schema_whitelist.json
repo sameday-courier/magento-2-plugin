@@ -71,7 +71,8 @@
             "region_id": true
         },
         "constraint": {
-            "PRIMARY": true
+            "PRIMARY": true,
+            "SAMEDAYCOURIER_CITIES_REGION_ID_DIR_COUNTRY_REGION_REGION_ID": true
         }
     },
     "sales_order": {
