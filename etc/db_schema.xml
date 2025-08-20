@@ -64,7 +64,7 @@
         <column xsi:type="int" identity="true" name="id" padding="11" unsigned="false" nullable="false" comment="City Id"/>
         <column xsi:type="int" name="sameday_id" comment="Sameday Id"/>
         <column xsi:type="text" name="name" comment="City Name"/>
-        <column xsi:type="int" name="region_id" padding="10" unsigned="true" nullable="false" comment="Region ID"/>
+        <column xsi:type="int" name="region_id" padding="10" unsigned="true" nullable="true" comment="Region ID"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="id"/>
         </constraint>
@@ -74,7 +74,8 @@
             column="region_id"
             referenceTable="directory_country_region"
             referenceColumn="region_id"
-            onDelete="CASCADE"
+            onDelete="SET NULL"
+            onUpdate="CASCADE"
         />
     </table>
 </schema>
