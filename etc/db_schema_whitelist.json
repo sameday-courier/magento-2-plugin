@@ -63,7 +63,7 @@
             "PRIMARY": true
         }
     },
-    "samedaycourier_city": {
+    "samedaycourier_shipping_city": {
         "column": {
             "id": true,
             "name": true,

@@ -8,6 +8,6 @@ class City extends AbstractDb
 {
     protected function _construct()
     {
-        $this->_init('samedaycourier_city', 'id');
+        $this->_init('samedaycourier_shipping_city', 'id');
     }
 }
