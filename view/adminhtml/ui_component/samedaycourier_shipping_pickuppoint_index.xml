@@ -49,6 +49,7 @@
             </item>
         </argument>
     </dataSource>
+    <filters name="listing_filters"/>
     <container name="listing_top">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
@@ -104,6 +105,7 @@
         <column name="sameday_alias">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
+                    <item name="filter" xsi:type="string">text</item>
                     <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="label" xsi:type="string" translate="true">Sameday alias</item>
@@ -113,6 +115,7 @@
         <column name="city">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
+                    <item name="filter" xsi:type="string">text</item>
                     <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="label" xsi:type="string" translate="true">City</item>
@@ -137,12 +140,33 @@
                 </item>
             </argument>
         </column>
-        <column name="is_default" class="SamedayCourier\Shipping\Ui\Component\Listing\Column\PickupPointIsDefault">
+        <column name="contact_persons" class="SamedayCourier\Shipping\Ui\Component\Listing\Column\PickupPointContactPersonColumn">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
+                    <item name="filter" xsi:type="string">text</item>
                     <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>
                     <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Contact Persons</item>
+                </item>
+            </argument>
+        </column>
+        <column name="is_default" class="SamedayCourier\Shipping\Ui\Component\Listing\Column\PickupPointIsDefaultColumn">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="filter" xsi:type="string">select</item>
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>
+                    <item name="dataType" xsi:type="string">select</item>
                     <item name="label" xsi:type="string" translate="true">Is default</item>
+                    <item name="options" xsi:type="array">
+                        <item name="1" xsi:type="array">
+                            <item name="value" xsi:type="string">1</item>
+                            <item name="label" xsi:type="string">Yes</item>
+                        </item>
+                        <item name="0" xsi:type="array">
+                            <item name="value" xsi:type="string">0</item>
+                            <item name="label" xsi:type="string">No</item>
+                        </item>
+                    </item>
                 </item>
             </argument>
         </column>
