@@ -14,8 +14,7 @@ class CityColumn extends Column implements OptionSourceInterface
         UiComponentFactory $uiComponentFactory,
         array $components = [],
         array $data = []
-    )
-    {
+    ) {
         parent::__construct($context, $uiComponentFactory, $components, $data);
     }
 
