@@ -6,6 +6,7 @@ use Magento\Directory\Model\Region;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\DataObject;
+use Magento\Setup\Exception;
 use Magento\Shipping\Model\Carrier\AbstractCarrier;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
 use Magento\Shipping\Model\Rate\ResultFactory;
@@ -19,9 +20,11 @@ use Sameday\Objects\PostAwb\Request\AwbRecipientEntityObject;
 use Sameday\Objects\Types\AwbPaymentType;
 use Sameday\Objects\Types\PackageType;
 use Sameday\Requests\SamedayPostAwbEstimationRequest;
+use Sameday\Responses\SamedayPostAwbEstimationResponse;
 use SamedayCourier\Shipping\Api\PickupPointRepositoryInterface;
 use SamedayCourier\Shipping\Api\ServiceRepositoryInterface;
 use SamedayCourier\Shipping\Helper\ApiHelper as SamedayApiHelper;
+use SamedayCourier\Shipping\Helper\BgnCurrencyConvertor;
 use SamedayCourier\Shipping\Helper\GeneralHelper;
 use SamedayCourier\Shipping\Helper\ShippingService;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
@@ -160,7 +163,6 @@ class Shipping extends AbstractCarrier implements CarrierInterface
             $method = $this->_rateMethodFactory->create();
 
             $method->setCarrier($this->getCarrierCode());
-            $method->setCarrierTitle($this->getConfigData('title'));
             $method->setMethod($service->getCode());
             $method->setMethodTitle($service->getName());
             $method->setCountryCode($destCountry);
@@ -168,15 +170,35 @@ class Shipping extends AbstractCarrier implements CarrierInterface
             $method->setShowLockersMap((bool) $this->scopeConfig->getValue('carriers/samedaycourier/show_lockers_map'));
             $method->setApiUsername($this->getConfigData('username'));
 
+            $carrierTitle = $this->getConfigData('title');
+
             $shippingCost = $service->getPrice();
             if ($service->getIsPriceFree() && $request->getPackageValueWithDiscount() >= $service->getPriceFree()) {
                 $shippingCost = 0;
             } elseif ($service->getUseEstimatedCost()) {
+                /** @var SamedayPostAwbEstimationResponse $shippingCostEstimation */
                 $shippingCostEstimation = $this->shippingEstimateCost($request, $service->getSamedayId());
-                $shippingCost = $shippingCostEstimation ? $shippingCostEstimation->getCost() : $service->getPrice();
+                $estimatedCost = $shippingCostEstimation ? $shippingCostEstimation->getCost() : $service->getPrice();
+                $shippingCost = $estimatedCost;
+
+                // Business logic for Bulgarian Currency
+                $storeCurrency = $request->getPackageCurrency()->getCode();
+                $estimatedCurrency = $shippingCostEstimation->getCurrency();
+                if ($storeCurrency !== $estimatedCurrency) {
+                    try {
+                        $bgnCurrencyConvertor = new BgnCurrencyConvertor($storeCurrency, $shippingCost);
+                        $shippingCost = $bgnCurrencyConvertor->convert();
+                        $carrierTitle = $bgnCurrencyConvertor->buildCurrencyConversionLabel(
+                            $carrierTitle,
+                            $estimatedCost,
+                            $estimatedCurrency
+                        );
+                    } catch (Exception $exception) {}
+                }
             }
 
             $method
+                ->setCarrierTitle($carrierTitle)
                 ->setPrice($shippingCost)
                 ->setCost($shippingCost);
 
