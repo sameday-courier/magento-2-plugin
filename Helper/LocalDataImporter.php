@@ -42,6 +42,10 @@ class LocalDataImporter extends AbstractHelper
     private $samedayCitiesHelper;
 
     /**
+     * @var SamedayCountiesHelper $samedayCountiesHelper
+     */
+    private $samedayCountiesHelper;
+    /**
      * @var Dir $moduleDirectory
      */
     private $moduleDirectory;
