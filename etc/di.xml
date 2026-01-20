@@ -50,6 +50,10 @@
         <plugin name="add_apiUsername_to_method_rate" type="SamedayCourier\Shipping\Plugin\Quote\Address\Rate" disabled="false" sortOrder="3"/>
     </type>
 
+    <type name="Magento\Sales\Api\OrderRepositoryInterface">
+        <plugin name="sameday_order_repository_plugin" type="SamedayCourier\Shipping\Plugin\OrderRepositoryPlugin"/>
+    </type>
+
     <preference for="SamedayCourier\Shipping\Api\Data\PickupPointInterface" type="SamedayCourier\Shipping\Model\Data\PickupPoint" />
     <preference for="SamedayCourier\Shipping\Api\PickupPointRepositoryInterface" type="SamedayCourier\Shipping\Model\ResourceModel\PickupPointRepository" />
     <preference for="SamedayCourier\Shipping\Api\Data\PickupPointSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
