@@ -81,5 +81,19 @@
             "samedaycourier_fee": true,
             "samedaycourier_destination_address_hd": true
         }
+    },
+    "samedaycourier_shipping_order_bulk_awb": {
+        "column": {
+            "id": true,
+            "order_id": true,
+            "status": true,
+            "feedback": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "SAMEDAYCOURIER_SHIPPING_ORDER_BULK_AWB_ORDER_ID": true
+        }
     }
 }
