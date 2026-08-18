@@ -72,4 +72,7 @@
 
     <preference for="SamedayCourier\Shipping\Api\Data\AwbInterface" type="SamedayCourier\Shipping\Model\Data\Awb" />
     <preference for="SamedayCourier\Shipping\Api\AwbRepositoryInterface" type="SamedayCourier\Shipping\Model\ResourceModel\AwbRepository" />
+
+    <preference for="SamedayCourier\Shipping\Api\Data\OrderBulkAwbInterface" type="SamedayCourier\Shipping\Model\OrderBulkAwb" />
+    <preference for="SamedayCourier\Shipping\Api\OrderBulkAwbRepositoryInterface" type="SamedayCourier\Shipping\Model\ResourceModel\OrderBulkAwbRepository" />
 </config>

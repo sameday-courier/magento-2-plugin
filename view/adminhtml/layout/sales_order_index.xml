@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="SamedayCourier_Shipping::css/bulk-awb.css"/>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block class="SamedayCourier\Shipping\Block\Adminhtml\Order\BulkAwbToolbar"
+                   name="samedaycourier.bulk.awb.toolbar"
+                   template="SamedayCourier_Shipping::order/bulk_awb.phtml"
+                   before="sales_order_grid"/>
+        </referenceContainer>
+    </body>
+</page>

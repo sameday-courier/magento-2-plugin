@@ -463,7 +463,7 @@ If you encounter any issues or have questions about the Sameday Courier Shipping
 
 ### Module Information
 
-- **Module Version**: 1.9.3
+- **Module Version**: 1.9.4
 - **Supported Magento Versions**: 2.3.x and above
 - **Supported Countries**: Romania, Bulgaria, Hungary
 

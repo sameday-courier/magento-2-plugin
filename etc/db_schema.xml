@@ -77,4 +77,18 @@
             onDelete="SET NULL"
         />
     </table>
+    <table name="samedaycourier_shipping_order_bulk_awb" resource="default" engine="innodb" comment="Sameday bulk AWB feedback per order">
+        <column xsi:type="int" identity="true" name="id" padding="11" unsigned="false" nullable="false" comment="Entity ID"/>
+        <column xsi:type="int" name="order_id" padding="10" unsigned="true" nullable="false" comment="Magento order ID"/>
+        <column xsi:type="smallint" name="status" padding="5" nullable="false" comment="0 pending, 1 success, 2 error"/>
+        <column xsi:type="text" name="feedback" nullable="true" comment="JSON feedback payload"/>
+        <column xsi:type="timestamp" name="created_at" on_create="true" nullable="false" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" on_create="true" on_update="true" nullable="false" comment="Updated At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="SAMEDAYCOURIER_SHIPPING_ORDER_BULK_AWB_ORDER_ID">
+            <column name="order_id"/>
+        </constraint>
+    </table>
 </schema>
