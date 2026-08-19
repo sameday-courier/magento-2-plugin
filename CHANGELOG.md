@@ -1,6 +1,14 @@
 # Changelog
 
-## 1.9.4 - 2026-08-18
+## 1.9.5
+
+### Changed
+- Bulgaria destinations now send EUR (not BGN) on all Sameday API requests (AWB create and cost estimation)
+
+### Removed
+- Checkout dual BGN/EUR conversion display for Bulgarian shipping rates
+
+## 1.9.4
 
 ### Added
 - Bulk AWB actions on Sales → Orders: Generate AWB, Remove AWB, and Clear Errors
