@@ -74,4 +74,4 @@ This module is provided by Sameday Courier for use with Magento 2.
 
 ---
 
-**Version**: 1.9.4
+**Version**: 1.9.5

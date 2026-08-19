@@ -39,7 +39,7 @@ class StoredDataHelper extends AbstractHelper
 
     public const SAMEDAY_ELIGIBLE_CURRENCIES = [
         ApiHelper::ROMANIA_CODE => 'RON',
-        ApiHelper::BULGARIA_CODE => 'BGN',
+        ApiHelper::BULGARIA_CODE => self::EURO_CURRENCY_CODE,
         ApiHelper::HUNGARY_CODE => 'HUF',
     ];
 
