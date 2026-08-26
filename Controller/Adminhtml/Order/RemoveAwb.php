@@ -24,7 +24,7 @@ class RemoveAwb extends Action
     private $apiHelper;
     private $formKeyValidator;
 
-    public function __construct(Context $context, ResultFactory $resultFactory, ManagerInterface $manager, AwbRepositoryInterface $awbRepository, ApiHelper $apiHelper, Validator $formKeyValidator = null)
+    public function __construct(Context $context, ResultFactory $resultFactory, ManagerInterface $manager, AwbRepositoryInterface $awbRepository, ApiHelper $apiHelper, ?Validator $formKeyValidator = null)
     {
         parent::__construct($context);
         $this->resultJsonFactory = $resultFactory;

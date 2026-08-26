@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.9.6
+
+### Fixed
+- PHP 8.4 compatibility: explicit nullable parameter types across the Magento module
+- Authentication failures now log endpoint details and surface the last error in admin instead of failing silently
+- Requires `sameday-courier/php-sdk` ^2.4.2 (PHP 8.4 nullable fixes and auth header alignment)
+
 ## 1.9.5
 
 ### Changed
