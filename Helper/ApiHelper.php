@@ -55,6 +55,11 @@ class ApiHelper extends AbstractHelper
      */
     private $generalHelper;
 
+    /**
+     * @var string|null Last authentication failure detail for admin/debugging
+     */
+    private $lastLoginError;
+
     public const ELIGIBLE_SAMEDAY_SERVICES = [
         GeneralHelper::SAMEDAY_SERVICE_6H_CODE,
         GeneralHelper::SAMEDAY_SERVICE_24H_CODE,
@@ -139,7 +144,7 @@ class ApiHelper extends AbstractHelper
      *
      * @throws SamedaySDKException
      */
-    public function initClient(string $username = null, string $password = null, $url_env = null): SamedayClient
+    public function initClient(?string $username = null, ?string $password = null, $url_env = null): SamedayClient
     {
         $country = $this->getHostCountry();
         $testing = (int) $this->scopeConfig->getValue('carriers/samedaycourier/testing');
@@ -234,6 +239,7 @@ class ApiHelper extends AbstractHelper
     public function loginClient($form_values): bool
     {
         $isLogged = false;
+        $this->lastLoginError = null;
         $envModes = self::SAMEDAY_ENVS;
         foreach ($envModes as $hostCountry => $envModesByHosts) {
             if ($isLogged === true) {
@@ -257,10 +263,41 @@ class ApiHelper extends AbstractHelper
                         $this->configWriter->delete('carriers/samedaycourier/expires_at');
 
                         $isLogged = true;
+                        $this->lastLoginError = null;
 
                         break;
                     }
+
+                    $this->lastLoginError = sprintf(
+                        'Invalid credentials for %s (%s)',
+                        strtoupper($hostCountry),
+                        $apiUrl
+                    );
+                    $this->logger->warning(
+                        'Sameday authentication failed',
+                        [
+                            'country' => $hostCountry,
+                            'apiUrl' => $apiUrl,
+                            'error' => $this->lastLoginError,
+                        ]
+                    );
                 } catch (Exception $exception) {
+                    $this->lastLoginError = sprintf(
+                        '%s [%s] via %s (%s)',
+                        $exception->getMessage(),
+                        $exception->getCode(),
+                        strtoupper($hostCountry),
+                        $apiUrl
+                    );
+                    $this->logger->error(
+                        'Sameday authentication exception',
+                        [
+                            'country' => $hostCountry,
+                            'apiUrl' => $apiUrl,
+                            'error' => $exception->getCode() . ' : ' . $exception->getMessage(),
+                            'trace' => $exception->getTraceAsString(),
+                        ]
+                    );
                     continue;
                 }
             }
@@ -270,7 +307,24 @@ class ApiHelper extends AbstractHelper
             return true;
         }
 
+        if ($this->lastLoginError !== null) {
+            $this->logger->error(
+                'Sameday authentication failed on all endpoints',
+                ['error' => $this->lastLoginError]
+            );
+        }
+
         return false;
+    }
+
+    /**
+     * Last login failure detail (credentials rejection or exception message).
+     *
+     * @return string|null
+     */
+    public function getLastLoginError(): ?string
+    {
+        return $this->lastLoginError;
     }
 
     /**

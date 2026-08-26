@@ -82,8 +82,8 @@
         <column xsi:type="int" name="order_id" padding="10" unsigned="true" nullable="false" comment="Magento order ID"/>
         <column xsi:type="smallint" name="status" padding="5" nullable="false" comment="0 pending, 1 success, 2 error"/>
         <column xsi:type="text" name="feedback" nullable="true" comment="JSON feedback payload"/>
-        <column xsi:type="timestamp" name="created_at" on_create="true" nullable="false" comment="Created At"/>
-        <column xsi:type="timestamp" name="updated_at" on_create="true" on_update="true" nullable="false" comment="Updated At"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated At"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="id"/>
         </constraint>

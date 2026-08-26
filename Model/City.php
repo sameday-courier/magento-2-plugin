@@ -40,8 +40,8 @@ class City extends AbstractExtensibleModel
        CityInterfaceFactory $cityDataFactory,
        ExtensionAttributesFactory $extensionFactory,
        AttributeValueFactory $customAttributeFactory,
-       AbstractResource $resource = null,
-       AbstractDb $resourceCollection = null, array $data = []
+       ?AbstractResource $resource = null,
+       ?AbstractDb $resourceCollection = null, array $data = []
    )
    {
        parent::__construct(

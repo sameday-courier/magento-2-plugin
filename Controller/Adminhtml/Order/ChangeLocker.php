@@ -34,7 +34,7 @@ class ChangeLocker extends Action
         ResultFactory $resultFactory,
         Json $json,
         OrderRepositoryInterface $orderRepository,
-        Validator $formKeyValidator = null
+        ?Validator $formKeyValidator = null
     ) {
         parent::__construct($context);
 

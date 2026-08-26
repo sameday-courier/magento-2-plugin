@@ -34,7 +34,7 @@ class LocalDataImporter extends AbstractHelper
     /**
      * @var ApiHelper $apiHelper
      */
-    private $apiHelper;
+    private ApiHelper $apiHelper;
 
     /**
      * @var SamedayCitiesHelper $samedayCitiesHelper
@@ -44,83 +44,83 @@ class LocalDataImporter extends AbstractHelper
     /**
      * @var Dir $moduleDirectory
      */
-    private $moduleDirectory;
+    private Dir $moduleDirectory;
 
     /**
      * @var GeneralHelper $generalHelper
      */
-    private $generalHelper;
+    private GeneralHelper $generalHelper;
 
     /**
      * @var ServiceInterfaceFactory
      */
-    private $serviceFactory;
+    private ServiceInterfaceFactory $serviceFactory;
 
     /**
      * @var ServiceRepositoryInterface
      */
-    private $serviceRepository;
+    private ServiceRepositoryInterface $serviceRepository;
 
     /**
      * @var RegionRepositoryInterface $regionRepository
      */
-    private $regionRepository;
+    private RegionRepositoryInterface $regionRepository;
 
     /**
      * @var PickupPointInterfaceFactory
      */
-    private $pickupPointFactory;
+    private PickupPointInterfaceFactory $pickupPointFactory;
 
     /**
      * @var PickupPointRepositoryInterface
      */
-    private $pickupPointRepository;
+    private PickupPointRepositoryInterface $pickupPointRepository;
 
     /**
      * @var LockerInterfaceFactory
      */
-    private $lockerFactory;
+    private LockerInterfaceFactory $lockerFactory;
 
     /**
      * @var RegionInterfaceFactory
      */
-    private $regionFactory;
+    private RegionInterfaceFactory $regionFactory;
 
     /**
      * @var LockerRepositoryInterface
      */
-    private $lockerRepository;
+    private LockerRepositoryInterface $lockerRepository;
 
     /**
      * @var CityInterfaceFactory
      */
-    private $cityFactory;
+    private CityInterfaceFactory $cityFactory;
 
     /**
      * @var CityRepository
      */
-    private $cityRepository;
+    private CityRepository $cityRepository;
 
     /**
      * @var StoredDataHelper
      */
-    private $storeDataHelper;
+    private StoredDataHelper $storeDataHelper;
 
     /**
      * @var Json $jsonHelper
      */
-    private $jsonHelper;
+    private Json $jsonHelper;
 
     /**
      * @var CacheHelper $cacheHelper
      */
-    private $cacheHelper;
+    private CacheHelper $cacheHelper;
+
 
     /**
      * @param Context $context
      * @param ApiHelper $apiHelper
      * @param GeneralHelper $generalHelper
-     * @param SamedayCountiesHelper $samedayCountiesHelper
      * @param SamedayCitiesHelper $samedayCitiesHelper
      * @param ServiceInterfaceFactory $serviceFactory
      * @param ServiceRepositoryInterface $serviceRepository
@@ -135,12 +135,12 @@ class LocalDataImporter extends AbstractHelper
      * @param CityInterfaceFactory $cityFactory
      * @param Dir $moduleDirectory
      * @param Json $jsonHelper
+     * @param CacheHelper $cacheHelper
      */
     public function __construct(
         Context $context,
         ApiHelper $apiHelper,
         GeneralHelper $generalHelper,
-        SamedayCountiesHelper $samedayCountiesHelper,
         SamedayCitiesHelper $samedayCitiesHelper,
         ServiceInterfaceFactory $serviceFactory,
         ServiceRepositoryInterface $serviceRepository,
@@ -161,7 +161,6 @@ class LocalDataImporter extends AbstractHelper
 
         $this->apiHelper = $apiHelper;
         $this->generalHelper = $generalHelper;
-        $this->samedayCountiesHelper = $samedayCountiesHelper;
         $this->samedayCitiesHelper = $samedayCitiesHelper;
         $this->serviceFactory = $serviceFactory;
         $this->serviceRepository = $serviceRepository;

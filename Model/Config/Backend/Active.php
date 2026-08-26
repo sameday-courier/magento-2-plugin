@@ -32,8 +32,8 @@ class Active extends Value
         ScopeConfigInterface $config,
         EncryptorInterface $encryptor,
         TypeListInterface $cacheTypeList,
-        AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
+        ?AbstractResource $resource = null,
+        ?AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct($context, $registry, $config, $cacheTypeList, $resource, $resourceCollection, $data);
@@ -52,9 +52,12 @@ class Active extends Value
         $authenticationValidator = new SamedayValidator();
 
         $authenticationValidator->setValidation($this->authenticationValidator($this));
-        $authenticationValidator->setMessage(
-            __('Sameday Courier API authentication failed. Please check your credentials!')
-        );
+        $message = 'Sameday Courier API authentication failed. Please check your credentials!';
+        $lastLoginError = $this->apiHelper->getLastLoginError();
+        if ($lastLoginError) {
+            $message .= ' Details: ' . $lastLoginError;
+        }
+        $authenticationValidator->setMessage(__($message));
 
         return $authenticationValidator;
     }

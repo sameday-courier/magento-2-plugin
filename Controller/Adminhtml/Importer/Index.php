@@ -35,7 +35,7 @@ class Index extends Action
         Context $context,
         ResultFactory $resultFactory,
         LocalDataImporter $localDataImporter,
-        Validator $formKeyValidator = null
+        ?Validator $formKeyValidator = null
     ) {
         parent::__construct($context);
 
