@@ -11,6 +11,11 @@ class BulkAwbToolbar extends Template
         return $this->getUrl('samedaycourier_shipping/order/bulkGenerateAwb');
     }
 
+    public function getGeneratePreviewUrl(): string
+    {
+        return $this->getUrl('samedaycourier_shipping/order/bulkGeneratePreview');
+    }
+
     public function getRemoveUrl(): string
     {
         return $this->getUrl('samedaycourier_shipping/order/bulkRemoveAwb');
@@ -25,6 +30,7 @@ class BulkAwbToolbar extends Template
     {
         return json_encode([
             'generateUrl' => $this->getGenerateUrl(),
+            'generatePreviewUrl' => $this->getGeneratePreviewUrl(),
             'removeUrl' => $this->getRemoveUrl(),
             'clearErrorsUrl' => $this->getClearErrorsUrl(),
             'formKey' => $this->getFormKey(),
@@ -38,6 +44,8 @@ class BulkAwbToolbar extends Template
                 'statusSkipped' => (string) __('Skipped'),
                 'clearConfirm' => (string) __('Clear Sameday feedback errors for orders without a generated AWB?'),
                 'noSelection' => (string) __('Please select at least one order.'),
+                'previewFailed' => (string) __('Could not prepare bulk AWB preview.'),
+                'crossborderConfirmRequired' => (string) __('Please confirm the cross-border currency disclaimer.'),
             ],
         ]);
     }

@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.9.7
+
+### Added
+- Bulk AWB generate modal shows cross-border currency warnings and requires conversion disclaimer confirmation
+
+### Fixed
+- Bulk/estimate AWB now use the default pickup point for the active testing/production environment
+- Cross-border locker (XL) AWB requests now send `lockerLastMile`
+
 ## 1.9.6
 
 ### Fixed

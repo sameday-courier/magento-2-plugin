@@ -23,12 +23,18 @@ $configJson = $block->getConfigJson();
             </div>
             <div class="sameday-bulk-modal-body">
                 <div id="samedayBulkGenerateConfirm">
-                    <p><?= $block->escapeHtml(__('The following orders will be processed:')) ?></p>
+                    <p><?= $block->escapeHtml(__('Review selected orders before generating shipment labels.')) ?></p>
                     <ul id="samedayBulkGenerateOrderList" class="sameday-bulk-confirm-list"></ul>
-                    <div class="sameday-bulk-confirm-agree">
+                    <div id="samedayBulkGenerateAgreeEstimate" class="sameday-bulk-confirm-agree">
                         <label>
                             <input type="checkbox" id="samedayBulkGenerateAgree">
                             <small><?= $block->escapeHtml(__('I agree that the price estimations are subject to change due to bulk generation inaccuracy potential.')) ?></small>
+                        </label>
+                    </div>
+                    <div id="samedayBulkGenerateAgreeCrossborder" class="sameday-bulk-confirm-agree is-crossborder" style="display:none;">
+                        <label>
+                            <input type="checkbox" id="samedayBulkGenerateCrossborderAgree">
+                            <small><?= $block->escapeHtml(__('I confirm that I proceed with manual conversion for those orders.')) ?></small>
                         </label>
                     </div>
                 </div>
