@@ -186,6 +186,61 @@ class StoredDataHelper extends AbstractHelper
     }
 
     /**
+     * Warning when COD repayment needs attention for currency mismatch and/or cross-border destination.
+     *
+     * @param string|null $destCountryId Destination country code (order shipping address)
+     * @param string $orderCurrency Order currency code
+     * @param float $repayment COD repayment amount
+     * @param string|null $hostCountryCode Sameday account country (carriers/samedaycourier/country)
+     */
+    public function buildCurrencyWarningMessage(
+        ?string $destCountryId,
+        string $orderCurrency,
+        float $repayment,
+        ?string $hostCountryCode = null
+    ): ?string {
+        if ($repayment <= 0 || $destCountryId === null || $destCountryId === '') {
+            return null;
+        }
+
+        $destCountry = strtolower($destCountryId);
+        $hostCountry = $hostCountryCode !== null && $hostCountryCode !== ''
+            ? strtolower($hostCountryCode)
+            : null;
+        $isCrossBorder = $hostCountry !== null && $hostCountry !== $destCountry;
+
+        $destCurrency = $this->buildDestCurrency($destCountry);
+        $currencyMismatch = $destCurrency !== $orderCurrency;
+
+        if (!$currencyMismatch && !$isCrossBorder) {
+            return null;
+        }
+
+        if ($currencyMismatch) {
+            if ($destCurrency === null) {
+                $destCurrency = sprintf(
+                    'not one of the accepted currency %s, %s or %s',
+                    self::SAMEDAY_ELIGIBLE_CURRENCIES[ApiHelper::ROMANIA_CODE],
+                    self::SAMEDAY_ELIGIBLE_CURRENCIES[ApiHelper::BULGARIA_CODE],
+                    self::SAMEDAY_ELIGIBLE_CURRENCIES[ApiHelper::HUNGARY_CODE]
+                );
+            }
+
+            return sprintf(
+                'Be aware that the intended currency is %s but the Repayment value is expressed in %s. Please consider a conversion !!',
+                $destCurrency,
+                $orderCurrency
+            );
+        }
+
+        return sprintf(
+            'Be aware that this is a cross-border order (destination %s, Sameday account %s). Please consider a conversion !!',
+            strtoupper($destCountry),
+            strtoupper($hostCountry)
+        );
+    }
+
+    /**
      * @param string $serviceCode
      *
      * @return bool

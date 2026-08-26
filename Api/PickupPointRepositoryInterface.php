@@ -62,11 +62,15 @@ interface PickupPointRepositoryInterface
     public function getList(SearchCriteriaInterface $searchCriteria): array;
 
     /**
-     * Get the default pickup point
+     * Get the default pickup point for the current (or given) environment.
+     *
+     * @param bool|null $isTesting When null, returns the first default regardless of environment.
      *
      * @return PickupPointInterface
+     *
+     * @throws NoSuchEntityException
      */
-    public function getDefaultPickupPoint(): PickupPointInterface;
+    public function getDefaultPickupPoint(?bool $isTesting = null): PickupPointInterface;
 
     /**
      * Delete pickup point.

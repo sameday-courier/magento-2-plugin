@@ -131,11 +131,38 @@
     padding-left: 18px;
 }
 
+.sameday-bulk-confirm-list .sameday-bulk-order-warning {
+    color: #b30000;
+    font-weight: 700;
+    margin: 8px 0;
+    list-style: none;
+    margin-left: -18px;
+}
+
+.sameday-bulk-confirm-list .sameday-bulk-order-warning .sameday-bulk-order-label {
+    display: inline;
+}
+
+.sameday-bulk-confirm-list .sameday-bulk-order-warning .sameday-bulk-order-message {
+    display: inline;
+    font-weight: 700;
+}
+
 .sameday-bulk-confirm-agree {
     margin-top: 16px;
     padding: 12px 14px;
     background: #f5f5f5;
     border: 1px solid #e3e3e3;
+}
+
+.sameday-bulk-confirm-agree.is-crossborder {
+    background: #fff1f0;
+    border-color: #f5c2c0;
+}
+
+.sameday-bulk-confirm-agree.is-crossborder label {
+    color: #b30000;
+    font-weight: 600;
 }
 
 .sameday-bulk-progress-label {

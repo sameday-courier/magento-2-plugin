@@ -175,7 +175,9 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
                 )
             );
 
-            if ($service->getCode() === GeneralHelper::SAMEDAY_SERVICE_LOCKER_CODE) {
+            if ($service->getCode() === GeneralHelper::SAMEDAY_SERVICE_LOCKER_CODE
+                || $service->getCode() === GeneralHelper::SAMEDAY_SERVICE_CROSSBORDER_LOCKER_CODE
+            ) {
                 $lockerLastMile = $locker['lockerId'];
             }
 

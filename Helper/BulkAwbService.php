@@ -119,6 +119,80 @@ class BulkAwbService
     }
 
     /**
+     * Preview selected orders for bulk AWB generation (currency / cross-border warnings).
+     *
+     * @param int[] $orderIds
+     * @return array{success:bool,orders:array<int,array{order_id:int,label:string,currency_warning:?string}>,has_currency_warnings:bool}
+     */
+    public function previewGenerateOrders(array $orderIds): array
+    {
+        $orders = [];
+        $hasCurrencyWarnings = false;
+
+        foreach ($orderIds as $orderId) {
+            $orderId = (int) $orderId;
+            if ($orderId <= 0) {
+                continue;
+            }
+
+            $warning = null;
+            $label = '#' . $orderId;
+
+            try {
+                /** @var Order $order */
+                $order = $this->orderRepository->get($orderId);
+                $incrementId = (string) $order->getIncrementId();
+                if ($incrementId !== '') {
+                    $label = '#' . $incrementId;
+                }
+
+                $repayment = 0.0;
+                $payment = $order->getPayment();
+                if ($payment) {
+                    $paymentCode = null;
+                    try {
+                        if ($payment->getMethodInstance()) {
+                            $paymentCode = $payment->getMethodInstance()->getCode();
+                        }
+                    } catch (Exception $exception) {
+                        $paymentCode = $payment->getMethod();
+                    }
+
+                    if ($paymentCode === null || in_array($paymentCode, StoredDataHelper::COD_OPTIONS, true)) {
+                        $repayment = (float) $order->getGrandTotal();
+                    }
+                }
+
+                $shippingAddress = $order->getShippingAddress();
+                $warning = $this->storedDataHelper->buildCurrencyWarningMessage(
+                    $shippingAddress ? (string) $shippingAddress->getCountryId() : null,
+                    (string) $order->getOrderCurrencyCode(),
+                    $repayment,
+                    $this->storedDataHelper->getHostCountry()
+                );
+            } catch (Exception $e) {
+                // Keep a plain label if the order cannot be loaded.
+            }
+
+            if ($warning !== null) {
+                $hasCurrencyWarnings = true;
+            }
+
+            $orders[] = [
+                'order_id' => $orderId,
+                'label' => $label,
+                'currency_warning' => $warning,
+            ];
+        }
+
+        return [
+            'success' => true,
+            'orders' => $orders,
+            'has_currency_warnings' => $hasCurrencyWarnings,
+        ];
+    }
+
+    /**
      * @return array{success:bool,order_id:int,skipped?:bool,awb_number?:string,message?:string,error?:string,feedback:string,actions_html:string}
      */
     public function generateForOrder(int $orderId): array
@@ -179,7 +253,9 @@ class BulkAwbService
         }
 
         try {
-            $pickupPoint = $this->pickupPointRepository->getDefaultPickupPoint();
+            $pickupPoint = $this->pickupPointRepository->getDefaultPickupPoint(
+                $this->isTestingMode()
+            );
         } catch (NoSuchEntityException $e) {
             return $this->fail($orderId, (string) __('Default pickup point not found.'));
         }
@@ -214,7 +290,14 @@ class BulkAwbService
                 sprintf('%s (%s)', (string) ($locker['address'] ?? ''), (string) ($locker['name'] ?? ''))
             );
 
-            if ($service->getCode() === GeneralHelper::SAMEDAY_SERVICE_LOCKER_CODE) {
+            if (in_array(
+                $service->getCode(),
+                [
+                    GeneralHelper::SAMEDAY_SERVICE_LOCKER_CODE,
+                    GeneralHelper::SAMEDAY_SERVICE_CROSSBORDER_LOCKER_CODE,
+                ],
+                true
+            )) {
                 $lockerLastMile = (int) $locker['lockerId'];
             }
             if ($service->getCode() === GeneralHelper::SAMEDAY_SERVICE_PUDO_CODE) {

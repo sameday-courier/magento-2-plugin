@@ -13,6 +13,7 @@ define([
 
         var pendingBulkOrderIds = [];
         var bulkProcessRunning = false;
+        var pendingHasCurrencyWarnings = false;
         var bulkRunResults = {
             generate: [],
             remove: []
@@ -194,6 +195,58 @@ define([
             listEl.empty();
             orderIds.forEach(function (orderId) {
                 listEl.append($('<li/>').text('#' + orderId));
+            });
+        }
+
+        function fillGenerateOrderList(listEl, orders) {
+            listEl.empty();
+            (orders || []).forEach(function (order) {
+                var label = order.label || ('#' + order.order_id);
+                var $item = $('<li/>');
+
+                if (order.currency_warning) {
+                    $item.addClass('sameday-bulk-order-warning');
+                    $item.append(
+                        $('<span/>', {
+                            'class': 'sameday-bulk-order-label',
+                            text: label + ' '
+                        })
+                    );
+                    $item.append(
+                        $('<span/>', {
+                            'class': 'sameday-bulk-order-message',
+                            text: '! ' + order.currency_warning
+                        })
+                    );
+                } else {
+                    $item.text(label);
+                }
+
+                listEl.append($item);
+            });
+        }
+
+        function updateGenerateConfirmState() {
+            var canConfirm;
+
+            if (pendingHasCurrencyWarnings) {
+                canConfirm = $('#samedayBulkGenerateCrossborderAgree').prop('checked');
+            } else {
+                canConfirm = $('#samedayBulkGenerateAgree').prop('checked');
+            }
+
+            $('#samedayBulkGenerateProcess').prop('disabled', !canConfirm);
+        }
+
+        function postPreview(orderIds) {
+            return $.ajax({
+                url: config.generatePreviewUrl,
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    form_key: config.formKey,
+                    order_ids: orderIds
+                }
             });
         }
 
@@ -488,7 +541,11 @@ define([
         }
 
         function resetGenerateModal() {
+            pendingHasCurrencyWarnings = false;
             $('#samedayBulkGenerateAgree').prop('checked', false);
+            $('#samedayBulkGenerateCrossborderAgree').prop('checked', false);
+            $('#samedayBulkGenerateAgreeEstimate').show();
+            $('#samedayBulkGenerateAgreeCrossborder').hide();
             $('#samedayBulkGenerateProcess').prop('disabled', true);
             $('#samedayBulkGenerateConfirm').show();
             $('#samedayBulkGenerateProgress').hide();
@@ -597,9 +654,41 @@ define([
                 alert(getLabels().noSelection || 'Please select at least one order.');
                 return;
             }
+
+            var $btn = $(this);
+            $btn.prop('disabled', true);
             resetGenerateModal();
-            fillOrderList($('#samedayBulkGenerateOrderList'), pendingBulkOrderIds);
-            showModal('samedayBulkGenerateModal');
+
+            postPreview(pendingBulkOrderIds)
+                .done(function (data) {
+                    if (!data || !data.success) {
+                        alert((data && data.error) || getLabels().previewFailed || 'Could not prepare bulk AWB preview.');
+                        return;
+                    }
+
+                    pendingHasCurrencyWarnings = !!data.has_currency_warnings;
+                    fillGenerateOrderList(
+                        $('#samedayBulkGenerateOrderList'),
+                        data.orders || []
+                    );
+
+                    if (pendingHasCurrencyWarnings) {
+                        $('#samedayBulkGenerateAgreeEstimate').hide();
+                        $('#samedayBulkGenerateAgreeCrossborder').show();
+                    } else {
+                        $('#samedayBulkGenerateAgreeEstimate').show();
+                        $('#samedayBulkGenerateAgreeCrossborder').hide();
+                    }
+
+                    updateGenerateConfirmState();
+                    showModal('samedayBulkGenerateModal');
+                })
+                .fail(function () {
+                    alert(getLabels().previewFailed || 'Could not prepare bulk AWB preview.');
+                })
+                .always(function () {
+                    updateToolbarState();
+                });
         });
 
         $(document).on('click', '#samedayBulkRemoveBtn', function () {
@@ -616,8 +705,8 @@ define([
             showModal('samedayBulkRemoveModal');
         });
 
-        $(document).on('change', '#samedayBulkGenerateAgree', function () {
-            $('#samedayBulkGenerateProcess').prop('disabled', !this.checked);
+        $(document).on('change', '#samedayBulkGenerateAgree, #samedayBulkGenerateCrossborderAgree', function () {
+            updateGenerateConfirmState();
         });
 
         $(document).on('change', '#samedayBulkRemoveAgree', function () {
@@ -626,6 +715,13 @@ define([
 
         $(document).on('click', '#samedayBulkGenerateProcess', function () {
             if (bulkProcessRunning || !pendingBulkOrderIds.length) {
+                return;
+            }
+            if (pendingHasCurrencyWarnings && !$('#samedayBulkGenerateCrossborderAgree').prop('checked')) {
+                alert(getLabels().crossborderConfirmRequired || 'Please confirm the cross-border currency disclaimer.');
+                return;
+            }
+            if (!pendingHasCurrencyWarnings && !$('#samedayBulkGenerateAgree').prop('checked')) {
                 return;
             }
             runSequential(pendingBulkOrderIds.slice(), config.generateUrl, {

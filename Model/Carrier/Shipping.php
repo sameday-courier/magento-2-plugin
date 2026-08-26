@@ -188,7 +188,9 @@ class Shipping extends AbstractCarrier implements CarrierInterface
 
     private function shippingEstimateCost(RateRequest $request, int $serviceId)
     {
-        $defaultPickupPoint = $this->pickupPointRepository->getDefaultPickupPoint();
+        $defaultPickupPoint = $this->pickupPointRepository->getDefaultPickupPoint(
+            (bool) (int) $this->getConfigData('testing')
+        );
         $packageWeight = max(1, $request->getData('package_weight'));
 
         $objectManager = ObjectManager::getInstance();

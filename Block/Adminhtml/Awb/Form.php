@@ -11,7 +11,6 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order\Payment\Interceptor as Payment;
 use SamedayCourier\Shipping\Api\Data\PickupPointInterface;
 use SamedayCourier\Shipping\Api\Data\ServiceInterface;
-use SamedayCourier\Shipping\Helper\ApiHelper;
 use SamedayCourier\Shipping\Helper\GeneralHelper;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
 use SamedayCourier\Shipping\Model\Data\Service;
@@ -159,26 +158,12 @@ class Form extends Template
         }
 
         $orderCurrency = $order->getOrderCurrencyCode();
-        $destCurrency = $this->storedDataHelper->buildDestCurrency($shippingAddress->getCountryId());
-
-        $currencyWarningMessage = null;
-        if ($destCurrency !== $orderCurrency
-            && $repayment > 0
-        ) {
-            if (null === $destCurrency) {
-                $destCurrency = sprintf("not one of the accepted currency %s, %s or %s",
-                    StoredDataHelper::SAMEDAY_ELIGIBLE_CURRENCIES[ApiHelper::ROMANIA_CODE],
-                    StoredDataHelper::SAMEDAY_ELIGIBLE_CURRENCIES[ApiHelper::BULGARIA_CODE],
-                    StoredDataHelper::SAMEDAY_ELIGIBLE_CURRENCIES[ApiHelper::HUNGARY_CODE]
-                );
-            }
-            $currencyWarningMessage = sprintf(
-                "Be aware that the intended currency is %s but the Repayment value is expressed in %s.
-                Please consider a conversion !!",
-                $destCurrency,
-                $orderCurrency
-            );
-        }
+        $currencyWarningMessage = $this->storedDataHelper->buildCurrencyWarningMessage(
+            $shippingAddress ? (string) $shippingAddress->getCountryId() : null,
+            (string) $orderCurrency,
+            (float) $repayment,
+            $this->storedDataHelper->getHostCountry()
+        );
 
         return [
             'client_reference' => $order->getId(),
