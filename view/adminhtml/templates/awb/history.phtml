@@ -16,57 +16,62 @@ use SamedayCourier\Shipping\Block\Adminhtml\Awb\History;
                         $historyRows = '';
                         foreach ($packageHistory as $history) {
                             $historyRows .=
-                                '<td>' . $history->getName() . '</td>' .
-                                '<td>' . $history->getLabel() . '</td>' .
-                                '<td>' . $history->getState() . '</td>' .
-                                '<td>' . $history->getDate()->format('Y-m-d H:i:s') . '</td>' .
-                                '<td>' . $history->getCounty() . '</td>' .
-                                '<td>' . $history->getTransitLocation() . '</td>' .
-                                '<td>' . $history->getReason() . '</td>'
-                            ;
+                                '<td>' . $block->escapeHtml($history->getName()) . '</td>' .
+                                '<td>' . $block->escapeHtml($history->getLabel()) . '</td>' .
+                                '<td>' . $block->escapeHtml($history->getState()) . '</td>' .
+                                '<td>' . $block->escapeHtml($history->getDate()->format('Y-m-d H:i:s')) . '</td>' .
+                                '<td>' . $block->escapeHtml($history->getCounty()) . '</td>' .
+                                '<td>' . $block->escapeHtml($history->getTransitLocation()) . '</td>' .
+                                '<td>' . $block->escapeHtml($history->getReason()) . '</td>';
                         }
+
+                        $parcelAwbNumber = $block->escapeHtml($summary->getParcelAwbNumber());
+                        $parcelAwbNumberAttr = $block->escapeHtmlAttr($summary->getParcelAwbNumber());
+                        $pickedUpAt = $summary->getPickedUpAt()
+                            ? $summary->getPickedUpAt()->format('Y-m-d H:i:s')
+                            : '';
+
                         $packageRows .=
                             '<tr>' .
-                            '<td style="text-align: center; cursor:pointer;" class="showHistoryDetails" value="-" data-awb-number="'.$summary->getParcelAwbNumber().'"> <strong> + </strong> </td>' .
-                            '<td>' . $summary->getParcelAwbNumber() . '</td>' .
-                            '<td>' . $summary->getParcelWeight() . '</td>' .
-                            '<td>' . ($summary->isDelivered() ? "Yes" : "No") . '</td>' .
-                            '<td>' . $summary->getDeliveryAttempts() . ' </td>' .
-                            '<td>' . ($summary->isPickedUp() ? 'Yes' : 'No') . '</td>' .
-                            '<td>' . ($summary->getPickedUpAt() ? $summary->getPickedUpAt()->format('Y-m-d H:i:s') : '') .'</td>' .
+                            '<td style="text-align: center; cursor:pointer;" class="showHistoryDetails" value="-" ' .
+                            'data-awb-number="' . $parcelAwbNumberAttr . '"> <strong> + </strong> </td>' .
+                            '<td>' . $parcelAwbNumber . '</td>' .
+                            '<td>' . $block->escapeHtml((string) $summary->getParcelWeight()) . '</td>' .
+                            '<td>' . $block->escapeHtml($summary->isDelivered() ? 'Yes' : 'No') . '</td>' .
+                            '<td>' . $block->escapeHtml((string) $summary->getDeliveryAttempts()) . '</td>' .
+                            '<td>' . $block->escapeHtml($summary->isPickedUp() ? 'Yes' : 'No') . '</td>' .
+                            '<td>' . $block->escapeHtml($pickedUpAt) . '</td>' .
                             '</tr>' .
                             '<tr>' .
                             '<td colspan="7">' .
-                            '<table class="history" id="history-'.$summary->getParcelAwbNumber().'" style="width: 100%; display: none; text-align: center">' .
+                            '<table class="history" id="history-' . $parcelAwbNumberAttr .
+                            '" style="width: 100%; display: none; text-align: center">' .
                             '<tr>' .
-                            '<th style="width: 15%">' . __("Status") . '</th>' .
-                            '<th style="width: 15%">' . __("Label") . '</th>' .
-                            '<th style="width: 15%">' . __("State") . '</th>' .
-                            '<th style="width: 15%">' . __("Date") . '</th>' .
-                            '<th style="width: 15%">' . __("County") . '</th>' .
-                            '<th style="width: 15%">' . __("Translation") . '</th>' .
-                            '<th style="width: 15%">' . __("Reason") . '</th>' .
+                            '<th style="width: 15%">' . $block->escapeHtml(__('Status')) . '</th>' .
+                            '<th style="width: 15%">' . $block->escapeHtml(__('Label')) . '</th>' .
+                            '<th style="width: 15%">' . $block->escapeHtml(__('State')) . '</th>' .
+                            '<th style="width: 15%">' . $block->escapeHtml(__('Date')) . '</th>' .
+                            '<th style="width: 15%">' . $block->escapeHtml(__('County')) . '</th>' .
+                            '<th style="width: 15%">' . $block->escapeHtml(__('Translation')) . '</th>' .
+                            '<th style="width: 15%">' . $block->escapeHtml(__('Reason')) . '</th>' .
                             '</tr>' .
                             $historyRows .
                             '</table>' .
                             '</td>' .
-                            '</tr>'
-
-
-                        ;
+                            '</tr>';
                     }
                     ?>
                     <table class="packages" style="width: 100%">
                         <tr>
                             <th></th>
-                            <th scope="col"><?= __('Parcel number') ?></th>
-                            <th scope="col"><?= __('Parcel weight') ?></th>
-                            <th scope="col"><?= __('Delivered') ?></th>
-                            <th scope="col"><?= __('Delivery attempts') ?></th>
-                            <th scope="col"><?= __('Is picked up') ?></th>
-                            <th scope="col"><?= __('Picked up at') ?></th>
+                            <th scope="col"><?= $block->escapeHtml(__('Parcel number')) ?></th>
+                            <th scope="col"><?= $block->escapeHtml(__('Parcel weight')) ?></th>
+                            <th scope="col"><?= $block->escapeHtml(__('Delivered')) ?></th>
+                            <th scope="col"><?= $block->escapeHtml(__('Delivery attempts')) ?></th>
+                            <th scope="col"><?= $block->escapeHtml(__('Is picked up')) ?></th>
+                            <th scope="col"><?= $block->escapeHtml(__('Picked up at')) ?></th>
                         </tr>
-                        <?= $packageRows ?>
+                        <?= /* @noEscape */ $packageRows ?>
                     </table>
                 </div>
             </section>
