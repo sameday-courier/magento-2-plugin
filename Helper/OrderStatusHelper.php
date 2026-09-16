@@ -17,7 +17,6 @@ use SamedayCourier\Shipping\Api\Data\AwbInterface;
 
 /**
  * Applies / reverts Magento order status around AWB create and remove.
- * Uses OrderRepository + status-state lookup so Magento 2.3 and 2.4 behave the same.
  */
 class OrderStatusHelper extends AbstractHelper
 {
@@ -79,13 +78,9 @@ class OrderStatusHelper extends AbstractHelper
     public function getOrderStatusPayload(int $orderId): array
     {
         try {
-            $order = $this->orderRepository->get($orderId);
-            $status = (string) $order->getStatus();
+            $status = (string) $this->orderRepository->get($orderId)->getStatus();
         } catch (Exception $e) {
-            return [
-                'order_status' => '',
-                'order_status_label' => '',
-            ];
+            $status = '';
         }
 
         return [
@@ -95,24 +90,19 @@ class OrderStatusHelper extends AbstractHelper
     }
 
     /**
-     * Persist current order status on the AWB row, then optionally move the order
-     * to the configured status after the AWB has been saved by the caller.
-     *
-     * Call order: prepareAwb(...) → awbRepository->save($awb) → applyConfiguredStatus($order)
-     * Or use prepareAwbAndApplyStatus() which sets initial status on the AWB model only,
-     * then call applyConfiguredStatus after a successful save.
+     * Store the current order status on the AWB before save.
+     * Call applyConfiguredStatus() after a successful AWB save.
      */
     public function captureInitialStatus(OrderInterface $order, AwbInterface $awb): void
     {
-        $initialStatus = (string) $order->getStatus();
-        $awb->setInitialOrderStatus($initialStatus !== '' ? $initialStatus : null);
+        $status = (string) $order->getStatus();
+        $awb->setInitialOrderStatus($status !== '' ? $status : null);
     }
 
     public function applyConfiguredStatus(OrderInterface $order): void
     {
         $targetStatus = $this->getConfiguredAwbOrderStatus();
-        $currentStatus = (string) $order->getStatus();
-        if ($targetStatus === '' || $targetStatus === $currentStatus) {
+        if ($targetStatus === '' || $targetStatus === (string) $order->getStatus()) {
             return;
         }
 
@@ -124,28 +114,13 @@ class OrderStatusHelper extends AbstractHelper
     }
 
     /**
-     * Capture initial status onto the AWB model and apply configured status to the order.
-     * Prefer saving the AWB before calling this if you need transactional safety around status;
-     * otherwise call captureInitialStatus → save → applyConfiguredStatus.
-     */
-    public function prepareAwbAndApplyStatus(OrderInterface $order, AwbInterface $awb): void
-    {
-        $this->captureInitialStatus($order, $awb);
-        $this->applyConfiguredStatus($order);
-    }
-
-    /**
      * Restore the order status captured when the AWB was created.
      */
     public function revertStatusFromAwb(AwbInterface $awb): void
     {
-        $initialStatus = $awb->getInitialOrderStatus();
-        if ($initialStatus === null || $initialStatus === '') {
-            return;
-        }
-
+        $initialStatus = (string) $awb->getInitialOrderStatus();
         $orderId = (int) $awb->getOrderId();
-        if ($orderId <= 0) {
+        if ($initialStatus === '' || $orderId <= 0) {
             return;
         }
 
@@ -206,8 +181,7 @@ class OrderStatusHelper extends AbstractHelper
         $collection = $this->orderStatusCollectionFactory->create();
         $collection->joinStates();
         $collection->addFieldToFilter('main_table.status', $status);
-        $item = $collection->getFirstItem();
-        $state = $item->getData('state');
+        $state = $collection->getFirstItem()->getData('state');
 
         return $state !== null && $state !== '' ? (string) $state : null;
     }

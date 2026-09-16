@@ -7,22 +7,9 @@ require(
         'use strict';
 
         function updateOrderStatusLabel(label) {
-            if (!label) {
-                return;
+            if (label) {
+                $('.order-status').text(label);
             }
-
-            var selectors = [
-                '.order-status',
-                '.page-title-wrapper .order-status',
-                '.order-information .order-status',
-                '[data-ui-id="order-status"]'
-            ];
-
-            selectors.forEach(function (selector) {
-                $(selector).each(function () {
-                    $(this).text(label);
-                });
-            });
         }
 
         function showGenerateButton() {
@@ -48,7 +35,7 @@ require(
 
         function bindRemoveAwb() {
             var removeAwb = document.getElementById('remove_awb');
-            if (null === removeAwb) {
+            if (!removeAwb) {
                 return;
             }
 
@@ -58,17 +45,15 @@ require(
                     content: $.mage.__('Are you sure you want to remove this awb?'),
                     actions: {
                         confirm: function () {
-                            var param = {
-                                form_key: window.FORM_KEY,
-                                awb_id: removeAwb.getAttribute('data-awb_id'),
-                                sameday_awb_number: removeAwb.getAttribute('data-sameday_awb_number'),
-                                isAjax: true
-                            };
-
                             $.ajax({
                                 showLoader: true,
                                 url: removeAwb.getAttribute('data-remove_awb_url'),
-                                data: param,
+                                data: {
+                                    form_key: window.FORM_KEY,
+                                    awb_id: removeAwb.getAttribute('data-awb_id'),
+                                    sameday_awb_number: removeAwb.getAttribute('data-sameday_awb_number'),
+                                    isAjax: true
+                                },
                                 type: 'POST',
                                 dataType: 'json'
                             }).done(function (data) {

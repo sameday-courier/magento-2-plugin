@@ -459,7 +459,7 @@ class BulkAwbService
                 'order_id' => $orderId,
                 'awb_number' => $awb->getAwbNumber(),
                 'message' => (string) __('AWB was canceled'),
-            ], $orderId, false);
+            ], $orderId);
         } catch (Exception $e) {
             return $this->enrichResponse([
                 'success' => false,
@@ -602,13 +602,12 @@ class BulkAwbService
         ], $orderId);
     }
 
-    private function enrichResponse(array $payload, int $orderId, bool $includeFeedback = true): array
+    private function enrichResponse(array $payload, int $orderId): array
     {
-        $payload['feedback'] = $includeFeedback ? $this->formatFeedbackHtml($orderId) : '—';
+        $payload['feedback'] = $this->formatFeedbackHtml($orderId);
         $payload['actions_html'] = $this->formatActionsHtml($orderId);
-        $payload = array_merge($payload, $this->orderStatusHelper->getOrderStatusPayload($orderId));
 
-        return $payload;
+        return array_merge($payload, $this->orderStatusHelper->getOrderStatusPayload($orderId));
     }
 
     private function resolveServiceCode(OrderInterface $order): ?string

@@ -4,11 +4,10 @@
 
 ### Added
 - Configurable order status after AWB generation (Stores → Configuration → Sameday); previous status stored on AWB and restored on remove
-- Live order status update on the order view and orders grid after AWB generate/remove
+- Live order status update on the order view and orders grid after AWB generate/remove (no page refresh required)
 
 ### Fixed
-- Removing an AWB also deletes the related `samedaycourier_shipping_order_bulk_awb` feedback row
-- Orders grid Feedback column clears to blank after a successful AWB remove (errors still shown when reported)
+- Removing an AWB also deletes the related `samedaycourier_shipping_order_bulk_awb` row and clears the Feedback column (errors still shown when reported)
 
 ## 1.9.7
 
