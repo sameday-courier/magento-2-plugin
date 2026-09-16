@@ -5,7 +5,8 @@
             "order_id": true,
             "awb_number": true,
             "parcels": true,
-            "awb_cost": true
+            "awb_cost": true,
+            "initial_order_status": true
         },
         "constraint": {
             "PRIMARY": true

@@ -5,6 +5,7 @@
         <column xsi:type="varchar" name="awb_number" length="255" nullable="false" comment="AWB Number"/>
         <column xsi:type="text" name="parcels" nullable="false" comment="AWB Parcels"/>
         <column xsi:type="decimal" name="awb_cost" precision="12" scale="2" nullable="false" comment="AWB Cost"/>
+        <column xsi:type="varchar" name="initial_order_status" length="32" nullable="true" comment="Order status before AWB generation"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="id"/>
         </constraint>

@@ -40,6 +40,21 @@ class AwbRepository implements AwbRepositoryInterface
     /**
      * @inheritdoc
      */
+    public function getById($id)
+    {
+        $awbModel = $this->awbFactory->create();
+        $this->awbResourceModel->load($awbModel, $id);
+
+        if (!$awbModel->getId()) {
+            throw NoSuchEntityException::singleField(AwbInterface::ID, $id);
+        }
+
+        return $awbModel->getDataModel();
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getByOrderId($id)
     {
         $awbModel = $this->awbFactory->create();

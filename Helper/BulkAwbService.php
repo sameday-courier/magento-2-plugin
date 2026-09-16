@@ -90,6 +90,11 @@ class BulkAwbService
      */
     private $urlBuilder;
 
+    /**
+     * @var OrderStatusHelper
+     */
+    private $orderStatusHelper;
+
     public function __construct(
         OrderRepositoryInterface $orderRepository,
         AwbRepositoryInterface $awbRepository,
@@ -102,7 +107,8 @@ class BulkAwbService
         ShippingService $shippingService,
         OrderShipmentHelper $orderShipmentHelper,
         Json $serializer,
-        UrlInterface $urlBuilder
+        UrlInterface $urlBuilder,
+        OrderStatusHelper $orderStatusHelper
     ) {
         $this->orderRepository = $orderRepository;
         $this->awbRepository = $awbRepository;
@@ -116,6 +122,7 @@ class BulkAwbService
         $this->orderShipmentHelper = $orderShipmentHelper;
         $this->serializer = $serializer;
         $this->urlBuilder = $urlBuilder;
+        $this->orderStatusHelper = $orderStatusHelper;
     }
 
     /**
@@ -396,7 +403,9 @@ class BulkAwbService
             ->setAwbNumber($response->getAwbNumber())
             ->setAwbCost($repayment)
             ->setParcels($this->serializer->serialize($parcelsArr));
+        $this->orderStatusHelper->captureInitialStatus($order, $awb);
         $this->awbRepository->save($awb);
+        $this->orderStatusHelper->applyConfiguredStatus($order);
 
         if (null !== $orderShipment = $this->orderShipmentHelper->saveOrderShipment($order)) {
             $this->orderShipmentHelper->saveTracking(
@@ -441,6 +450,7 @@ class BulkAwbService
         try {
             $apiRequest = new SamedayDeleteAwbRequest($awb->getAwbNumber());
             (new Sameday($this->apiHelper->initClient()))->deleteAwb($apiRequest);
+            $this->orderStatusHelper->revertStatusFromAwb($awb);
             $this->awbRepository->deleteById($awb->getId());
             $this->orderBulkAwbRepository->deleteByOrderId($orderId);
 
@@ -449,7 +459,7 @@ class BulkAwbService
                 'order_id' => $orderId,
                 'awb_number' => $awb->getAwbNumber(),
                 'message' => (string) __('AWB was canceled'),
-            ], $orderId);
+            ], $orderId, false);
         } catch (Exception $e) {
             return $this->enrichResponse([
                 'success' => false,
@@ -505,16 +515,13 @@ class BulkAwbService
                 '</span>';
         }
 
-        if (!empty($payload['awb_number'])) {
-            return $this->formatAwbBadgeHtml((string) $payload['awb_number']);
-        }
-
         if ((int) $bulk->getStatus() === OrderBulkAwbInterface::STATUS_PENDING) {
             return '<span class="sameday-feedback-pending">' .
                 htmlspecialchars((string) __('Pending'), ENT_QUOTES, 'UTF-8') .
                 '</span>';
         }
 
+        // AWB table is the source of truth for generated numbers; do not show stale bulk success badges.
         return '—';
     }
 
@@ -599,6 +606,7 @@ class BulkAwbService
     {
         $payload['feedback'] = $includeFeedback ? $this->formatFeedbackHtml($orderId) : '—';
         $payload['actions_html'] = $this->formatActionsHtml($orderId);
+        $payload = array_merge($payload, $this->orderStatusHelper->getOrderStatusPayload($orderId));
 
         return $payload;
     }

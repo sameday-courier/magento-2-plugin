@@ -7,6 +7,7 @@
                 <model>SamedayCourier\Shipping\Model\Carrier\Shipping</model>
                 <title>Sameday Courier</title>
                 <shipping_cost>10</shipping_cost>
+                <awb_order_status></awb_order_status>
                 <sallowspecific>0</sallowspecific>
                 <sort_order>15</sort_order>
                 <specificerrmsg>This shipping method is not available. To use this shipping method, please contact us.</specificerrmsg>

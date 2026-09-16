@@ -324,6 +324,23 @@ define([
             updateGridCell(orderId, 'col-sameday_feedback', html);
         }
 
+        function updateOrderStatus(orderId, statusCode, statusLabel) {
+            if (!statusLabel && !statusCode) {
+                return;
+            }
+
+            var fields = {};
+            if (statusCode) {
+                fields.status = statusCode;
+            }
+            updateOrderGridData(orderId, fields);
+            updateGridCell(
+                orderId,
+                'col-status',
+                statusLabel || statusCode
+            );
+        }
+
         function updateOrderActions(orderId, actionsHtml) {
             var html = actionsHtml || '';
             updateOrderGridData(orderId, { sameday_actions: html });
@@ -502,12 +519,29 @@ define([
                         appendLog(modalConfig.logEl, orderId, message, type);
 
                         if (updateFeedback) {
-                            var feedbackHtml = (data && data.feedback)
-                                ? data.feedback
-                                : (entry.awbNumber
-                                    ? '<span class="sameday-awb-badge">' + entry.awbNumber + '</span>'
-                                    : '<span class="sameday-feedback-error">' + (entry.message || 'Error') + '</span>');
+                            var feedbackHtml;
+
+                            if (data && typeof data.feedback !== 'undefined') {
+                                feedbackHtml = data.feedback || '—';
+                            } else if (data && data.success && entry.awbNumber && resultsKey === 'generate') {
+                                feedbackHtml = '<span class="sameday-awb-badge">' + entry.awbNumber + '</span>';
+                            } else if (data && data.success) {
+                                feedbackHtml = '—';
+                            } else {
+                                feedbackHtml = '<span class="sameday-feedback-error">' +
+                                    (entry.message || 'Error') +
+                                    '</span>';
+                            }
+
                             updateOrderFeedback(orderId, feedbackHtml);
+                        }
+
+                        if (data && (data.order_status_label || data.order_status)) {
+                            updateOrderStatus(
+                                orderId,
+                                data.order_status || '',
+                                data.order_status_label || data.order_status || ''
+                            );
                         }
 
                         if (data && typeof data.actions_html !== 'undefined') {
@@ -594,6 +628,13 @@ define([
                                         updateOrderFeedback(orderId, data.feedback);
                                     } else {
                                         updateOrderFeedback(orderId, '—');
+                                    }
+                                    if (data.order_status_label || data.order_status) {
+                                        updateOrderStatus(
+                                            orderId,
+                                            data.order_status || '',
+                                            data.order_status_label || data.order_status || ''
+                                        );
                                     }
                                     if (data.actions_html) {
                                         updateOrderActions(orderId, data.actions_html);

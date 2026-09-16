@@ -16,6 +16,15 @@ interface AwbRepositoryInterface
      *
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
+    public function getById($id);
+
+    /**
+     * @param int $id
+     *
+     * @return AwbInterface
+     *
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
     public function getByOrderId($id);
 
     /**
