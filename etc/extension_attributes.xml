@@ -12,4 +12,7 @@
     <extension_attributes for="Magento\Quote\Api\Data\ShippingMethodInterface">
         <attribute code="apiUsername" type="string"/>
     </extension_attributes>
+    <extension_attributes for="Magento\Sales\Api\Data\OrderInterface">
+        <attribute code="samedaycourier_locker" type="string"/>
+    </extension_attributes>
 </config>
