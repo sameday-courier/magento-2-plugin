@@ -47,6 +47,12 @@
                     <source_model>SamedayCourier\Shipping\Model\Config\Source\AwbLabelFormat</source_model>
                 </field>
 
+                <field id="awb_order_status" translate="label" type="select" sortOrder="430" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Order status after AWB generation</label>
+                    <tooltip>When an AWB is generated, the order moves to this status. Removing the AWB restores the previous status.</tooltip>
+                    <source_model>SamedayCourier\Shipping\Model\Config\Source\OrderStatus</source_model>
+                </field>
+
                 <field id="repayment_tax_label" translate="label" type="text" sortOrder="460" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Repayment tax label</label>
                 </field>

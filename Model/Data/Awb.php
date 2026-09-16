@@ -86,4 +86,20 @@ class Awb extends AbstractExtensibleObject implements AwbInterface
     {
         return $this->setData(self::AWB_COST, $awbCost);
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getInitialOrderStatus()
+    {
+        return $this->_get(self::INITIAL_ORDER_STATUS);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setInitialOrderStatus($status)
+    {
+        return $this->setData(self::INITIAL_ORDER_STATUS, $status);
+    }
 }

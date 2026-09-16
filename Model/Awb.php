@@ -53,6 +53,7 @@ class Awb extends AbstractExtensibleModel
             ->setAwbNumber($this->getData(AwbInterface::AWB_NUMBER))
             ->setParcels($this->getData(AwbInterface::PARCELS))
             ->setAwbCost($this->getData(AwbInterface::AWB_COST))
+            ->setInitialOrderStatus($this->getData(AwbInterface::INITIAL_ORDER_STATUS))
             ;
 
         return $awbDataObject;

@@ -39,6 +39,7 @@ use SamedayCourier\Shipping\Helper\GeneralHelper;
 use SamedayCourier\Shipping\Helper\ShippingService;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
 use SamedayCourier\Shipping\Helper\OrderShipmentHelper;
+use SamedayCourier\Shipping\Helper\OrderStatusHelper;
 
 class AddAwb extends AdminOrder implements HttpPostActionInterface
 {
@@ -66,6 +67,11 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
      */
     private $orderShipmentHelper;
 
+    /**
+     * @var OrderStatusHelper
+     */
+    private $orderStatusHelper;
+
     public function __construct(
         Action\Context $context,
         Registry $coreRegistry,
@@ -86,7 +92,8 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         ServiceRepositoryInterface $serviceRepository,
         StoredDataHelper $storedDataHelper,
         ShippingService $shippingService,
-        OrderShipmentHelper $orderShipmentHelper
+        OrderShipmentHelper $orderShipmentHelper,
+        OrderStatusHelper $orderStatusHelper
     )
     {
         parent::__construct(
@@ -112,6 +119,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         $this->shippingService = $shippingService;
         $this->storedDataHelper = $storedDataHelper;
         $this->orderShipmentHelper = $orderShipmentHelper;
+        $this->orderStatusHelper = $orderStatusHelper;
     }
 
     /**
@@ -307,7 +315,9 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
                 ->setAwbNumber($response->getAwbNumber())
                 ->setAwbCost($requestParams['repayment'])
                 ->setParcels($parcels);
+            $this->orderStatusHelper->captureInitialStatus($order, $awb);
             $this->awbRepository->save($awb);
+            $this->orderStatusHelper->applyConfiguredStatus($order);
 
             // Generate Order Shipment and store it's tracking
             if (null !== $orderShipment = $this->orderShipmentHelper->saveOrderShipment($order)) {

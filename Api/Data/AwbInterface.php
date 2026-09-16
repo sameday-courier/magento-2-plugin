@@ -17,6 +17,7 @@ interface AwbInterface extends ExtensibleDataInterface
     const AWB_NUMBER = 'awb_number';
     const PARCELS = 'parcels';
     const AWB_COST = 'awb_cost';
+    const INITIAL_ORDER_STATUS = 'initial_order_status';
 
     /**
      * @return int
@@ -77,4 +78,16 @@ interface AwbInterface extends ExtensibleDataInterface
      * @return $this
      */
     public function setAwbCost($awbCost);
+
+    /**
+     * @return string|null
+     */
+    public function getInitialOrderStatus();
+
+    /**
+     * @param string|null $status
+     *
+     * @return $this
+     */
+    public function setInitialOrderStatus($status);
 }
