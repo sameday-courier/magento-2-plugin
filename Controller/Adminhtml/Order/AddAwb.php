@@ -72,6 +72,11 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
      */
     private $orderStatusHelper;
 
+    /**
+     * @var GeneralHelper
+     */
+    private $generalHelper;
+
     public function __construct(
         Action\Context $context,
         Registry $coreRegistry,
@@ -93,7 +98,8 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         StoredDataHelper $storedDataHelper,
         ShippingService $shippingService,
         OrderShipmentHelper $orderShipmentHelper,
-        OrderStatusHelper $orderStatusHelper
+        OrderStatusHelper $orderStatusHelper,
+        GeneralHelper $generalHelper
     )
     {
         parent::__construct(
@@ -120,6 +126,7 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         $this->storedDataHelper = $storedDataHelper;
         $this->orderShipmentHelper = $orderShipmentHelper;
         $this->orderStatusHelper = $orderStatusHelper;
+        $this->generalHelper = $generalHelper;
     }
 
     /**
@@ -166,6 +173,10 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
             (int) $serviceId,
             (bool) $this->apiHelper->getEnvMode()
         );
+        $service = $this->remapOohServiceForOrder($order, $service);
+        if ($service === null) {
+            return $resultRedirect;
+        }
 
         $lockerLastMile = null;
         $oohLastMile = null;
@@ -183,14 +194,10 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
                 )
             );
 
-            if ($service->getCode() === GeneralHelper::SAMEDAY_SERVICE_LOCKER_CODE
-                || $service->getCode() === GeneralHelper::SAMEDAY_SERVICE_CROSSBORDER_LOCKER_CODE
-            ) {
-                $lockerLastMile = $locker['lockerId'];
-            }
-
-            if ($service->getCode() === GeneralHelper::SAMEDAY_SERVICE_PUDO_CODE) {
+            if ($this->generalHelper->isPudoServiceType((string) $service->getCode())) {
                 $oohLastMile = $locker['lockerId'];
+            } else {
+                $lockerLastMile = $locker['lockerId'];
             }
         }
 
@@ -335,5 +342,59 @@ class AddAwb extends AdminOrder implements HttpPostActionInterface
         }
 
         return $resultRedirect;
+    }
+
+    /**
+     * Remap LN/XL to PP/XP when the stored locker is a PUDO location (and vice versa).
+     *
+     * @param Order $order
+     * @param \SamedayCourier\Shipping\Api\Data\ServiceInterface $service
+     * @return \SamedayCourier\Shipping\Api\Data\ServiceInterface|null
+     */
+    private function remapOohServiceForOrder(Order $order, $service)
+    {
+        if (!$this->apiHelper->isEligibleToLocker((string) $service->getCode())) {
+            return $service;
+        }
+
+        $lockerRaw = $order->getSamedaycourierLocker();
+        if (!$lockerRaw) {
+            return $service;
+        }
+
+        try {
+            $locker = $this->serializer->unserialize($lockerRaw);
+        } catch (\Exception $e) {
+            return $service;
+        }
+
+        $lockerPayload = is_array($locker)
+            ? $locker
+            : (is_numeric($locker) ? ['lockerId' => (int) $locker] : null);
+        $oohType = $this->generalHelper->resolveOohTypeFromLocker($lockerPayload);
+        if ($oohType === null) {
+            return $service;
+        }
+
+        $orderServiceCode = explode('_', (string) $order->getShippingMethod(), 2)[1] ?? (string) $service->getCode();
+        $resolvedCode = $this->generalHelper->resolveAwbServiceCode($orderServiceCode, $oohType);
+        if ($resolvedCode === (string) $service->getCode()) {
+            return $service;
+        }
+
+        try {
+            return $this->serviceRepository->getBySamedayCode(
+                $resolvedCode,
+                (bool) $this->apiHelper->getEnvMode()
+            );
+        } catch (NoSuchEntityException $e) {
+            $this->manager->addErrorMessage(sprintf(
+                'Sameday service %s not found for OOH remap (order service %s). Please refresh services.',
+                $resolvedCode,
+                $orderServiceCode
+            ));
+
+            return null;
+        }
     }
 }

@@ -22,6 +22,11 @@ class Form extends Template
     private $json;
 
     /**
+     * @var GeneralHelper
+     */
+    private $generalHelper;
+
+    /**
      * @var \Magento\Framework\View\Element\Template\Context $context
      */
     protected $context;
@@ -36,6 +41,7 @@ class Form extends Template
      * @param StoredDataHelper $storedDataHelper
      * @param Json $json
      * @param OrderRepositoryInterface $orderRepository
+     * @param GeneralHelper $generalHelper
      * @param array $data
      */
     public function __construct(
@@ -43,11 +49,13 @@ class Form extends Template
         StoredDataHelper $storedDataHelper,
         Json $json,
         OrderRepositoryInterface $orderRepository,
+        GeneralHelper $generalHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
 
         $this->context = $context;
+        $this->generalHelper = $generalHelper;
         $this->storedDataHelper = $storedDataHelper;
         $this->json = $json;
         $this->orderRepository = $orderRepository;
@@ -147,8 +155,12 @@ class Form extends Template
         if ($this->storedDataHelper->isEligibleToLocker($serviceCode)) {
             $displayLockerDetails = $this->storedDataHelper::DISPLAY_HTML_ELEM['show'];
 
-            if (isset($samedaycourierLocker['oohType'])) {
-                $serviceCode = GeneralHelper::OOH_SERVICES[$samedaycourierLocker['oohType']];
+            $lockerPayload = is_array($samedaycourierLocker)
+                ? $samedaycourierLocker
+                : (is_numeric($samedaycourierLocker) ? ['lockerId' => (int) $samedaycourierLocker] : null);
+            $oohType = $this->generalHelper->resolveOohTypeFromLocker($lockerPayload);
+            if ($oohType !== null && $serviceCode !== null) {
+                $serviceCode = $this->generalHelper->resolveAwbServiceCode($serviceCode, $oohType);
             }
         }
 

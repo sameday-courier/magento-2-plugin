@@ -55,11 +55,18 @@ class Edit extends \Magento\Backend\App\Action
 
         $this->repository->save($service);
 
-        // Update PUDO service status to be the same as LockerNextDay
+        // Keep hidden PUDO services in sync with their Easybox counterparts.
+        $pudoCode = null;
         if ($service->getCode() === GeneralHelper::SAMEDAY_SERVICE_LOCKER_CODE) {
-            try{
+            $pudoCode = GeneralHelper::SAMEDAY_SERVICE_PUDO_CODE;
+        } elseif ($service->getCode() === GeneralHelper::SAMEDAY_SERVICE_CROSSBORDER_LOCKER_CODE) {
+            $pudoCode = GeneralHelper::SAMEDAY_SERVICE_CROSSBORDER_PUDO_CODE;
+        }
+
+        if ($pudoCode !== null) {
+            try {
                 $pudoService = $this->repository->getBySamedayCode(
-                    GeneralHelper::SAMEDAY_SERVICE_PUDO_CODE,
+                    $pudoCode,
                     $service->getIsTesting()
                 );
             } catch (NoSuchEntityException $e) {

@@ -75,6 +75,7 @@ class ApiHelper extends AbstractHelper
         GeneralHelper::SAMEDAY_SERVICE_LOCKER_CODE,
         GeneralHelper::SAMEDAY_SERVICE_CROSSBORDER_LOCKER_CODE,
         GeneralHelper::SAMEDAY_SERVICE_PUDO_CODE,
+        GeneralHelper::SAMEDAY_SERVICE_CROSSBORDER_PUDO_CODE,
     ];
 
     public const DEFAULT_COUNTRIES = [
