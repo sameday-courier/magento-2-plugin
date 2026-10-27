@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.9.9
+
+### Fixed
+- AWB generation remaps Easybox/PUDO service codes from the selected locker (`oohType`): LN/XL → PP/XP, and uses `oohLastMile` for PUDO
+
 ## 1.9.8
 
 ### Added

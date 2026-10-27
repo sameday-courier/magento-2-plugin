@@ -95,6 +95,11 @@ class BulkAwbService
      */
     private $orderStatusHelper;
 
+    /**
+     * @var GeneralHelper
+     */
+    private $generalHelper;
+
     public function __construct(
         OrderRepositoryInterface $orderRepository,
         AwbRepositoryInterface $awbRepository,
@@ -108,7 +113,8 @@ class BulkAwbService
         OrderShipmentHelper $orderShipmentHelper,
         Json $serializer,
         UrlInterface $urlBuilder,
-        OrderStatusHelper $orderStatusHelper
+        OrderStatusHelper $orderStatusHelper,
+        GeneralHelper $generalHelper
     ) {
         $this->orderRepository = $orderRepository;
         $this->awbRepository = $awbRepository;
@@ -123,6 +129,7 @@ class BulkAwbService
         $this->serializer = $serializer;
         $this->urlBuilder = $urlBuilder;
         $this->orderStatusHelper = $orderStatusHelper;
+        $this->generalHelper = $generalHelper;
     }
 
     /**
@@ -297,18 +304,10 @@ class BulkAwbService
                 sprintf('%s (%s)', (string) ($locker['address'] ?? ''), (string) ($locker['name'] ?? ''))
             );
 
-            if (in_array(
-                $service->getCode(),
-                [
-                    GeneralHelper::SAMEDAY_SERVICE_LOCKER_CODE,
-                    GeneralHelper::SAMEDAY_SERVICE_CROSSBORDER_LOCKER_CODE,
-                ],
-                true
-            )) {
-                $lockerLastMile = (int) $locker['lockerId'];
-            }
-            if ($service->getCode() === GeneralHelper::SAMEDAY_SERVICE_PUDO_CODE) {
+            if ($this->generalHelper->isPudoServiceType((string) $service->getCode())) {
                 $oohLastMile = (int) $locker['lockerId'];
+            } else {
+                $lockerLastMile = (int) $locker['lockerId'];
             }
         } elseif ($order->getData('samedaycourier_destination_address_hd')) {
             $hdAddress = $this->unserializeArray($order->getData('samedaycourier_destination_address_hd'));
@@ -619,7 +618,21 @@ class BulkAwbService
         }
 
         $code = substr($shippingMethod, strlen($prefix));
-        return $code !== '' ? $code : null;
+        if ($code === '') {
+            return null;
+        }
+
+        if (!$this->apiHelper->isEligibleToLocker($code)) {
+            return $code;
+        }
+
+        $locker = $this->unserializeArray($order->getData('samedaycourier_locker'));
+        $oohType = $this->generalHelper->resolveOohTypeFromLocker($locker);
+        if ($oohType === null) {
+            return $code;
+        }
+
+        return $this->generalHelper->resolveAwbServiceCode($code, $oohType);
     }
 
     private function formatBadRequest(SamedayBadRequestException $e): string

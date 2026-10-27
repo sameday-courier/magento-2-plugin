@@ -187,6 +187,8 @@ class LocalDataImporter extends AbstractHelper
         $isTesting = $this->apiHelper->getEnvMode();
 
         $remoteServices = [];
+        $lockerService = null;
+        $crossborderLockerService = null;
         $page = 1;
         do {
             $request = new SamedayGetServicesRequest();
@@ -200,7 +202,6 @@ class LocalDataImporter extends AbstractHelper
                 );
             }
 
-            $lockerService = null;
             foreach ($services->getServices() as $serviceObject) {
                 try {
                     $service = $this->serviceRepository->getBySamedayId($serviceObject->getId(), $isTesting);
@@ -241,9 +242,12 @@ class LocalDataImporter extends AbstractHelper
                 // Save as current services.
                 $remoteServices[] = $serviceObject->getId();
 
-                // Keep LockerService
+                // Keep locker services used to sync hidden PUDO counterparts.
                 if ($service->getCode() === GeneralHelper::SAMEDAY_SERVICE_LOCKER_CODE) {
                     $lockerService = $service;
+                }
+                if ($service->getCode() === GeneralHelper::SAMEDAY_SERVICE_CROSSBORDER_LOCKER_CODE) {
+                    $crossborderLockerService = $service;
                 }
             }
         } while ($page <= $services->getPages());
@@ -267,27 +271,40 @@ class LocalDataImporter extends AbstractHelper
             }
         }
 
-        // Update PUDO service status to be the same as LockerNextDay
-        if (null !== $lockerService) {
-            try{
-                $pudoService = $this->serviceRepository->getBySamedayCode(
-                    GeneralHelper::SAMEDAY_SERVICE_PUDO_CODE,
-                    $lockerService->getIsTesting()
-                );
-            } catch (NoSuchEntityException $e) {
-                $pudoService = null;
-            }
-
-            if (null !== $pudoService) {
-                $pudoService->setStatus($lockerService->getStatus());
-                $this->serviceRepository->save($pudoService);
-            }
-        }
+        // Keep hidden PUDO services in sync with their Easybox counterparts.
+        $this->syncHiddenPudoServiceStatus($lockerService, GeneralHelper::SAMEDAY_SERVICE_PUDO_CODE);
+        $this->syncHiddenPudoServiceStatus(
+            $crossborderLockerService,
+            GeneralHelper::SAMEDAY_SERVICE_CROSSBORDER_PUDO_CODE
+        );
 
         return (new LocalDataImporterResponse())
             ->setSucceed(true)
             ->setMessage(__('Services was imported with success !')
         );
+    }
+
+    /**
+     * @param ServiceInterface|null $sourceService
+     * @param string $pudoCode
+     */
+    private function syncHiddenPudoServiceStatus($sourceService, string $pudoCode): void
+    {
+        if ($sourceService === null) {
+            return;
+        }
+
+        try {
+            $pudoService = $this->serviceRepository->getBySamedayCode(
+                $pudoCode,
+                (bool) $sourceService->getIsTesting()
+            );
+        } catch (NoSuchEntityException $e) {
+            return;
+        }
+
+        $pudoService->setStatus($sourceService->getStatus());
+        $this->serviceRepository->save($pudoService);
     }
 
     /**
