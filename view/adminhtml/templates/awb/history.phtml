@@ -1,5 +1,6 @@
 <?php
 /** @var $block History */
+/** @var \Magento\Framework\Escaper $escaper */
 use SamedayCourier\Shipping\Block\Adminhtml\Awb\History;
 ?>
 
@@ -16,57 +17,63 @@ use SamedayCourier\Shipping\Block\Adminhtml\Awb\History;
                         $historyRows = '';
                         foreach ($packageHistory as $history) {
                             $historyRows .=
-                                '<td>' . $history->getName() . '</td>' .
-                                '<td>' . $history->getLabel() . '</td>' .
-                                '<td>' . $history->getState() . '</td>' .
-                                '<td>' . $history->getDate()->format('Y-m-d H:i:s') . '</td>' .
-                                '<td>' . $history->getCounty() . '</td>' .
-                                '<td>' . $history->getTransitLocation() . '</td>' .
-                                '<td>' . $history->getReason() . '</td>'
+                                '<td>' . $escaper->escapeHtml($history->getName()) . '</td>' .
+                                '<td>' . $escaper->escapeHtml($history->getLabel()) . '</td>' .
+                                '<td>' . $escaper->escapeHtml($history->getState()) . '</td>' .
+                                '<td>' . $escaper->escapeHtml($history->getDate()->format('Y-m-d H:i:s')) . '</td>' .
+                                '<td>' . $escaper->escapeHtml($history->getCounty()) . '</td>' .
+                                '<td>' . $escaper->escapeHtml($history->getTransitLocation()) . '</td>' .
+                                '<td>' . $escaper->escapeHtml($history->getReason()) . '</td>'
                             ;
                         }
+                        $awbNumber = $summary->getParcelAwbNumber();
+                        $pickedUpAt = $summary->getPickedUpAt()
+                            ? $summary->getPickedUpAt()->format('Y-m-d H:i:s')
+                            : '';
                         $packageRows .=
                             '<tr>' .
-                            '<td style="text-align: center; cursor:pointer;" class="showHistoryDetails" value="-" data-awb-number="'.$summary->getParcelAwbNumber().'"> <strong> + </strong> </td>' .
-                            '<td>' . $summary->getParcelAwbNumber() . '</td>' .
-                            '<td>' . $summary->getParcelWeight() . '</td>' .
-                            '<td>' . ($summary->isDelivered() ? "Yes" : "No") . '</td>' .
-                            '<td>' . $summary->getDeliveryAttempts() . ' </td>' .
-                            '<td>' . ($summary->isPickedUp() ? 'Yes' : 'No') . '</td>' .
-                            '<td>' . ($summary->getPickedUpAt() ? $summary->getPickedUpAt()->format('Y-m-d H:i:s') : '') .'</td>' .
+                            '<td style="text-align: center; cursor:pointer;" class="showHistoryDetails" value="-" data-awb-number="' .
+                            $escaper->escapeHtmlAttr($awbNumber) .
+                            '"> <strong> + </strong> </td>' .
+                            '<td>' . $escaper->escapeHtml($awbNumber) . '</td>' .
+                            '<td>' . $escaper->escapeHtml((string) $summary->getParcelWeight()) . '</td>' .
+                            '<td>' . $escaper->escapeHtml($summary->isDelivered() ? 'Yes' : 'No') . '</td>' .
+                            '<td>' . $escaper->escapeHtml((string) $summary->getDeliveryAttempts()) . ' </td>' .
+                            '<td>' . $escaper->escapeHtml($summary->isPickedUp() ? 'Yes' : 'No') . '</td>' .
+                            '<td>' . $escaper->escapeHtml($pickedUpAt) . '</td>' .
                             '</tr>' .
                             '<tr>' .
                             '<td colspan="7">' .
-                            '<table class="history" id="history-'.$summary->getParcelAwbNumber().'" style="width: 100%; display: none; text-align: center">' .
+                            '<table class="history" id="history-' .
+                            $escaper->escapeHtmlAttr($awbNumber) .
+                            '" style="width: 100%; display: none; text-align: center">' .
                             '<tr>' .
-                            '<th style="width: 15%">' . __("Status") . '</th>' .
-                            '<th style="width: 15%">' . __("Label") . '</th>' .
-                            '<th style="width: 15%">' . __("State") . '</th>' .
-                            '<th style="width: 15%">' . __("Date") . '</th>' .
-                            '<th style="width: 15%">' . __("County") . '</th>' .
-                            '<th style="width: 15%">' . __("Translation") . '</th>' .
-                            '<th style="width: 15%">' . __("Reason") . '</th>' .
+                            '<th style="width: 15%">' . $escaper->escapeHtml(__('Status')) . '</th>' .
+                            '<th style="width: 15%">' . $escaper->escapeHtml(__('Label')) . '</th>' .
+                            '<th style="width: 15%">' . $escaper->escapeHtml(__('State')) . '</th>' .
+                            '<th style="width: 15%">' . $escaper->escapeHtml(__('Date')) . '</th>' .
+                            '<th style="width: 15%">' . $escaper->escapeHtml(__('County')) . '</th>' .
+                            '<th style="width: 15%">' . $escaper->escapeHtml(__('Translation')) . '</th>' .
+                            '<th style="width: 15%">' . $escaper->escapeHtml(__('Reason')) . '</th>' .
                             '</tr>' .
                             $historyRows .
                             '</table>' .
                             '</td>' .
                             '</tr>'
-
-
                         ;
                     }
                     ?>
                     <table class="packages" style="width: 100%">
                         <tr>
                             <th></th>
-                            <th scope="col"><?= __('Parcel number') ?></th>
-                            <th scope="col"><?= __('Parcel weight') ?></th>
-                            <th scope="col"><?= __('Delivered') ?></th>
-                            <th scope="col"><?= __('Delivery attempts') ?></th>
-                            <th scope="col"><?= __('Is picked up') ?></th>
-                            <th scope="col"><?= __('Picked up at') ?></th>
+                            <th scope="col"><?= $escaper->escapeHtml(__('Parcel number')) ?></th>
+                            <th scope="col"><?= $escaper->escapeHtml(__('Parcel weight')) ?></th>
+                            <th scope="col"><?= $escaper->escapeHtml(__('Delivered')) ?></th>
+                            <th scope="col"><?= $escaper->escapeHtml(__('Delivery attempts')) ?></th>
+                            <th scope="col"><?= $escaper->escapeHtml(__('Is picked up')) ?></th>
+                            <th scope="col"><?= $escaper->escapeHtml(__('Picked up at')) ?></th>
                         </tr>
-                        <?= $packageRows ?>
+                        <?= /* @noEscape */ $packageRows ?>
                     </table>
                 </div>
             </section>

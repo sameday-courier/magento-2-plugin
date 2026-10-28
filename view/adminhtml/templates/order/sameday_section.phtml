@@ -1,12 +1,13 @@
 <?php
 /** @var $block SamedaySection */
+/** @var \Magento\Framework\Escaper $escaper */
 use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedaySection;
 ?>
 
 <section class="admin__page-section" id="sameday-order-section"
-         data-generate-url="<?= $block->escapeUrl($block->goToAwbFormPage()) ?>">
+         data-generate-url="<?= $escaper->escapeUrl($block->goToAwbFormPage()) ?>">
     <div class="admin__page-section-title">
-        <span class="title"><?= $block->escapeHtml(__('SamedayCourier')) ?></span>
+        <span class="title"><?= $escaper->escapeHtml(__('SamedayCourier')) ?></span>
     </div>
     <div class="admin__page-section-content" id="sameday-order-section-content">
         <?php if ($block->orderHasAwb()): ?>
@@ -14,34 +15,34 @@ use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedaySection;
                 <button class="sameday-primary"
                         type="button"
                         id="add_parcel_modal"
-                        onclick="setLocation('<?= $block->escapeUrl($block->goToAddNewParcelFormPage()) ?>')">
-                    <?= $block->escapeHtml(__('Add new parcel')) ?>
+                        onclick="setLocation('<?= $escaper->escapeUrl($block->goToAddNewParcelFormPage()) ?>')">
+                    <?= $escaper->escapeHtml(__('Add new parcel')) ?>
                 </button>
                 <button class="sameday-primary"
                         id="awb_history_modal"
                         type="button"
-                        onclick="setLocation('<?= $block->escapeUrl($block->goToAwbHistoryPage()) ?>')">
-                    <?= $block->escapeHtml(__('Awb history')) ?>
+                        onclick="setLocation('<?= $escaper->escapeUrl($block->goToAwbHistoryPage()) ?>')">
+                    <?= $escaper->escapeHtml(__('Awb history')) ?>
                 </button>
                 <button class="sameday-primary"
                         type="button"
-                        onclick="setLocation('<?= $block->escapeUrl($block->getRouteAwbAsPdf()) ?>')">
-                    <?= $block->escapeHtml(__('Show as pdf')) ?>
+                        onclick="setLocation('<?= $escaper->escapeUrl($block->getRouteAwbAsPdf()) ?>')">
+                    <?= $escaper->escapeHtml(__('Show as pdf')) ?>
                 </button>
                 <button class="sameday-primary"
                         id="remove_awb"
-                        data-awb_id="<?= $block->escapeHtmlAttr($block->getAwb()->getId()) ?>"
-                        data-sameday_awb_number="<?= $block->escapeHtmlAttr($block->getAwb()->getAwbNumber()) ?>"
-                        data-remove_awb_url="<?= $block->escapeUrl($block->getRouteRemoveAwb()) ?>">
-                    <?= $block->escapeHtml(__('Remove Awb')) ?>
+                        data-awb_id="<?= $escaper->escapeHtmlAttr($block->getAwb()->getId()) ?>"
+                        data-sameday_awb_number="<?= $escaper->escapeHtmlAttr($block->getAwb()->getAwbNumber()) ?>"
+                        data-remove_awb_url="<?= $escaper->escapeUrl($block->getRouteRemoveAwb()) ?>">
+                    <?= $escaper->escapeHtml(__('Remove Awb')) ?>
                 </button>
             </div>
         <?php else: ?>
             <button class="edit sameday-primary"
                     type="button"
                     id="sameday_generate_awb"
-                    onclick="setLocation('<?= $block->escapeUrl($block->goToAwbFormPage()) ?>')">
-                <?= $block->escapeHtml(__('Generate Sameday AWB')) ?>
+                    onclick="setLocation('<?= $escaper->escapeUrl($block->goToAwbFormPage()) ?>')">
+                <?= $escaper->escapeHtml(__('Generate Sameday AWB')) ?>
             </button>
         <?php endif; ?>
     </div>
