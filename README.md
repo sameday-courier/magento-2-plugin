@@ -59,7 +59,7 @@ The documentation includes:
 ## 🔧 Requirements
 
 - **Magento**: 2.3.x and above
-- **PHP**: 7.1.0, 7.2.0, 7.3.0, 7.4.0, 8.1.0, 8.2.0, 8.3.0, or 8.4.0
+- **PHP**: 7.1.0, 7.2.0, 7.3.0, 7.4.0, 8.1.0, 8.2.0, 8.3.0, 8.4.0, or 8.5.0
 - **Sameday Courier Account**: Active Sameday account and a Sameday API set of credentials
 
 ## 📞 Support

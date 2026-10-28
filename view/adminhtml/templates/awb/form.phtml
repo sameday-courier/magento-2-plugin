@@ -1,27 +1,30 @@
 <?php
 /** @var $block Form */
+/** @var \Magento\Framework\Escaper $escaper */
 use SamedayCourier\Shipping\Block\Adminhtml\Awb\Form;
+
+$orderDetails = $block->getOrderDetails() ?: [];
 ?>
 
 <section class="admin__page-section">
     <div class="admin__page-section-content">
         <div class="admin__page-section-item">
             <section class="admin__page-section sameday-courier-section">
-                <form action="<?= $block->escapeUrl($block->getRouteAddAwb())?>" method="post" id="sameday-add-awb-form" class="samedaycourier_shipping_generate_awb_form">
-                    <input type="hidden" id="changeLockerUrl" data-change_locker_url="<?php echo $block->escapeUrl($block->getOrderDetails()['changeLockerMethodUrl']); ?>">
-                    <input type="hidden" name="order_id" value="<?= $block->getOrder()->getId() ?>">
+                <form action="<?= $escaper->escapeUrl($block->getRouteAddAwb()) ?>" method="post" id="sameday-add-awb-form" class="samedaycourier_shipping_generate_awb_form">
+                    <input type="hidden" id="changeLockerUrl" data-change_locker_url="<?= $escaper->escapeUrl($orderDetails['changeLockerMethodUrl'] ?? '') ?>">
+                    <input type="hidden" name="order_id" value="<?= $escaper->escapeHtmlAttr($block->getOrder()->getId()) ?>">
                     <div class="row">
                         <div class="col-25">
                             <label for="repayment">
-                                <?= __('Repayment') ?>
-                                <span style="font-weight: bolder"> (<?php echo $block->getOrderDetails()['currency']; ?>) </span>
+                                <?= $escaper->escapeHtml(__('Repayment')) ?>
+                                <span style="font-weight: bolder"> (<?= $escaper->escapeHtml($orderDetails['currency'] ?? '') ?>) </span>
                             </label>
                         </div>
                         <div class="col-75">
-                            <input name="repayment" id="repayment" type="number" step="any" min="0" value="<?= $block->getOrderDetails()['repayment'] ?>">
-                            <?php if (isset($block->getOrderDetails()['currencyWarningMessage'])) { ?>
+                            <input name="repayment" id="repayment" type="number" step="any" min="0" value="<?= $escaper->escapeHtmlAttr($orderDetails['repayment'] ?? '') ?>">
+                            <?php if (!empty($orderDetails['currencyWarningMessage'])) { ?>
                                 <span style="font-weight: bolder; color: #9f0101">
-                            <?php echo $block->getOrderDetails()['currencyWarningMessage']; ?>
+                            <?= $escaper->escapeHtml($orderDetails['currencyWarningMessage']) ?>
                         </span>
                             <?php } ?>
                         </div>
@@ -29,7 +32,7 @@ use SamedayCourier\Shipping\Block\Adminhtml\Awb\Form;
                     <div class="row">
                         <div class="col-25">
                             <label for="insured_value">
-                                <?= __('Insured value') ?>
+                                <?= $escaper->escapeHtml(__('Insured value')) ?>
                             </label>
                         </div>
                         <div class="col-75">
@@ -39,13 +42,13 @@ use SamedayCourier\Shipping\Block\Adminhtml\Awb\Form;
 
                     <div class="row">
                         <div class="col-25">
-                            <?= __('Package type') ?>
+                            <?= $escaper->escapeHtml(__('Package type')) ?>
                         </div>
                         <div class="col-75">
                             <select name="package_type" id="package_type">
-                                <option value="0"><?= __('Parcel') ?></option>
-                                <option value="1"><?= __('Envelope') ?></option>
-                                <option value="2"><?= __('Large parcel') ?></option>
+                                <option value="0"><?= $escaper->escapeHtml(__('Parcel')) ?></option>
+                                <option value="1"><?= $escaper->escapeHtml(__('Envelope')) ?></option>
+                                <option value="2"><?= $escaper->escapeHtml(__('Large parcel')) ?></option>
                             </select>
                         </div>
                     </div>
@@ -53,7 +56,7 @@ use SamedayCourier\Shipping\Block\Adminhtml\Awb\Form;
                     <div class="row">
                         <div class="col-25">
                             <label for="packages" style="font-weight: bolder">
-                                <?= __('Nr. of Packages') ?>
+                                <?= $escaper->escapeHtml(__('Nr. of Packages')) ?>
                             </label>
                         </div>
                         <div class="col-75">
@@ -65,12 +68,12 @@ use SamedayCourier\Shipping\Block\Adminhtml\Awb\Form;
                         <div class="package_dimensions_fields">
                             <div class="col-25">
                                 <label for="insured_value">
-                                    <?= __('Package dimensions') ?>
+                                    <?= $escaper->escapeHtml(__('Package dimensions')) ?>
                                 </label>
                             </div>
                             <div class="col-75">
                                 <div class="col-25">
-                                    <input name="package_weight[]" id="package_weight" type="number" step="any" min="0" value="<?= $block->getOrderDetails()['weight'] ?>">
+                                    <input name="package_weight[]" id="package_weight" type="number" step="any" min="0" value="<?= $escaper->escapeHtmlAttr($orderDetails['weight'] ?? '') ?>">
                                 </div>
                                 <div class="col-25">
                                     <input name="package_length[]" id="package_length" type="number" step="any" min="0" placeholder="length">
@@ -87,35 +90,35 @@ use SamedayCourier\Shipping\Block\Adminhtml\Awb\Form;
 
                     <div class="row">
                         <div class="col-25">
-                            <?= __('Service') ?>
+                            <?= $escaper->escapeHtml(__('Service')) ?>
                         </div>
                         <div class="col-75">
                             <select name="service" id="service">
                                 <?php foreach ($block->getServices() as $service): ?>
                                     <option
-                                        data-service_code="<?php echo $service->getCode();?>"
-                                        data-service_locker_to_show="<?php echo $block->toggleHtmlElement($block->isEligibleToLocker($service->getCode())); ?>"
-                                        data-service_eligible_locker_first_mile="<?php echo $block->toggleHtmlElement($block->isServiceEligibleToLockerFirstMile($service->getCode())); ?>"
-                                        value="<?= $service->getSamedayId() ?>" <?= $service->getCode() === $block->getOrderDetails()['serviceCode'] ? 'selected' : '' ?>
+                                        data-service_code="<?= $escaper->escapeHtmlAttr($service->getCode()) ?>"
+                                        data-service_locker_to_show="<?= $escaper->escapeHtmlAttr($block->toggleHtmlElement($block->isEligibleToLocker($service->getCode()))) ?>"
+                                        data-service_eligible_locker_first_mile="<?= $escaper->escapeHtmlAttr($block->toggleHtmlElement($block->isServiceEligibleToLockerFirstMile($service->getCode()))) ?>"
+                                        value="<?= $escaper->escapeHtmlAttr($service->getSamedayId()) ?>" <?= ($service->getCode() === ($orderDetails['serviceCode'] ?? null)) ? 'selected' : '' ?>
                                     >
-                                        <?= $service->getSamedayName() ?>
+                                        <?= $escaper->escapeHtml($service->getSamedayName()) ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
 
-                    <div id="showLockerFirstMile" style="display: <?php echo $block->getOrderDetails()['displayLockerFirstMile']; ?>">
+                    <div id="showLockerFirstMile" style="display: <?= $escaper->escapeHtmlAttr($orderDetails['displayLockerFirstMile'] ?? 'none') ?>">
                         <div class="row">
-                            <div class="col-25" title="<?php echo __('Check this field if you want to apply for Personal delivery of the package at an easyBox terminal.'); ?>" style="cursor: help">
-                                <?= __('Personal delivery at locker') ?>
-                                <span><a href="https://sameday.ro/easybox#lockers-intro" target="_blank"><?php echo __('Show on map')?></a></span>
+                            <div class="col-25" title="<?= $escaper->escapeHtmlAttr(__('Check this field if you want to apply for Personal delivery of the package at an easyBox terminal.')) ?>" style="cursor: help">
+                                <?= $escaper->escapeHtml(__('Personal delivery at locker')) ?>
+                                <span><a href="https://sameday.ro/easybox#lockers-intro" target="_blank"><?= $escaper->escapeHtml(__('Show on map')) ?></a></span>
                             </div>
                             <div class="col-75">
-                                <input type="checkbox" name="locker_first_mile" class="checkbox" value="<?php echo $block->getOrderDetails()['serviceTaxCodePDO']; ?>" id="lockerFirstMile">
+                                <input type="checkbox" name="locker_first_mile" class="checkbox" value="<?= $escaper->escapeHtmlAttr($orderDetails['serviceTaxCodePDO'] ?? '') ?>" id="lockerFirstMile">
                             </div>
                             <div class="col-75">
-                                <div class="tooltip"><?php echo __('Show locker dimensions box');?>
+                                <div class="tooltip"><?= $escaper->escapeHtml(__('Show locker dimensions box')) ?>
                                     <span class="tooltiptext">
                                 <table class="data-grid data-grid-draggable"> <tr> <th></th> <th style="text-align: center;">L</th> <th style="text-align: center;">l</th> <th style="text-align: center;">h</th> </tr><tr> <td>Small (cm)</td><td> 47</td><td> 44.5</td><td> 10</td></tr><tr> <td>Medium (cm)</td><td> 47</td><td> 44.5</td><td> 19</td></tr><tr> <td>Large (cm)</td><td> 47</td><td> 44.5</td><td> 39</td></tr></table>
                             </span>
@@ -124,13 +127,13 @@ use SamedayCourier\Shipping\Block\Adminhtml\Awb\Form;
                         </div>
                     </div>
 
-                    <div id="showLockerDetails" style="display: <?php echo $block->getOrderDetails()['displayLockerDetails']; ?>">
+                    <div id="showLockerDetails" style="display: <?= $escaper->escapeHtmlAttr($orderDetails['displayLockerDetails'] ?? 'none') ?>">
                         <div class="row">
-                            <div class="col-25" title="<?php echo __('Delivery point for customer');?>">
-                                <strong> <?= __('Location details (Last Mile)') ?> </strong>
+                            <div class="col-25" title="<?= $escaper->escapeHtmlAttr(__('Delivery point for customer')) ?>">
+                                <strong> <?= $escaper->escapeHtml(__('Location details (Last Mile)')) ?> </strong>
                             </div>
                             <div class="col-75">
-                                <textarea disabled="disabled" id="lockerId_details" style="height:50px"><?php print $block->getOrderDetails()['samedaycourier_locker']; ?></textarea>
+                                <textarea disabled="disabled" id="lockerId_details" style="height:50px"><?= $escaper->escapeHtml($orderDetails['samedaycourier_locker'] ?? '') ?></textarea>
                             </div>
                         </div>
                         <div class="row">
@@ -141,12 +144,12 @@ use SamedayCourier\Shipping\Block\Adminhtml\Awb\Form;
                                 <button type="button"
                                         id="changeLocker"
                                         name="changeLocker"
-                                        data-country_code="<?php print $block->getOrderDetails()['country-code']; ?>"
-                                        data-api_username="<?php print $block->getOrderDetails()['api-username']; ?>"
-                                        data-city="<?php print $block->getOrderDetails()['city']; ?>"
+                                        data-country_code="<?= $escaper->escapeHtmlAttr($orderDetails['country-code'] ?? '') ?>"
+                                        data-api_username="<?= $escaper->escapeHtmlAttr($orderDetails['api-username'] ?? '') ?>"
+                                        data-city="<?= $escaper->escapeHtmlAttr($orderDetails['city'] ?? '') ?>"
                                         class="action-default scalable sameday-primary"
                                 >
-                                    <?= __('Change location') ?>
+                                    <?= $escaper->escapeHtml(__('Change location')) ?>
                                 </button>
                             </div>
                         </div>
@@ -154,13 +157,13 @@ use SamedayCourier\Shipping\Block\Adminhtml\Awb\Form;
 
                     <div class="row">
                         <div class="col-25">
-                            <?= __('Pickup point') ?>
+                            <?= $escaper->escapeHtml(__('Pickup point')) ?>
                         </div>
                         <div class="col-75">
                             <select name="pickup_point" id="pickup_point">
                                 <?php foreach ($block->getPickupPoints() as $pickupPoint): ?>
-                                    <option value="<?= $pickupPoint->getSamedayId() ?>" <?= ((bool) $pickupPoint->getIsDefault()) === true ? 'selected' : '' ?>>
-                                        <?= $pickupPoint->getSamedayAlias() ?>
+                                    <option value="<?= $escaper->escapeHtmlAttr($pickupPoint->getSamedayId()) ?>" <?= ((bool) $pickupPoint->getIsDefault()) === true ? 'selected' : '' ?>>
+                                        <?= $escaper->escapeHtml($pickupPoint->getSamedayAlias()) ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
@@ -169,11 +172,11 @@ use SamedayCourier\Shipping\Block\Adminhtml\Awb\Form;
 
                     <div class="row">
                         <div class="col-25">
-                            <?= __('Awb payment') ?>
+                            <?= $escaper->escapeHtml(__('Awb payment')) ?>
                         </div>
                         <div class="col-75">
                             <select name="awb_payment" id="awb_payment">
-                                <option value="0"><?= __('Client')?></option>
+                                <option value="0"><?= $escaper->escapeHtml(__('Client')) ?></option>
                             </select>
                         </div>
                     </div>
@@ -181,21 +184,21 @@ use SamedayCourier\Shipping\Block\Adminhtml\Awb\Form;
                     <div class="row">
                         <div class="col-25">
                             <label for="subject">
-                                <?= __('Observation') ?>
+                                <?= $escaper->escapeHtml(__('Observation')) ?>
                             </label>
                         </div>
                         <div class="col-75">
-                            <textarea name="observation" id="observation" placeholder="<?= __('Write something...') ?>" style="height:50px"></textarea>
+                            <textarea name="observation" id="observation" placeholder="<?= $escaper->escapeHtmlAttr(__('Write something...')) ?>" style="height:50px"></textarea>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-25">
                             <label for="subject">
-                                <?= __('Client Reference') ?>
+                                <?= $escaper->escapeHtml(__('Client Reference')) ?>
                             </label>
                         </div>
                         <div class="col-75">
-                            <input type="text" name="client_reference" id="client_reference" value="<?= $block->getOrderDetails()['client_reference']; ?>" placeholder="<?= __('Default value is order ID...') ?>" style="height:50px">
+                            <input type="text" name="client_reference" id="client_reference" value="<?= $escaper->escapeHtmlAttr($orderDetails['client_reference'] ?? '') ?>" placeholder="<?= $escaper->escapeHtmlAttr(__('Default value is order ID...')) ?>" style="height:50px">
                         </div>
                     </div>
                     <div class="row">
