@@ -2,6 +2,8 @@
 /** @var $block SamedaySection */
 /** @var \Magento\Framework\Escaper $escaper */
 use SamedayCourier\Shipping\Block\Adminhtml\Order\SamedaySection;
+
+$escaper = $escaper ?? $block->getEscaper();
 ?>
 
 <section class="admin__page-section" id="sameday-order-section"

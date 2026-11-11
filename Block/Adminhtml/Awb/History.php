@@ -12,10 +12,13 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Sameday\Requests\SamedayGetParcelStatusHistoryRequest;
 use SamedayCourier\Shipping\Api\AwbRepositoryInterface;
 use SamedayCourier\Shipping\Api\Data\AwbInterface;
+use SamedayCourier\Shipping\Block\EscaperAware;
 use SamedayCourier\Shipping\Helper\ApiHelper;
 
 class History extends Template
 {
+    use EscaperAware;
+
     /**
      * @var Context $context
      */

@@ -3,6 +3,7 @@
 /** @var \Magento\Framework\Escaper $escaper */
 use SamedayCourier\Shipping\Block\Adminhtml\Awb\Form;
 
+$escaper = $escaper ?? $block->getEscaper();
 $orderDetails = $block->getOrderDetails() ?: [];
 ?>
 

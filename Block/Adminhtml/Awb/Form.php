@@ -11,12 +11,15 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order\Payment\Interceptor as Payment;
 use SamedayCourier\Shipping\Api\Data\PickupPointInterface;
 use SamedayCourier\Shipping\Api\Data\ServiceInterface;
+use SamedayCourier\Shipping\Block\EscaperAware;
 use SamedayCourier\Shipping\Helper\GeneralHelper;
 use SamedayCourier\Shipping\Helper\StoredDataHelper;
 use SamedayCourier\Shipping\Model\Data\Service;
 
 class Form extends Template
 {
+    use EscaperAware;
+
     private $storedDataHelper;
 
     private $json;

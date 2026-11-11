@@ -9,9 +9,12 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Block\Adminhtml\Order\View\Info;
 use SamedayCourier\Shipping\Api\Data\AwbInterface;
 use SamedayCourier\Shipping\Api\AwbRepositoryInterface;
+use SamedayCourier\Shipping\Block\EscaperAware;
 
 class SamedaySection extends Template
 {
+    use EscaperAware;
+
     /**
      * @var Context $context
      */

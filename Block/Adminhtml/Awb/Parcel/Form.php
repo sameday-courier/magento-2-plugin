@@ -6,9 +6,12 @@ use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
+use SamedayCourier\Shipping\Block\EscaperAware;
 
 class Form extends Template
 {
+    use EscaperAware;
+
     /**
      * @var Context $context
      */
