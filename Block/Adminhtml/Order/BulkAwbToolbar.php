@@ -3,9 +3,12 @@
 namespace SamedayCourier\Shipping\Block\Adminhtml\Order;
 
 use Magento\Backend\Block\Template;
+use SamedayCourier\Shipping\Block\EscaperAware;
 
 class BulkAwbToolbar extends Template
 {
+    use EscaperAware;
+
     public function getGenerateUrl(): string
     {
         return $this->getUrl('samedaycourier_shipping/order/bulkGenerateAwb');

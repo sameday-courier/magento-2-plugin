@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.9.10
+
+### Fixed
+- Admin templates escape output via `$escaper` for Marketplace XSS checks, with a Magento 2.3-compatible fallback when `$escaper` is not injected
+
 ## 1.9.9
 
 ### Fixed

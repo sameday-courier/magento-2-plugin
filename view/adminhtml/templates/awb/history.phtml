@@ -2,6 +2,8 @@
 /** @var $block History */
 /** @var \Magento\Framework\Escaper $escaper */
 use SamedayCourier\Shipping\Block\Adminhtml\Awb\History;
+
+$escaper = $escaper ?? $block->getEscaper();
 ?>
 
 <section class="admin__page-section">
