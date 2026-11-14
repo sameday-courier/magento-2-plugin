@@ -50,6 +50,10 @@ define([
     $(document, 'select[name="region_id"]').on('change', function() {
         let address = quote.shippingAddress();
 
+        if (!address) {
+            return;
+        }
+
         rateReg.set(address.getKey(), null);
         rateReg.set(address.getCacheKey(), null);
 
