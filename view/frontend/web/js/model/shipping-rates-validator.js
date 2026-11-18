@@ -6,7 +6,7 @@
 define([
     'jquery',
     'mageUtils',
-    'Magento_Dhl/js/model/shipping-rates-validation-rules',
+    'SamedayCourier_Shipping/js/model/shipping-rates-validation-rules',
     'mage/translate'
 ], function ($, utils, validationRules, $t) {
     'use strict';
