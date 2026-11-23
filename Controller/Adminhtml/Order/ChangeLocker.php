@@ -12,7 +12,6 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\App\ObjectManager;
-use Magento\Framework\App\ResourceConnection;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
 use RuntimeException;
@@ -30,7 +29,6 @@ class ChangeLocker extends Action
 
     public function __construct(
         Context $context,
-        ResourceConnection $resourceConnection,
         ResultFactory $resultFactory,
         Json $json,
         OrderRepositoryInterface $orderRepository,
