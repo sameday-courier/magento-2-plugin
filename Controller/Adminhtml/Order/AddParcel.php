@@ -44,7 +44,7 @@ class AddParcel extends AdminOrder implements HttpPostActionInterface
         $values = $this->getRequest()->getParams();
 
         if (!$this->getRequest()->isPost()) {
-            throw new InvalidRequestException(new NotFoundException());
+            throw new InvalidRequestException(new NotFoundException(__('Page not found.')));
         }
 
         /** @var AwbInterface $awb */
