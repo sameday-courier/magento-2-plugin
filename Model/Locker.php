@@ -7,6 +7,7 @@ use Magento\Framework\Api\ExtensionAttributesFactory;
 use Magento\Framework\Api\ExtensionAttributesInterface;
 use Magento\Framework\Model\AbstractExtensibleModel;
 use SamedayCourier\Shipping\Api\Data\LockerInterface;
+use SamedayCourier\Shipping\Api\Data\LockerExtensionInterface as LockerExtensionAttributesInterface;
 
 class Locker extends AbstractExtensibleModel
 {
@@ -84,11 +85,11 @@ class Locker extends AbstractExtensibleModel
     /**
      * @inheritdoc
      *
-     * @param LockerExtensionInterface $extensionAttributes
+     * @param LockerExtensionAttributesInterface $extensionAttributes
      *
      * @return $this
      */
-    public function setExtensionAttributes(LockerExtensionInterface $extensionAttributes)
+    public function setExtensionAttributes(LockerExtensionAttributesInterface $extensionAttributes)
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }

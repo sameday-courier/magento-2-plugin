@@ -10,6 +10,7 @@ use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
 use SamedayCourier\Shipping\Api\Data\RegionInterface;
+use SamedayCourier\Shipping\Api\Data\RegionExtensionInterface as RegionExtensionAttributesInterface;
 use SamedayCourier\Shipping\Api\Data\RegionInterfaceFactory;
 use SamedayCourier\Shipping\Api\Data\ServiceExtensionInterface;
 
@@ -93,7 +94,7 @@ class Region extends AbstractExtensibleModel
     /**
      * @inheritdoc
      *
-     * @return RegionExtensionInterface|null
+     * @return RegionExtensionAttributesInterface|null
      */
     public function getExtensionAttributes()
     {
@@ -103,11 +104,11 @@ class Region extends AbstractExtensibleModel
     /**
      * @inheritdoc
      *
-     * @param RegionExtensionInterface $extensionAttributes
+     * @param RegionExtensionAttributesInterface $extensionAttributes
      *
      * @return $this
      */
-    public function setExtensionAttributes(RegionExtensionInterface $extensionAttributes)
+    public function setExtensionAttributes(RegionExtensionAttributesInterface $extensionAttributes)
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }

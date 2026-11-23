@@ -7,7 +7,11 @@
   }
     ,
     "require-dev": {
-        "roave/security-advisories": "dev-latest"
+        "roave/security-advisories": "dev-latest",
+    "magento/magento-coding-standard": "^41",
+    "phpstan/phpstan": "^2.1",
+    "bitexpert/phpstan-magento": "^0.44",
+    "phpstan/extension-installer": "^1.4"
     },
   "type": "magento2-module",
   "version": "1.9.10",
@@ -15,6 +19,12 @@
     "files": [ "registration.php" ],
     "psr-4": {
       "SamedayCourier\\Shipping\\": ""
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "phpstan/extension-installer": true
     }
   }
 }

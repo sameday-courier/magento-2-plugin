@@ -12,5 +12,7 @@ class LockerMaxItems extends Value
         if ($this->getValue() === null) {
             $this->setValue(StoredDataHelper::DEFAULT_VALUE_LOCKER_MAX_ITEMS);
         }
+
+        return $this;
     }
 }

@@ -89,11 +89,11 @@ class Awb extends AbstractExtensibleModel
     /**
      * @inheritdoc
      *
-     * @param AwbExtensionInterface $extensionAttributes
+     * @param ExtensionAttributesInterface $extensionAttributes
      *
      * @return $this
      */
-    public function setExtensionAttributes(AwbExtensionInterface $extensionAttributes)
+    public function setExtensionAttributes(ExtensionAttributesInterface $extensionAttributes)
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }

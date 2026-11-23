@@ -53,7 +53,7 @@ class RemoveAwb extends Action
         $resultJson = $this->resultJsonFactory->create(ResultFactory::TYPE_JSON);
         $params = $this->getRequest()->getParams();
         if (!$this->getRequest()->isPost() || empty($params['isAjax']) || !$this->formKeyValidator->validate($this->getRequest())) {
-            throw new InvalidRequestException(new NotFoundException());
+            throw new InvalidRequestException(new NotFoundException(__('Page not found.')));
         }
 
         $awb = $this->awbRepository->getById((int) $params['awb_id']);
