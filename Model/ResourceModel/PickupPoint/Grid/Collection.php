@@ -26,8 +26,6 @@ class Collection extends SearchResult
      * @param Logger $logger
      * @param FetchStrategy $fetchStrategy
      * @param EventManager $eventManager
-     * @param null $mainTable
-     * @param null $resourceModel
      * @param null $identifierName
      * @param null $connectionName
      *
@@ -39,8 +37,6 @@ class Collection extends SearchResult
         Logger $logger,
         FetchStrategy $fetchStrategy,
         EventManager $eventManager,
-        $mainTable = null,
-        $resourceModel = null,
         $identifierName = null,
         $connectionName = null
     )
